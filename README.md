@@ -10,6 +10,8 @@ Los datos son recibidos de un Arduino
 
 # POSIBLES ERRORES:
 ```ImportError: No module named 'meter' ```
+
 * Todos los .py deben estar en el mismo directorio.
+
 * Estando en el directorio de los .py -> export PYTHONPATH=`pwd`
 
