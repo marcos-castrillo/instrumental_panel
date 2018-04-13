@@ -1,4 +1,8 @@
-import tkinter as tk
+import sys
+if sys.version_info[0] < 3:
+    import Tkinter as tk
+else:
+    import tkinter as tk
 import medidor_marco as Medidor
 import indicador_marco as Indicador
 import grafico_marco as Grafico
@@ -27,8 +31,8 @@ class App(tk.Tk):
         ]
         i = 0
         while i < len(configuracion_medidor):
-            gauge = Medidor.MedidorMarco(container, configuracion=configuracion_medidor[i])
-            gauge.grid(row=0, column=i*2, columnspan=2, sticky="NSEW")
+            medidor = Medidor.MedidorMarco(container, configuracion=configuracion_medidor[i])
+            medidor.grid(row=0, column=i*2, columnspan=2, sticky="NSEW")
             i += 1
         # Indicadores **************************************************************************************************
         n_indicadores = 2
@@ -64,18 +68,27 @@ class App(tk.Tk):
                 i = 0
 
         # Gráfico **************************************************************************************************
-        n_graficos = 2
-        ancho_grafico = ancho_total / n_graficos / 4
-        altura_grafico = altura_total/3.5
+        n_graficos = 4
+        ancho_grafico = ancho_total / n_graficos / 1.5
+        altura_grafico = altura_total/2.5
         # [Título, descripción, unidad, ancho, altura, minimo, maximo, intervalo, color_bajo, color_medio, color_alto]
         configuracion_grafico = [
             {"nombre": "Presión", "unidad": "Pa", "ancho": ancho_grafico, "altura": altura_grafico,
              "intervalo": 3000, "color_bajo": "green", "color_medio": "#efdf00", "color_alto": "red"},
+            {"nombre": "Presión", "unidad": "Pa", "ancho": ancho_grafico, "altura": altura_grafico,
+             "intervalo": 3000, "color_bajo": "green", "color_medio": "#efdf00", "color_alto": "red"},
+            {"nombre": "Presión", "unidad": "Pa", "ancho": ancho_grafico, "altura": altura_grafico,
+             "intervalo": 3000, "color_bajo": "green", "color_medio": "#efdf00", "color_alto": "red"},
+            {"nombre": "Presión", "unidad": "Pa", "ancho": ancho_grafico, "altura": altura_grafico,
+             "intervalo": 3000, "color_bajo": "green", "color_medio": "#efdf00", "color_alto": "red"}
         ]
         i = 0
         while i < len(configuracion_grafico):
-            #grafico = Grafico.GraficoMarco(container, configuracion=configuracion_grafico[i])
-            #grafico.grid(row=0, column=4, columnspan=2, sticky="NSEW")
+            grafico = Grafico.GraficoMarco(container, configuracion=configuracion_grafico[i])
+            if i%2 == 0:
+                grafico.grid(row=int(i/2), column=4)
+            else:
+                grafico.grid(row=int(i/2), column=4 + 1)
             i += 1
 
         # Configuración ************************************************************************************************
