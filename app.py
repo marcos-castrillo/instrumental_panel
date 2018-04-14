@@ -34,16 +34,20 @@ class Window:
         master.bind("<Escape>", end_fullscreen)
         # Elementos
         self.master = master
-        self.container = tk.Frame(self.master)
-        self.container.grid(column=0, row=0)
-        self.container.columnconfigure(0, weight=1)
-        self.container.rowconfigure(0, weight=1)
+        self.master.grid_columnconfigure(0, weight=1)
+        self.master.grid_rowconfigure(0, weight=1)
+
+        self.mainContainer = tk.Frame(self.master)
+        self.bottomContainer = tk.Frame(self.master)
+
+        self.mainContainer.grid(column=0, row=0)
+        self.bottomContainer.grid(column=0, row=1)
 
 
         # Medidores ****************************************************************************************************
         n_medidores = 2
-        ancho_medidor = self.ancho_total / n_medidores / 2.5
-        altura_medidor = self.altura_total/2
+        ancho_medidor = self.ancho_total / n_medidores/3.5
+        altura_medidor = self.altura_total/ n_medidores/2.5
         # [Título, descripción, unidad, ancho, altura, minimo, maximo, intervalo, color_bajo, color_medio, color_alto]
         configuracion_medidor = [
             {"nombre": "Presión", "unidad": "Pa", "ancho": ancho_medidor, "altura": altura_medidor, "minimo": 0,
@@ -53,15 +57,17 @@ class Window:
              "maximo": 100, "intervalo": 1000, "color_bajo": "green", "color_medio": "#efdf00", "color_alto": "red"}
         ]
         i = 0
+        altura = configuracion_medidor[i]['altura']
+        ancho = configuracion_medidor[i]['ancho']
         while i < len(configuracion_medidor):
-            self.medidor = Medidor.Medidor(self.container, configuracion=configuracion_medidor[i])
-            self.medidor.grid(column=i*2, row=0, columnspan="2", rowspan="2")
+            self.medidor = Medidor.Medidor(self.mainContainer, configuracion=configuracion_medidor[i],
+                bd=2, height=altura, width=ancho, bg='white', highlightbackground="black")
+            self.medidor.grid(column=0, row=i, sticky='NSEW')
             i += 1
-
 
         # Indicadores **************************************************************************************************
         n_indicadores = 8
-        ancho_indicador = self.ancho_total / (n_indicadores+1)
+        ancho_indicador = (self.ancho_total / n_indicadores) - n_indicadores*2
         altura_indicador = self.altura_total / n_indicadores
         # [Título, descripción, unidad, ancho, altura, minimo, maximo, intervalo, color_bajo, color_medio, color_alto]
         configuracion_indicador = [
@@ -83,21 +89,20 @@ class Window:
              "intervalo": 1000, "color_bajo": "green", "color_medio": "#efdf00", "color_alto": "red"}
         ]
         i = 0
-        j = 4
+        j = 0
         while i < len(configuracion_indicador):
             altura = configuracion_indicador[i]['altura']
             ancho = configuracion_indicador[i]['ancho']
-            self.indicador = Indicador.Indicador(self.container,
+            self.indicador = Indicador.Indicador(self.bottomContainer,
                 bd=2,height=altura,width=ancho, bg='white',highlightbackground="black",
                 configuracion=configuracion_indicador[i])
-            self.indicador.grid(row=j, column=i, sticky="s")
+            self.indicador.grid(row=j, column=i)
             i += 1
 
         # Gráficos **************************************************************************************************
         n_graficos = 4
         ancho_grafico = self.ancho_total / n_graficos / 1.5
         altura_grafico = self.altura_total/2.5
-        # [Título, descripción, unidad, ancho, altura, minimo, maximo, intervalo, color_bajo, color_medio, color_alto]
         configuracion_grafico = [
             {"nombre": "Presión", "unidad": "Pa", "ancho": ancho_grafico, "altura": altura_grafico,
              "intervalo": 3000, "color_bajo": "green", "color_medio": "#efdf00", "color_alto": "red"},
@@ -109,17 +114,17 @@ class Window:
              "intervalo": 3000, "color_bajo": "green", "color_medio": "#efdf00", "color_alto": "red"}
         ]
         i = 0
-        j = 4
+        j = 1
         while i < len(configuracion_grafico):
-            self.grafico = Grafico.Grafico(self.container, configuracion=configuracion_grafico[i])
+            self.grafico = Grafico.Grafico(self.mainContainer, configuracion=configuracion_grafico[i])
             if i % 2 == 0:
-                self.grafico.grid(row=int(i / 2)*2, column=j, columnspan=2)
+                self.grafico.grid(row=int(i / 2), column=j)
             else:
-                self.grafico.grid(row=int(i / 2)*2, column=j + 1, columnspan=2)
+                self.grafico.grid(row=int(i / 2), column=j + 1)
             i += 1
 
-        self.salirButton = tk.Button(self.container, text='Salir', width=10, command=master.destroy)
-        self.salirButton.grid(row=4, column=5)
+        self.salirButton = tk.Button(self.mainContainer, text='Salir', width=10, command=master.destroy)
+        self.salirButton.grid(row=0, column=3, sticky="N")
 def main():
     root = tk.Tk()
     Window(root)
