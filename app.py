@@ -3,24 +3,47 @@ if sys.version_info[0] < 3:
     import Tkinter as tk
 else:
     import tkinter as tk
-import medidor_marco as Medidor
-import indicador_marco as Indicador
-import grafico_marco as Grafico
+
+import medidor as Medidor
+import indicador as Indicador
+import grafico as Grafico
 
 
-class App(tk.Tk):
-    def __init__(self):
-        super(App, self).__init__()
+class Window:
+    def __init__(self, master):
+        def toggle_fullscreen(self, event=None):
+            self.state = not self.state  # Just toggling the boolean
+            master.attributes("-fullscreen", self.state)
+            return "break"
+
+        def end_fullscreen(self, event=None):
+            self.state = False
+            master.attributes("-fullscreen", False)
+            return "break"
+
         # Obtener ancho/alto de la pantalla
-        ancho_total = self.winfo_screenwidth()
-        altura_total = self.winfo_screenheight()
+        self.ancho_total = master.winfo_screenwidth()
+        self.altura_total = master.winfo_screenheight()
         # Título de la ventana
-        self.title('Gauge')
-        container = tk.Frame(self).grid(column=0, row=0)
+        master.title('Gauge')
+        # Pantalla completa
+        master.attributes("-fullscreen", True)
+        # Acciones de salir de pantalla completa
+        self.state = False
+        master.bind("<F11>", toggle_fullscreen)
+        master.bind("<Escape>", end_fullscreen)
+        # Elementos
+        self.master = master
+        self.container = tk.Frame(self.master)
+        self.container.grid(column=0, row=0)
+        self.container.columnconfigure(0, weight=1)
+        self.container.rowconfigure(0, weight=1)
+
+
         # Medidores ****************************************************************************************************
         n_medidores = 2
-        ancho_medidor = ancho_total / n_medidores / 2.5
-        altura_medidor = altura_total/2
+        ancho_medidor = self.ancho_total / n_medidores / 2.5
+        altura_medidor = self.altura_total/2
         # [Título, descripción, unidad, ancho, altura, minimo, maximo, intervalo, color_bajo, color_medio, color_alto]
         configuracion_medidor = [
             {"nombre": "Presión", "unidad": "Pa", "ancho": ancho_medidor, "altura": altura_medidor, "minimo": 0,
@@ -31,13 +54,15 @@ class App(tk.Tk):
         ]
         i = 0
         while i < len(configuracion_medidor):
-            medidor = Medidor.MedidorMarco(container, configuracion=configuracion_medidor[i])
-            medidor.grid(row=0, column=i*2, columnspan=2, sticky="NSEW")
+            self.medidor = Medidor.Medidor(self.container, configuracion=configuracion_medidor[i])
+            self.medidor.grid(column=i*2, row=0, columnspan="2", rowspan="2")
             i += 1
+
+
         # Indicadores **************************************************************************************************
-        n_indicadores = 2
-        ancho_indicador = ancho_total / n_indicadores / 4
-        altura_indicador = altura_total/3.5
+        n_indicadores = 8
+        ancho_indicador = self.ancho_total / (n_indicadores+1)
+        altura_indicador = self.altura_total / n_indicadores
         # [Título, descripción, unidad, ancho, altura, minimo, maximo, intervalo, color_bajo, color_medio, color_alto]
         configuracion_indicador = [
             {"nombre": "Presión", "unidad": "Pa", "ancho": ancho_indicador, "altura": altura_indicador,
@@ -58,19 +83,20 @@ class App(tk.Tk):
              "intervalo": 1000, "color_bajo": "green", "color_medio": "#efdf00", "color_alto": "red"}
         ]
         i = 0
-        j = 0
-        while i < len(configuracion_indicador)/2:
-            indicador = Indicador.IndicadorMarco(container, configuracion=configuracion_indicador[i])
-            indicador.grid(row=j+1, column=i)
+        j = 4
+        while i < len(configuracion_indicador):
+            altura = configuracion_indicador[i]['altura']
+            ancho = configuracion_indicador[i]['ancho']
+            self.indicador = Indicador.Indicador(self.container,
+                bd=2,height=altura,width=ancho, bg='white',highlightbackground="black",
+                configuracion=configuracion_indicador[i])
+            self.indicador.grid(row=j, column=i, sticky="s")
             i += 1
-            if i > len(configuracion_indicador)/2 -1 and j == 0:
-                j = 1
-                i = 0
 
-        # Gráfico **************************************************************************************************
+        # Gráficos **************************************************************************************************
         n_graficos = 4
-        ancho_grafico = ancho_total / n_graficos / 1.5
-        altura_grafico = altura_total/2.5
+        ancho_grafico = self.ancho_total / n_graficos / 1.5
+        altura_grafico = self.altura_total/2.5
         # [Título, descripción, unidad, ancho, altura, minimo, maximo, intervalo, color_bajo, color_medio, color_alto]
         configuracion_grafico = [
             {"nombre": "Presión", "unidad": "Pa", "ancho": ancho_grafico, "altura": altura_grafico,
@@ -83,30 +109,21 @@ class App(tk.Tk):
              "intervalo": 3000, "color_bajo": "green", "color_medio": "#efdf00", "color_alto": "red"}
         ]
         i = 0
+        j = 4
         while i < len(configuracion_grafico):
-            grafico = Grafico.GraficoMarco(container, configuracion=configuracion_grafico[i])
-            if i%2 == 0:
-                grafico.grid(row=int(i/2), column=4)
+            self.grafico = Grafico.Grafico(self.container, configuracion=configuracion_grafico[i])
+            if i % 2 == 0:
+                self.grafico.grid(row=int(i / 2)*2, column=j, columnspan=2)
             else:
-                grafico.grid(row=int(i/2), column=4 + 1)
+                self.grafico.grid(row=int(i / 2)*2, column=j + 1, columnspan=2)
             i += 1
 
-        # Configuración ************************************************************************************************
-        # Pantalla completa
-        self.attributes("-fullscreen", True)
-        # Botón de salir
-        salir = tk.Button(container, text='Salir', width=10, command=self.destroy).grid(row=0, column=0, sticky="nw")
-        # Acciones de salir de pantalla completa
-        self.state = False
-        self.bind("<F11>", self.toggle_fullscreen)
-        self.bind("<Escape>", self.end_fullscreen)
+        self.salirButton = tk.Button(self.container, text='Salir', width=10, command=master.destroy)
+        self.salirButton.grid(row=4, column=5)
+def main():
+    root = tk.Tk()
+    Window(root)
+    root.mainloop()
 
-    def toggle_fullscreen(self, event=None):
-        self.state = not self.state  # Just toggling the boolean
-        self.attributes("-fullscreen", self.state)
-        return "break"
-
-    def end_fullscreen(self, event=None):
-        self.state = False
-        self.attributes("-fullscreen", False)
-        return "break"
+if __name__ == '__main__':
+    main()
