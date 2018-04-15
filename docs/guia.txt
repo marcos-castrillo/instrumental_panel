@@ -1,0 +1,11 @@
+exec(open("C:/Users/Sokram/Downloads/Gauge/meter.py").read())
+exec(open("C:/Users/Sokram/Downloads/Gauge/meter_test.py").read())
+
+exec(open("Downloads/meter.py").read())
+
+GAUGE EN RASPBERRY PI
+
+* Usando Python 3.5.3: Presintalado en Raspbian.
+* Los módulos se llaman tkinter y tkinter.font en esta versión de Python.
+* ImportError: No module named 'meter' -> Estando en el directorio de los .py -> export PYTHONPATH=`pwd`
+
