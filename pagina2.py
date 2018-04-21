@@ -42,9 +42,10 @@ class Pagina2(tk.Frame):
         i = 0
         filas = [0, 0, 1, 1, 1]
         columnas = [2, 4, 1, 3, 5]
+        self.graficos = [0] * n_graficos
         while i < len(configuracion_grafico):
-            self.grafico = Grafico.Grafico(self.mainContainer, configuracion=configuracion_grafico[i])
-            self.grafico.grid(row=filas[i], column=columnas[i], columnspan=2,padx=20,pady=10)
+            self.graficos[i] = Grafico.Grafico(self.mainContainer, configuracion=configuracion_grafico[i])
+            self.graficos[i].grid(row=filas[i], column=columnas[i], columnspan=2,padx=20,pady=10)
             i += 1
 
         # Indicadores **************************************************************************************************
@@ -71,13 +72,14 @@ class Pagina2(tk.Frame):
              "intervalo": 1000, "color_bajo": "green", "color_medio": "#efdf00", "color_alto": "red"}
         ]
         i = 0
+        self.indicadores = [0] * n_indicadores
         while i < len(configuracion_indicador):
             altura = configuracion_indicador[i]['altura']
             ancho = configuracion_indicador[i]['ancho']
-            self.indicador = Indicador.Indicador(self.mainContainer,
+            self.indicadores[i] = Indicador.Indicador(self.mainContainer,
                 bd=2,height=altura,width=ancho, bg='white',highlightbackground="black",
                 configuracion=configuracion_indicador[i])
-            self.indicador.grid(row=2, column=i, pady=50)
+            self.indicadores[i].grid(row=2, column=i, pady=50)
             i += 1
 
         # Botón de salir ***********************************************************************************************
@@ -85,3 +87,15 @@ class Pagina2(tk.Frame):
         self.salirButton.grid(row=0, column=7, sticky="N")
         self.paginaButton = tk.Button(self.mainContainer, text="<-", width=10, command=lambda: master.cambiar_pagina())
         self.paginaButton.grid(row=0, column=6, sticky="N")
+
+    def set(self, valores):
+        i = 0
+        vuelta = valores["vuelta"]
+        diente = valores["diente"]
+        tiempo = valores["tiempo"]
+        presion = valores["presion"]
+        par = valores["par"]
+        # Fórmulas matemáticas
+        while i < len(self.indicadores):
+            self.indicadores[i].set(vuelta)
+            i += 1

@@ -180,9 +180,9 @@ class Medidor(tk.Canvas, object):
         minimo = min(self.promedios_array)
         maximo = max(self.promedios_array)
         # Se asigna el numero al medidor
-        if valor < self.maximo / 3:
+        if valor < self.maximo_rango / 3:
             color = self.color_bajo
-        elif valor > 2 * self.maximo / 3:
+        elif valor > 2 * self.maximo_rango / 3:
             color = self.color_alto
         else:
             color = self.color_medio

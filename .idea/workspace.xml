@@ -2,10 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="670f7a40-7001-435e-8018-17186f7bc24c" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chart.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/Structure.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/docs/Structure.xlsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/indicador.py" beforeDir="false" afterPath="$PROJECT_DIR$/indicador.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/medidor.py" beforeDir="false" afterPath="$PROJECT_DIR$/medidor.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pagina1.py" beforeDir="false" afterPath="$PROJECT_DIR$/pagina1.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pagina2.py" beforeDir="false" afterPath="$PROJECT_DIR$/pagina2.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -22,8 +24,8 @@
       <file leaf-file-name="app.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="674">
-              <caret line="53" column="39" lean-forward="true" selection-start-line="53" selection-start-column="39" selection-end-line="53" selection-end-column="39" />
+            <state relative-caret-position="17">
+              <caret line="46" column="35" lean-forward="true" selection-start-line="46" selection-start-column="35" selection-end-line="46" selection-end-column="35" />
             </state>
           </provider>
         </entry>
@@ -31,17 +33,26 @@
       <file leaf-file-name="pagina1.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/pagina1.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="266">
-              <caret line="102" column="32" selection-start-line="102" selection-start-column="32" selection-end-line="102" selection-end-column="32" />
+            <state relative-caret-position="198">
+              <caret line="31" column="49" selection-start-line="31" selection-start-column="49" selection-end-line="31" selection-end-column="49" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="pagina2.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pagina2.py">
+      <file leaf-file-name="medidor.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/medidor.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="850">
-              <caret line="79" column="56" selection-start-line="79" selection-start-column="56" selection-end-line="79" selection-end-column="56" />
+            <state relative-caret-position="17">
+              <caret line="173" column="28" selection-start-line="173" selection-start-column="19" selection-end-line="173" selection-end-column="28" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="indicador.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/indicador.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="935">
+              <caret line="55" column="21" selection-start-line="55" selection-start-column="21" selection-end-line="55" selection-end-column="21" />
             </state>
           </provider>
         </entry>
@@ -50,36 +61,36 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>canvas</find>
-      <find>columnconfigure</find>
-      <find>altura_total</find>
-      <find>grid</find>
-      <find>pack</find>
-      <find>print</find>
-      <find>width</find>
-      <find>configure</find>
       <find>sticky</find>
       <find>descripcionid</find>
-      <find>frame</find>
       <find>toggle_fullscreen</find>
       <find>button</find>
       <find>tk</find>
       <find>salirButton</find>
       <find>valorid</find>
-      <find>maximo</find>
       <find>set</find>
       <find>minimo</find>
       <find>self.minimo</find>
       <find>tituloid</find>
       <find>random</find>
       <find>switch_frame</find>
-      <find>self.maximo</find>
       <find>conf</find>
       <find>nuevo_valor</find>
       <find>blob</find>
       <find>color</find>
+      <find>maximo</find>
+      <find>self.maximo</find>
+      <find>redondear</find>
       <find>self.medidor</find>
       <find>Pagina1</find>
+      <find>indicadores</find>
+      <find>frameframe</find>
+      <find>frame_actual</find>
+      <find>frame</find>
+      <find>mainContainer</find>
+      <find>topContainer</find>
+      <find>bottomContainer</find>
+      <find>medidoresContainer</find>
     </findStrings>
     <replaceStrings>
       <replace>etiquetas</replace>
@@ -110,10 +121,10 @@
         <option value="$PROJECT_DIR$/redondeo.py" />
         <option value="$PROJECT_DIR$/medidor_marco.py" />
         <option value="$PROJECT_DIR$/indicador_marco.py" />
-        <option value="$PROJECT_DIR$/indicador.py" />
         <option value="$PROJECT_DIR$/grafico.py" />
         <option value="$PROJECT_DIR$/pagina2.py" />
         <option value="$PROJECT_DIR$/medidor.py" />
+        <option value="$PROJECT_DIR$/indicador.py" />
         <option value="$PROJECT_DIR$/app.py" />
         <option value="$PROJECT_DIR$/pagina1.py" />
       </list>
@@ -151,7 +162,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -163,6 +173,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -305,42 +316,42 @@
     <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.84257203" weight="0.12227363" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.84257203" visible="true" weight="0.12227363" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.26067746" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
-      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.50363517" side_tool="true" visible="true" weight="0.3976436" />
       <window_info anchor="bottom" id="Version Control" order="7" sideWeight="0.4976867" weight="0.32842416" />
       <window_info anchor="bottom" id="Python Console" order="7" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.50363517" side_tool="true" visible="true" weight="0.3976436" />
       <window_info id="Structure" order="1" sideWeight="0.15742794" side_tool="true" weight="0.07468606" />
       <window_info anchor="bottom" id="Terminal" order="7" sideWeight="0.08856577" weight="0.33578792" />
-      <window_info id="Favorites" order="2" sideWeight="0.15742794" side_tool="true" weight="0.07468606" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49636483" weight="0.3976436" />
+      <window_info id="Favorites" order="2" sideWeight="0.15742794" side_tool="true" weight="0.07468606" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Find" order="1" />
     </layout>
     <layout-to-restore>
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.5029742" side_tool="true" visible="true" weight="0.3976436" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.84257203" visible="true" weight="0.12227363" />
       <window_info id="Structure" order="1" sideWeight="0.15742794" side_tool="true" weight="0.07468606" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.26067746" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Python Console" order="7" />
+      <window_info anchor="bottom" id="Version Control" order="10" sideWeight="0.4976867" weight="0.32842416" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.5029742" side_tool="true" visible="true" weight="0.3976436" />
+      <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.4970258" weight="0.3976436" />
       <window_info anchor="bottom" id="Terminal" order="8" sideWeight="0.08856577" weight="0.33578792" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="Version Control" order="10" sideWeight="0.4976867" weight="0.32842416" />
-      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info id="Favorites" order="2" sideWeight="0.15742794" side_tool="true" weight="0.07468606" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Python Console" order="7" />
     </layout-to-restore>
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -395,6 +406,13 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/indicador.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="935">
+          <caret line="55" column="21" selection-start-line="55" selection-start-column="21" selection-end-line="55" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/gauge_marco.py" />
     <entry file="file://$PROJECT_DIR$/medidor.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -543,29 +561,13 @@
         <state relative-caret-position="-357" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/indicador.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="425">
-          <caret line="25" column="30" selection-start-line="25" selection-start-column="30" selection-end-line="25" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/chart.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="8" column="28" selection-end-line="25" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/chart.py" />
     <entry file="file://$PROJECT_DIR$/grafico.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="595">
           <caret line="35" column="16" selection-start-line="35" selection-start-column="16" selection-end-line="35" selection-end-column="16" />
         </state>
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/redondeo.py">
-      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36-32/Lib/tkinter/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -574,31 +576,38 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/indicador.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="935">
+          <caret line="55" column="21" selection-start-line="55" selection-start-column="21" selection-end-line="55" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/pagina2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="850">
-          <caret line="79" column="56" selection-start-line="79" selection-start-column="56" selection-end-line="79" selection-end-column="56" />
+        <state relative-caret-position="170">
+          <caret line="25" lean-forward="true" selection-start-line="25" selection-end-line="48" selection-end-column="18" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/medidor.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="111">
-          <caret line="183" column="17" selection-start-line="183" selection-start-column="12" selection-end-line="183" selection-end-column="17" />
+        <state relative-caret-position="17">
+          <caret line="173" column="28" selection-start-line="173" selection-start-column="19" selection-end-line="173" selection-end-column="28" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="674">
-          <caret line="53" column="39" lean-forward="true" selection-start-line="53" selection-start-column="39" selection-end-line="53" selection-end-column="39" />
+        <state relative-caret-position="17">
+          <caret line="46" column="35" lean-forward="true" selection-start-line="46" selection-start-column="35" selection-end-line="46" selection-end-column="35" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/pagina1.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="266">
-          <caret line="102" column="32" selection-start-line="102" selection-start-column="32" selection-end-line="102" selection-end-column="32" />
+        <state relative-caret-position="198">
+          <caret line="31" column="49" selection-start-line="31" selection-start-column="49" selection-end-line="31" selection-end-column="49" />
         </state>
       </provider>
     </entry>

@@ -6,6 +6,7 @@ else:
 
 import medidor as Medidor
 import indicador as Indicador
+import grafico as Grafico
 
 
 class Pagina1(tk.Frame):
@@ -16,13 +17,28 @@ class Pagina1(tk.Frame):
         self.altura_total = master.winfo_screenheight()
         # Elementos
         self.master = master
-        self.master.grid_columnconfigure(0, weight=1)
-        self.master.grid_rowconfigure(0, weight=1)
+        self.master.grid_columnconfigure(1, weight=1)
+        self.master.grid_rowconfigure(1, weight=1)
 
-        self.mainContainer = tk.Frame(self.master)
-        self.mainContainer.grid(column=0, row=0)
+        self.topContainer = tk.Frame(self.master)
+        self.topContainer.grid(column=0, row=0)
 
+        self.medidoresContainer = tk.Frame(self.master)
+        self.medidoresContainer.grid(column=0, row=1)
+        self.graficosContainer = tk.Frame(self.master)
+        self.graficosContainer.grid(column=0, row=1)
 
+        self.bottomContainer = tk.Frame(self.master)
+        self.bottomContainer.grid(column=0, row=2)
+
+        self.paginaFlag = False
+
+        # Botón de salir ***********************************************************************************************
+        self.salirButton = tk.Button(self.topContainer, text='Salir', width=10, command=master.destroy)
+        self.salirButton.grid(row=0, column=0, sticky="NE")
+        # Botón de página **********************************************************************************************
+        self.paginaButton = tk.Button(self.topContainer, text="->", width=10, command=lambda: self.cambiar_pagina())
+        self.paginaButton.grid(row=0, column=1, sticky="NE")
         # Medidores ****************************************************************************************************
         n_medidores = 5
         ancho_medidor = self.ancho_total / n_medidores
@@ -47,9 +63,9 @@ class Pagina1(tk.Frame):
         while i < len(configuracion_medidor):
             altura = configuracion_medidor[i]['altura']
             ancho = configuracion_medidor[i]['ancho']
-            self.medidores[i] = Medidor.Medidor(self.mainContainer, configuracion=configuracion_medidor[i],
+            self.medidores[i] = Medidor.Medidor(self.medidoresContainer, configuracion=configuracion_medidor[i],
                 bd=2, height=altura, width=ancho, bg='white', highlightbackground="black")
-            self.medidores[i].grid(column=columnas[i], row=filas[i], columnspan=2,pady=10, padx=40)
+            self.medidores[i].grid(column=columnas[i], row=filas[i], columnspan=2)
             i += 1
 
         # Indicadores **************************************************************************************************
@@ -80,26 +96,59 @@ class Pagina1(tk.Frame):
         while i < len(configuracion_indicador):
             altura = configuracion_indicador[i]['altura']
             ancho = configuracion_indicador[i]['ancho']
-            self.indicadores[i] = Indicador.Indicador(self.mainContainer,
+            self.indicadores[i] = Indicador.Indicador(self.bottomContainer,
                 bd=2,height=altura,width=ancho, bg='white',highlightbackground="black",
                 configuracion=configuracion_indicador[i])
-            self.indicadores[i].grid(row=2, column=i)
+            self.indicadores[i].grid(row=2, column=i, padx=5)
             i += 1
 
-        # Botón de salir ***********************************************************************************************
-        self.salirButton = tk.Button(self.mainContainer, text='Salir', width=10, command=master.destroy)
-        self.salirButton.grid(row=0, column=7, sticky="N")
-        self.paginaButton = tk.Button(self.mainContainer, text="->", width=10, command=lambda: master.cambiar_pagina())
-        self.paginaButton.grid(row=0, column=6, sticky="N")
+        # Gráficos **************************************************************************************************
+        n_graficos = 5
+        ancho_grafico = self.ancho_total / n_graficos
+        altura_grafico = self.altura_total / n_graficos*2
+        configuracion_grafico = [
+            {"nombreX": "Nº de grado de cigüeñal", "nombreY": "Presión/Par",
+             "ancho": ancho_grafico, "altura": altura_grafico, "intervalo": 3000},
+            {"nombreX": "Volumen", "nombreY": "Presión",
+             "ancho": ancho_grafico, "altura": altura_grafico, "intervalo": 3000},
+            {"nombreX": "ω promedio/vuelta", "nombreY": "Potencia/vuelta",
+             "ancho": ancho_grafico, "altura": altura_grafico,"intervalo": 3000},
+            {"nombreX": "Volumen", "nombreY": "Presión",
+             "ancho": ancho_grafico, "altura": altura_grafico, "intervalo": 3000},
+            {"nombreX": "ω promedio/vuelta", "nombreY": "Potencia/vuelta",
+             "ancho": ancho_grafico, "altura": altura_grafico, "intervalo": 3000}
+        ]
+        i = 0
+        filas = [0, 0, 1, 1, 1]
+        columnas = [2, 4, 1, 3, 5]
+        self.graficos = [0] * n_graficos
+        while i < len(configuracion_grafico):
+            self.graficos[i] = Grafico.Grafico(self.graficosContainer, configuracion=configuracion_grafico[i])
+            self.graficos[i].grid(row=filas[i], column=columnas[i], columnspan=2,padx=20,pady=10)
+            i += 1
+        self.graficosContainer.grid_remove()
+
+    def cambiar_pagina(self):
+        if self.paginaFlag:
+            self.graficosContainer.grid_remove()
+            self.medidoresContainer.grid()
+        else:
+            self.graficosContainer.grid()
+            self.medidoresContainer.grid_remove()
+        self.paginaFlag = not self.paginaFlag
 
     def set(self, valores):
-        i = 0
         vuelta = valores["vuelta"]
         diente = valores["diente"]
         tiempo = valores["tiempo"]
         presion = valores["presion"]
         par = valores["par"]
         # Fórmulas matemáticas
+        i = 0
         while i < len(self.medidores):
             self.medidores[i].set(vuelta)
+            i += 1
+        i = 0
+        while i < len(self.indicadores):
+            self.indicadores[i].set(vuelta)
             i += 1

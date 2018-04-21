@@ -54,7 +54,7 @@ class App(tk.Tk):
             self.frame_actual = Pagina1
         new_frame = self.frame_actual(self)
         if self.frame is not None:
-            self.frame.grid_forget()
+            self.frame.lower()
         self.frame = new_frame
 
     def toggle_fullscreen(self, event=None):
