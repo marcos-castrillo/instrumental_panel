@@ -6,7 +6,6 @@ else:
 import tkinter.font as tkf
 
 from redondeo import redondear
-import random
 
 
 # Clase Indicador: Engloba cada uno de los indicadores

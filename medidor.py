@@ -7,7 +7,6 @@ import tkinter.font as tkf
 
 import math
 from redondeo import redondear
-import random
 
 # Clase Medidor: Engloba cada uno de los medidores
 class Medidor(tk.Canvas, object):

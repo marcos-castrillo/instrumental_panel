@@ -4,8 +4,7 @@ if sys.version_info[0] < 3:
 else:
     import tkinter as tk
 
-from pagina1 import Pagina1
-from pagina2 import Pagina2
+from main import Main
 
 import random
 
@@ -13,6 +12,7 @@ class App(tk.Tk):
     def __init__(self):
         tk.Tk.__init__(self)
         self.config_ventana()
+        self.main = Main(self)
         self.get_data()
 
     def get_data(self):
@@ -29,10 +29,9 @@ class App(tk.Tk):
         presion = 100 * float(random.random())
         par = 100 * float(random.random())
         valores = {"vuelta": vuelta, "diente": diente, "tiempo": tiempo, "presion": presion, "par": par}
-        self.frame_actual.set(self.frame,valores)
+        self.main.set(valores)
         # Se calcula un nuevo valor aleatorio cuando termina el intervalo
         self.after(intervalo, self.get_data)
-
     def config_ventana(self):
         # Título de la ventana
         self.title('Panel instrumental')
@@ -42,20 +41,6 @@ class App(tk.Tk):
         self.state = False
         self.bind("<F11>", self.toggle_fullscreen)
         self.bind("<Escape>", self.end_fullscreen)
-        # Frames
-        self.frame = None
-        self.frame_actual = Pagina2
-        self.cambiar_pagina()
-
-    def cambiar_pagina(self):
-        if self.frame_actual == Pagina1:
-            self.frame_actual = Pagina2
-        else:
-            self.frame_actual = Pagina1
-        new_frame = self.frame_actual(self)
-        if self.frame is not None:
-            self.frame.lower()
-        self.frame = new_frame
 
     def toggle_fullscreen(self, event=None):
         self.state = not self.state  # Just toggling the boolean
