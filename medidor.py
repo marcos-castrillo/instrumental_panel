@@ -18,24 +18,19 @@ class Medidor(tk.Canvas, object):
         self.unidad = configuracion["unidad"]
         self.ancho = configuracion["ancho"]
         self.altura = configuracion["altura"]
-        self.minimo = configuracion["minimo"]
-        self.maximo = configuracion["maximo"]
+        self.minimo_rango = configuracion["minimo"]
+        self.maximo_rango = configuracion["maximo"]
         self.intervalo = configuracion["intervalo"]
         self.color_bajo = configuracion["color_bajo"]
         self.color_medio = configuracion["color_medio"]
         self.color_alto = configuracion["color_alto"]
         self.layoutparams()
         # Se configura el medidor
-        self.graphics(self.minimo, self.maximo)
+        self.graphics(self.minimo_rango, self.maximo_rango)
         self.createhand()
-        self.setrange(self.minimo, self.maximo)
-        # Se selecciona el puerto serial a utilizar
-        # tasa_baudios = 9600
-        # ser = serial.Serial('/dev/ttyACM0', tasa_baudios)
-        ser = ""
-        msg = [0]
-        # (Se genera el primer valor aleatorio)
-        self.nuevo_valor(ser, msg)
+        self.setrange(self.minimo_rango, self.maximo_rango)
+        self.promedios_array = []
+        self.valores_array = []
 
     def layoutparams(self):
         # find a square that fits in the window
@@ -104,9 +99,19 @@ class Medidor(tk.Canvas, object):
 
     def createhand(self):
         # create text display
-        self.valorid = self.create_text(self.centrex
+        self.maximo = self.create_text(self.centrex * 1.7
                                        , self.centrey * 2.1
                                        , font=tkf.Font(size=-int(3 * self.majortick)))
+        self.maximoid = self.create_text(self.centrex * 1.75
+                                       , self.centrey * 1.9
+                                       , font=tkf.Font(size=int(self.majortick)))
+        self.minimo = self.create_text(self.centrex / 2.5
+                                        , self.centrey * 2.1
+                                        , font=tkf.Font(size=-int(3 * self.majortick)))
+        self.minimoid = self.create_text(self.centrex / 3
+                                        , self.centrey * 1.9
+                                        , font=tkf.Font(size=int(self.majortick)))
+
         self.unidadid = self.create_text(self.centrex
                                        , self.centrey * 2 - self.centrey*0.3
                                        , font=tkf.Font(size=-int(1.5*self.majortick)))
@@ -126,6 +131,11 @@ class Medidor(tk.Canvas, object):
                                        , self.centrex + self.blobrad
                                        , self.centrey + self.blobrad
                                        , outline='black', fill='black')
+
+        self.itemconfigure(self.minimoid, text="Mín", fill='black')
+        self.itemconfigure(self.maximoid, text="Máx", fill='black')
+        self.itemconfigure(self.unidadid, text=str(self.unidad), fill='black')
+        self.itemconfigure(self.tituloid, text=str(self.titulo), fill='black')
 
     def createtick(self, angle, length, rango_min, rango_max):
         # helper function to create one tick
@@ -149,33 +159,26 @@ class Medidor(tk.Canvas, object):
         self.start = start
         self.range = end - start
 
-    def set(self, value, color, titulo, unidad):
-        # call this to set the hand
-        # convert value to range 0,100
-        deg = 300 * (value - self.start) / self.range - 240
-
-        self.itemconfigure(self.valorid, text=str(value), fill=color)
-        self.itemconfigure(self.unidadid, text=str(unidad), fill='black')
-        self.itemconfigure(self.tituloid, text=str(titulo), fill='black')
-        # self.itemconfigure(self.descripcionid, text=str(descripcion), fill='black')
-        self.itemconfigure(self.ovalo, outline=color)
-        rad = math.radians(deg)
-        # reposition hand
-        self.coords(self.handid, self.centrex, self.centrey, self.centrex + self.handlen * math.cos(rad),
-                    self.centrey + self.handlen * math.sin(rad))
-
-    def blob(self, colour):
-        # call this to change the colour of the blob
-        self.itemconfigure(self.blobid, fill=colour, outline=colour)
-
-    # Función para cargar un nuevo valor en la vista
-    def nuevo_valor(self, serial, mensaje):
-        # Se lee el serial y se convierte
-        # valor = str(int(serial.readline(), 16))
-        # Se utiliza un numero aleatorio dentro del rango
-        valor = self.maximo * float(random.random())
-        # Se redondea utiizando la funcion redondeo
-        valor = redondear(valor)
+    def set(self, valor):
+        # Se llena el array de últimos valores
+        n_promedio = 20
+        if len(self.valores_array) < n_promedio:
+            self.valores_array.append(valor)
+        else:
+            self.valores_array.pop(0)
+            self.valores_array.append(valor)
+        if len(self.valores_array) > 1:
+            promedio = sum(self.valores_array) / len(self.valores_array)
+        else:
+            promedio = sum(self.valores_array)
+        promedio = redondear(promedio)
+        if len(self.promedios_array) < n_promedio:
+            self.promedios_array.append(promedio)
+        else:
+            self.promedios_array.pop(0)
+            self.promedios_array.append(promedio)
+        minimo = min(self.promedios_array)
+        maximo = max(self.promedios_array)
         # Se asigna el numero al medidor
         if valor < self.maximo / 3:
             color = self.color_bajo
@@ -183,6 +186,13 @@ class Medidor(tk.Canvas, object):
             color = self.color_alto
         else:
             color = self.color_medio
-        self.set(valor, color, self.titulo, self.unidad)
-        # Se calcula un nuevo valor aleatorio cuando termina el intervalo
-        self.after(self.intervalo, self.nuevo_valor, serial, mensaje)
+        deg = 300 * (valor - self.start) / self.range - 240
+
+        # self.itemconfigure(self.descripcionid, text=str(descripcion), fill='black')
+        self.itemconfigure(self.ovalo, outline=color)
+        self.itemconfigure(self.minimo, text=str(minimo), fill=color)
+        self.itemconfigure(self.maximo, text=str(maximo), fill=color)
+        rad = math.radians(deg)
+        # reposition hand
+        self.coords(self.handid, self.centrex, self.centrey, self.centrex + self.handlen * math.cos(rad),
+                    self.centrey + self.handlen * math.sin(rad))
