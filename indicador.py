@@ -55,7 +55,4 @@ class Indicador(tk.Canvas, object):
         valor = redondear(valor)
         self.itemconfigure(self.valorid, text=str(valor))
 
-    def blob(self, colour):
-        # call this to change the colour of the blob
-        self.itemconfigure(self.blobid, fill=colour, outline=colour)
 

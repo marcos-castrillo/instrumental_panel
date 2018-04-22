@@ -12,6 +12,7 @@ from redondeo import redondear
 class Medidor(tk.Canvas, object):
     def __init__(self, master, configuracion, **kwargs):
         super(Medidor, self).__init__(master, configuracion=None, **kwargs)
+        self.master = master
         # Parámetros
         self.titulo = configuracion["nombre"]
         self.unidad = configuracion["unidad"]
@@ -30,6 +31,7 @@ class Medidor(tk.Canvas, object):
         self.setrange(self.minimo_rango, self.maximo_rango)
         self.promedios_array = []
         self.valores_array = []
+        self.n_promedio = 20
 
     def layoutparams(self):
         # find a square that fits in the window
@@ -97,7 +99,6 @@ class Medidor(tk.Canvas, object):
             self.createtick(deg, self.majortick, rango_min, rango_max)
 
     def createhand(self):
-        # create text display
         self.maximo = self.create_text(self.centrex * 1.7
                                        , self.centrey * 2.1
                                        , font=tkf.Font(size=-int(3 * self.majortick)))
@@ -117,9 +118,7 @@ class Medidor(tk.Canvas, object):
         self.tituloid = self.create_text(self.centrex
                                        , self.centrey * 2  - self.centrey*0.8
                                        , font=tkf.Font(size=-int(self.majortick)*2))
-        # self.descripcionid = self.create_text(self.centrex, self.centrey - self.centrey*0.85, font=tkf.Font(size=-int(self.majortick)))
 
-        # create moving and changeable bits
         self.handid = self.create_line(self.centrex, self.centrey
                                        , self.centrex - self.handlen, self.centrey
                                        , width=2 * self.linewidth
@@ -160,8 +159,7 @@ class Medidor(tk.Canvas, object):
 
     def set(self, valor):
         # Se llena el array de últimos valores
-        n_promedio = 20
-        if len(self.valores_array) < n_promedio:
+        if len(self.valores_array) < self.n_promedio:
             self.valores_array.append(valor)
         else:
             self.valores_array.pop(0)
@@ -171,7 +169,7 @@ class Medidor(tk.Canvas, object):
         else:
             promedio = sum(self.valores_array)
         promedio = redondear(promedio)
-        if len(self.promedios_array) < n_promedio:
+        if len(self.promedios_array) < self.n_promedio:
             self.promedios_array.append(promedio)
         else:
             self.promedios_array.pop(0)
@@ -195,3 +193,5 @@ class Medidor(tk.Canvas, object):
         # reposition hand
         self.coords(self.handid, self.centrex, self.centrey, self.centrex + self.handlen * math.cos(rad),
                     self.centrey + self.handlen * math.sin(rad))
+
+    #def config(self, ajustes):
