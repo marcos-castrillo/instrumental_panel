@@ -1,17 +1,18 @@
-# GAUGE EN RASPBERRY PI
-Proyecto de monitorización de motor Sterling utilizando una Raspberry Pi.
-Los datos son recibidos de un Arduino
+# PYTHON INSTRUMENTAL PANEL
 
-* Versión 0.0.1
+Monitorization of a Stirling engine.
 
-# Dependencias:
-* Python 3.5.3 (Presintalado en Raspbian)
-* Módulos tkinter y tkinter.font
+The data is received from an Arduino and displayed using a Raspberry Pi.
 
-# POSIBLES ERRORES:
-```ImportError: No module named 'meter' ```
+# Dependencies:
 
-* Todos los .py deben estar en el mismo directorio.
+* Python 3.5.3 (Instalated by default in Raspbian)
+* Tkinter module
 
-* Estando en el directorio de los .py -> export PYTHONPATH=`pwd`
+# POSIBLE ERRORS:
+
+ImportError: No module named 'meter'
+* Every .py file has to be in the same folder.
+* Execute the next command being in this folder:
+``` export PYTHONPATH=`pwd` ```
 
