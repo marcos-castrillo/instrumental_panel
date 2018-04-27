@@ -16,22 +16,21 @@ class Medidor(tk.Canvas, object):
         # Parámetros
         self.titulo = configuracion["nombre"]
         self.unidad = configuracion["unidad"]
-        self.ancho = configuracion["ancho"]
-        self.altura = configuracion["altura"]
+        self.ancho = int(self['width'])
+        self.altura = int(self['height'])
         self.minimo_rango = configuracion["minimo"]
         self.maximo_rango = configuracion["maximo"]
-        self.intervalo = configuracion["intervalo"]
-        self.color_bajo = configuracion["color_bajo"]
-        self.color_medio = configuracion["color_medio"]
-        self.color_alto = configuracion["color_alto"]
-        self.layoutparams()
+        self.n_promedios = configuracion["n_promedios"]
+        self.colores = configuracion["colores"]
+        self.umbrales = configuracion["umbrales"]
+        self.n_colores = len(self.colores)
         # Se configura el medidor
+        self.layoutparams()
         self.graphics(self.minimo_rango, self.maximo_rango)
         self.createhand()
         self.setrange(self.minimo_rango, self.maximo_rango)
         self.promedios_array = []
         self.valores_array = []
-        self.n_promedio = 20
 
     def layoutparams(self):
         # find a square that fits in the window
@@ -159,7 +158,7 @@ class Medidor(tk.Canvas, object):
 
     def set(self, valor):
         # Se llena el array de últimos valores
-        if len(self.valores_array) < self.n_promedio:
+        if len(self.valores_array) < self.n_promedios:
             self.valores_array.append(valor)
         else:
             self.valores_array.pop(0)
@@ -169,7 +168,7 @@ class Medidor(tk.Canvas, object):
         else:
             promedio = sum(self.valores_array)
         promedio = redondear(promedio)
-        if len(self.promedios_array) < self.n_promedio:
+        if len(self.promedios_array) < self.n_promedios:
             self.promedios_array.append(promedio)
         else:
             self.promedios_array.pop(0)
@@ -177,12 +176,9 @@ class Medidor(tk.Canvas, object):
         minimo = min(self.promedios_array)
         maximo = max(self.promedios_array)
         # Se asigna el numero al medidor
-        if valor < self.maximo_rango / 3:
-            color = self.color_bajo
-        elif valor > 2 * self.maximo_rango / 3:
-            color = self.color_alto
-        else:
-            color = self.color_medio
+        for i in range(self.n_colores):
+            if self.umbrales[i] <= valor < self.umbrales[i + 1]:
+                color = self.colores[i]
         deg = 300 * (valor - self.start) / self.range - 240
 
         # self.itemconfigure(self.descripcionid, text=str(descripcion), fill='black')
