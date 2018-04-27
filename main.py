@@ -51,17 +51,19 @@ class Main(tk.Frame):
         # Inicializar las variables
         self.image_medidor_button = tk.PhotoImage(file="images/ajustes.png")
         # Configuración de cada medidor
+        # Si se quiere cambiar el nº de colores (3 por defecto), basta con modificar en las conf. siguientes
+        # las variables "colores" y "umbrales" de forma adecuada
         self.n_medidores = 5
         medidor0_conf = {"nombre": "Presión", "unidad": "Pa", "minimo": 0, "maximo": 100,
-        "n_promedios":20, "colores": ["green","#efdf00","red"], "umbrales": [0,33,66,100]}
+        "n_promedios":20, "colores": ["green","yellow","red",], "umbrales": [0,33,66,100]}
         medidor1_conf = {"nombre": "Par", "unidad": "N*m", "minimo": 0, "maximo": 100,
-        "n_promedios":20, "colores": ["green","#efdf00","red"], "umbrales": [0,33,66,100]}
+        "n_promedios":20, "colores": ["green","yellow","red"], "umbrales": [0,33,66,100]}
         medidor2_conf = {"nombre": "V. angular", "unidad": "rad/s", "minimo": 0,"maximo": 100,
-        "n_promedios":20, "colores": ["green","#efdf00","red"], "umbrales": [0,33,66,100]}
+        "n_promedios":20, "colores": ["green","yellow","red"], "umbrales": [0,33,66,100]}
         medidor3_conf = {"nombre": "Ángulo cig", "unidad": "º", "minimo": 0, "maximo": 100,
-        "n_promedios":20, "colores": ["green","#efdf00","red"], "umbrales": [0,33,66,100]}
+        "n_promedios":20, "colores": ["green","yellow","red"], "umbrales": [0,33,66,100]}
         medidor4_conf = {"nombre": "Potencia", "unidad": "W", "minimo": 0, "maximo": 100,
-        "n_promedios":20, "colores": ["green","#efdf00","red"], "umbrales": [0,33,66,100]}
+        "n_promedios":20, "colores": ["green","yellow","red"], "umbrales": [0,33,66,100]}
         # Flags para controlar el mostrar u ocultar la ventana de ajustes
         medidor0_flag = False
         medidor1_flag = False
@@ -145,21 +147,21 @@ class Main(tk.Frame):
         # [Título, descripción, unidad, ancho, altura, minimo, maximo, intervalo, color_bajo, color_medio, color_alto]
         configuracion_indicador = [
             {"nombre": "Presión", "unidad": "Pa", "ancho": ancho_indicador, "altura": altura_indicador,
-             "intervalo": 3000, "color_bajo": "green", "color_medio": "#efdf00", "color_alto": "red"},
+             "intervalo": 3000, "color_bajo": "green", "color_medio": "yellow", "color_alto": "red"},
             {"nombre": "Par", "unidad": "rad/s", "ancho": ancho_indicador, "altura": altura_indicador,
-             "intervalo": 1000, "color_bajo": "green", "color_medio": "#efdf00", "color_alto": "red"},
+             "intervalo": 1000, "color_bajo": "green", "color_medio": "yellow", "color_alto": "red"},
             {"nombre": "Vuelta de cigüeñal", "unidad": "rad/s", "ancho": ancho_indicador, "altura": altura_indicador,
-             "intervalo": 1000, "color_bajo": "green", "color_medio": "#efdf00", "color_alto": "red"},
+             "intervalo": 1000, "color_bajo": "green", "color_medio": "yellow", "color_alto": "red"},
             {"nombre": "I/vuelta", "unidad": "rad/s", "ancho": ancho_indicador, "altura": altura_indicador,
-             "intervalo": 1000, "color_bajo": "green", "color_medio": "#efdf00", "color_alto": "red"},
+             "intervalo": 1000, "color_bajo": "green", "color_medio": "yellow", "color_alto": "red"},
             {"nombre": "ω instantánea", "unidad": "Pa", "ancho": ancho_indicador, "altura": altura_indicador,
-             "intervalo": 3000, "color_bajo": "green", "color_medio": "#efdf00", "color_alto": "red"},
+             "intervalo": 3000, "color_bajo": "green", "color_medio": "yellow", "color_alto": "red"},
             {"nombre": "ω promedio/vuelta", "unidad": "rad/s", "ancho": ancho_indicador, "altura": altura_indicador,
-             "intervalo": 1000, "color_bajo": "green", "color_medio": "#efdf00", "color_alto": "red"},
+             "intervalo": 1000, "color_bajo": "green", "color_medio": "yellow", "color_alto": "red"},
             {"nombre": "Volumen", "unidad": "m^3", "ancho": ancho_indicador, "altura": altura_indicador,
-             "intervalo": 1000, "color_bajo": "green", "color_medio": "#efdf00", "color_alto": "red"},
+             "intervalo": 1000, "color_bajo": "green", "color_medio": "yellow", "color_alto": "red"},
             {"nombre": "Potencia", "unidad": "W", "ancho": ancho_indicador, "altura": altura_indicador,
-             "intervalo": 1000, "color_bajo": "green", "color_medio": "#efdf00", "color_alto": "red"}
+             "intervalo": 1000, "color_bajo": "green", "color_medio": "yellow", "color_alto": "red"}
         ]
         i = 0
         self.indicadores = [0]*n_indicadores
@@ -267,3 +269,7 @@ class Main(tk.Frame):
         self.medidores['medidor' + str(int(medidor_index) - 1)].n_promedios = n_promedios
         self.medidores['medidor' + str(int(medidor_index) - 1)].colores = colores
         self.medidores['medidor' + str(int(medidor_index) - 1)].umbrales = umbrales
+        self.medidores['medidor' + str(int(medidor_index) - 1) + '_ajustes'].n_promedios = n_promedios
+        self.medidores['medidor' + str(int(medidor_index) - 1) + '_ajustes'].colores = colores
+        self.medidores['medidor' + str(int(medidor_index) - 1) + '_ajustes'].umbrales = umbrales
+        self.medidores['medidor' + str(int(medidor_index) - 1) + '_ajustes'].set_ajustes()

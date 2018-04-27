@@ -177,7 +177,7 @@ class Medidor(tk.Canvas, object):
         maximo = max(self.promedios_array)
         # Se asigna el numero al medidor
         for i in range(self.n_colores):
-            if self.umbrales[i] <= valor < self.umbrales[i + 1]:
+            if self.umbrales[i] < valor <= self.umbrales[i + 1]:
                 color = self.colores[i]
         deg = 300 * (valor - self.start) / self.range - 240
 
