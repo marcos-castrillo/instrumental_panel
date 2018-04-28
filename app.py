@@ -4,7 +4,7 @@ if sys.version_info[0] < 3:
 else:
     import tkinter as tk
 
-from main import Main
+from bin.main import Main
 
 import random
 
@@ -18,6 +18,7 @@ class App(tk.Tk):
         self.get_data()
 
     def get_data(self):
+        """Obtiene los datos y hace un main.set cada cierto intervalo de tiempo"""
         # Se selecciona el puerto serial a utilizar
         # tasa_baudios = 9600
         # ser = serial.Serial('/dev/ttyACM0', tasa_baudios)
@@ -35,10 +36,12 @@ class App(tk.Tk):
         self.job = self.after(self.intervalo, self.get_data)
 
     def cancel_get_data(self):
+        """Detiene el proceso de get_data"""
         if self.job is not None:
             self.after_cancel(self.job)
             self.job = None
     def config_ventana(self):
+        """Configura la ventana de la aplicación"""
         # Título de la ventana
         self.title('Panel instrumental')
         # Pantalla completa

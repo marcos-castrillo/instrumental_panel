@@ -1,10 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="670f7a40-7001-435e-8018-17186f7bc24c" name="Default" comment="">
+    <list default="true" id="670f7a40-7001-435e-8018-17186f7bc24c" name="Default" comment="Fixing settings for floats">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ajustes_medidores.py" beforeDir="false" afterPath="$PROJECT_DIR$/ajustes_medidores.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/medidor.py" beforeDir="false" afterPath="$PROJECT_DIR$/medidor.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ajustes_medidores.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/grafico.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/indicador.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medidor.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/opciones.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/redondeo.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/sources/frame.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/sources/meter.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/sources/meter_entrada.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/sources/meter_probando.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/sources/meter_random.py" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -18,29 +30,38 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
-      <file leaf-file-name="main.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/main.py">
+      <file leaf-file-name="app.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="283">
-              <caret line="104" column="48" selection-start-line="104" selection-start-column="48" selection-end-line="104" selection-end-column="48" />
+            <state relative-caret-position="708">
+              <caret line="53" column="44" selection-start-line="53" selection-start-column="44" selection-end-line="53" selection-end-column="44" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="medidor.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/medidor.py">
+      <file leaf-file-name="main.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/bin/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="164">
-              <caret line="147" column="47" selection-start-line="147" selection-start-column="47" selection-end-line="147" selection-end-column="47" />
+            <state relative-caret-position="147">
+              <caret line="434" column="15" selection-start-line="434" selection-start-column="10" selection-end-line="434" selection-end-column="15" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ajustes_medidores.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/ajustes_medidores.py">
+      <file leaf-file-name="grafico.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/bin/grafico.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1156">
-              <caret line="68" column="33" selection-start-line="68" selection-start-column="33" selection-end-line="68" selection-end-column="33" />
+            <state relative-caret-position="62">
+              <caret line="22" column="41" selection-start-line="22" selection-start-column="41" selection-end-line="22" selection-end-column="41" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="medidor.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/bin/medidor.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="306">
+              <caret line="18" selection-start-line="18" selection-end-line="19" selection-end-column="41" />
             </state>
           </provider>
         </entry>
@@ -49,19 +70,9 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>dataUpdate</find>
-      <find>.cfg</find>
-      <find>self.config</find>
-      <find>str</find>
-      <find>colores</find>
-      <find>Medidor1</find>
-      <find>Medidor0</find>
-      <find>insert</find>
-      <find>_str</find>
-      <find>[33, 66]</find>
+      <find />
       <find>set_ajustes</find>
       <find>ajustesmedidores</find>
-      <find>print</find>
       <find>umbrales</find>
       <find>save_config_medidor</find>
       <find>&quot;</find>
@@ -69,16 +80,26 @@
       <find>ajustesmedi</find>
       <find>save_ajuste</find>
       <find>replace</find>
-      <find>n_promedios</find>
       <find>maximo_rango</find>
       <find>minimo</find>
       <find>configuracion[&quot;maximo&quot;]</find>
       <find>set_ajus</find>
       <find>min</find>
       <find>save_ajustes_medi</find>
-      <find>mínimo del</find>
+      <find />
       <find>redondear</find>
       <find>int</find>
+      <find>prin</find>
+      <find>print</find>
+      <find>n_promedios</find>
+      <find>1</find>
+      <find>0</find>
+      <find>os</find>
+      <find>medidor</find>
+      <find>indicador</find>
+      <find>grafico</find>
+      <find>opciones</find>
+      <find>ajustes_medidores</find>
     </findStrings>
     <replaceStrings>
       <replace>etiquetas</replace>
@@ -96,9 +117,17 @@
       <replace>Medidor2</replace>
       <replace>Medidor3</replace>
       <replace>Medidor4</replace>
-      <replace>[0, 33, 66, 100]</replace>
+      <replace />
       <replace>self.configParser</replace>
       <replace>'</replace>
+      <replace>1</replace>
+      <replace>2</replace>
+      <replace>3</replace>
+      <replace>4</replace>
+      <replace>5</replace>
+      <replace>6</replace>
+      <replace>7</replace>
+      <replace>settings.ini</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -114,27 +143,31 @@
         <option value="$PROJECT_DIR$/gauge_marco.py" />
         <option value="$PROJECT_DIR$/meter_test.py" />
         <option value="$PROJECT_DIR$/grafico_marco.py" />
-        <option value="$PROJECT_DIR$/redondeo.py" />
         <option value="$PROJECT_DIR$/medidor_marco.py" />
         <option value="$PROJECT_DIR$/indicador_marco.py" />
         <option value="$PROJECT_DIR$/grafico.py" />
         <option value="$PROJECT_DIR$/pagina2.py" />
         <option value="$PROJECT_DIR$/pagina1.py" />
         <option value="$PROJECT_DIR$/main_frame.py" />
-        <option value="$PROJECT_DIR$/indicador.py" />
         <option value="$PROJECT_DIR$/ajustes.py" />
-        <option value="$PROJECT_DIR$/app.py" />
         <option value="$PROJECT_DIR$/opciones.py" />
-        <option value="$PROJECT_DIR$/main.py" />
-        <option value="$PROJECT_DIR$/ajustes_medidores.py" />
+        <option value="$PROJECT_DIR$/redondeo.py" />
         <option value="$PROJECT_DIR$/medidor.py" />
+        <option value="$PROJECT_DIR$/ajustes_medidores.py" />
+        <option value="$PROJECT_DIR$/indicador.py" />
+        <option value="$PROJECT_DIR$/main.py" />
+        <option value="$PROJECT_DIR$/bin/medidor.py" />
+        <option value="$PROJECT_DIR$/bin/indicador.py" />
+        <option value="$PROJECT_DIR$/bin/grafico.py" />
+        <option value="$PROJECT_DIR$/bin/main.py" />
+        <option value="$PROJECT_DIR$/app.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="950" />
-    <option name="width" value="980" />
-    <option name="height" value="1040" />
+    <option name="x" value="-8" />
+    <option name="width" value="977" />
+    <option name="height" value="1038" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -169,6 +202,11 @@
             <path>
               <item name="instrumental_panel" type="b2602c69:ProjectViewProjectNode" />
               <item name="instrumental_panel" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="instrumental_panel" type="b2602c69:ProjectViewProjectNode" />
+              <item name="instrumental_panel" type="462c0819:PsiDirectoryNode" />
+              <item name="bin" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -336,7 +374,14 @@
       <option name="project" value="LOCAL" />
       <updated>1524874347728</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="Fixing settings for floats">
+      <created>1524875224595</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1524875224595</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TodoView">
@@ -349,15 +394,15 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
+    <frame x="-7" y="-7" width="1550" height="838" extended-state="7" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.84257203" visible="true" weight="0.12227363" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.84257203" visible="true" weight="0.12227363" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.26067746" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" weight="0.3298969" />
       <window_info anchor="bottom" id="Version Control" order="7" sideWeight="0.4976867" weight="0.32842416" />
       <window_info anchor="bottom" id="Python Console" order="7" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.5076008" side_tool="true" visible="true" weight="0.2371134" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.5076008" side_tool="true" visible="true" weight="0.2371134" />
       <window_info id="Structure" order="1" sideWeight="0.15742794" side_tool="true" weight="0.07468606" />
       <window_info anchor="bottom" id="Terminal" order="7" sideWeight="0.08856577" weight="0.33578792" />
       <window_info id="Favorites" order="2" sideWeight="0.15742794" side_tool="true" weight="0.07468606" />
@@ -373,21 +418,21 @@
     <layout-to-restore>
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.84257203" visible="true" weight="0.12227363" />
       <window_info id="Structure" order="1" sideWeight="0.15742794" side_tool="true" weight="0.07468606" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.26067746" />
-      <window_info anchor="bottom" id="Version Control" order="10" sideWeight="0.4976867" weight="0.32842416" />
       <window_info anchor="bottom" id="Run" order="2" sideWeight="0.50627893" side_tool="true" visible="true" weight="0.33578792" />
-      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Python Console" order="7" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.4937211" weight="0.3976436" />
       <window_info anchor="bottom" id="Terminal" order="8" sideWeight="0.08856577" weight="0.33578792" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Version Control" order="10" sideWeight="0.4976867" weight="0.32842416" />
+      <window_info anchor="bottom" id="Message" order="0" />
       <window_info id="Favorites" order="2" sideWeight="0.15742794" side_tool="true" weight="0.07468606" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Python Console" order="7" />
     </layout-to-restore>
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -432,7 +477,8 @@
     <MESSAGE value="Color and threshold settings for each gauge" />
     <MESSAGE value="Colorpicker for the gauge" />
     <MESSAGE value="Settings file + min/max in gauge settings" />
-    <option name="LAST_COMMIT_MESSAGE" value="Settings file + min/max in gauge settings" />
+    <MESSAGE value="Fixing settings for floats" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixing settings for floats" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -447,37 +493,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/medidor.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="378">
-          <caret line="20" column="34" selection-start-line="20" selection-start-column="34" selection-end-line="20" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="609">
-          <caret line="29" column="37" selection-start-line="29" selection-start-column="37" selection-end-line="29" selection-end-column="37" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/meter_test.py" />
-    <entry file="file://$PROJECT_DIR$/gauge_marco.py" />
-    <entry file="file://$PROJECT_DIR$/medidor.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="378">
-          <caret line="20" column="34" selection-start-line="20" selection-start-column="34" selection-end-line="20" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="609">
-          <caret line="29" column="37" selection-start-line="29" selection-start-column="37" selection-end-line="29" selection-end-column="37" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/meter_test.py" />
     <entry file="file://$PROJECT_DIR$/gauge_marco.py" />
     <entry file="file://$PROJECT_DIR$/medidor.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -584,13 +599,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/indicador.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="861">
-          <caret line="56" selection-start-line="56" selection-end-line="56" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/ajustes.py" />
     <entry file="file://$PROJECT_DIR$/sources/meter.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -613,38 +621,82 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app.py">
+    <entry file="file://$PROJECT_DIR$/redondeo.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="827">
-          <caret line="60" column="20" selection-start-line="60" selection-start-column="8" selection-end-line="60" selection-end-column="20" />
+        <state relative-caret-position="198">
+          <caret line="67" column="16" selection-start-line="67" selection-start-column="16" selection-end-line="67" selection-end-column="16" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/ajustes_medidores.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1156">
-          <caret line="68" column="33" selection-start-line="68" selection-start-column="33" selection-end-line="68" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="283">
-          <caret line="104" column="48" selection-start-line="104" selection-start-column="48" selection-end-line="104" selection-end-column="48" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/redondeo.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1054">
-          <caret line="62" column="12" selection-start-line="62" selection-start-column="9" selection-end-line="62" selection-end-column="12" />
+        <state relative-caret-position="341">
+          <caret line="94" lean-forward="true" selection-start-line="94" selection-end-line="94" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/medidor.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="164">
-          <caret line="147" column="47" selection-start-line="147" selection-start-column="47" selection-end-line="147" selection-end-column="47" />
+        <state relative-caret-position="202">
+          <caret line="17" column="45" lean-forward="true" selection-start-line="17" selection-start-column="45" selection-end-line="19" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/indicador.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="18" column="41" selection-start-line="18" selection-start-column="41" selection-end-line="18" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-748">
+          <caret line="64" column="28" selection-start-line="64" selection-start-column="28" selection-end-line="64" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bin/ajustes_medidores.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bin/indicador.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="7" column="9" selection-start-line="7" selection-start-column="9" selection-end-line="7" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bin/opciones.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bin/redondeo.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bin/medidor.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="18" selection-start-line="18" selection-end-line="19" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bin/grafico.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="62">
+          <caret line="22" column="41" selection-start-line="22" selection-start-column="41" selection-end-line="22" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="708">
+          <caret line="53" column="44" selection-start-line="53" selection-start-column="44" selection-end-line="53" selection-end-column="44" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bin/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="147">
+          <caret line="434" column="15" selection-start-line="434" selection-start-column="10" selection-end-line="434" selection-end-column="15" />
         </state>
       </provider>
     </entry>

@@ -5,7 +5,7 @@ else:
     import tkinter as tk
 import tkinter.font as tkf
 
-from redondeo import redondear
+from bin.redondeo import redondear
 
 
 # Clase Indicador: Engloba cada uno de los indicadores
@@ -15,12 +15,8 @@ class Indicador(tk.Canvas, object):
         # Parámetros
         self.titulo = configuracion["nombre"]
         self.unidad = configuracion["unidad"]
-        self.ancho = configuracion["ancho"]
-        self.altura = configuracion["altura"]
-        self.intervalo = configuracion["intervalo"]
-        self.color_bajo = configuracion["color_bajo"]
-        self.color_medio = configuracion["color_medio"]
-        self.color_alto = configuracion["color_alto"]
+        self.ancho = int(self['width'])
+        self.altura = int(self['height'])
         # Se configura el indicador
         self.layoutparams(self.altura, self.ancho)
         self.createhand(self.altura, self.ancho)

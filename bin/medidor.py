@@ -6,7 +6,7 @@ else:
 import tkinter.font as tkf
 
 import math
-from redondeo import redondear
+from bin.redondeo import redondear
 
 # Clase Medidor: Engloba cada uno de los medidores
 class Medidor(tk.Canvas, object):
@@ -144,8 +144,6 @@ class Medidor(tk.Canvas, object):
             canvas_id = self.create_text(self.centrex - 0.73 * radius * cos, self.centrey - 0.73 * radius * sin)
             numero = rango_min + (angle + 60) / 30 * (rango_max - rango_min) / 10
             numero2 = redondear(numero)
-            print(numero,numero2)
-            print(redondear(2.2),'sdddddddddddd')
             if numero.is_integer():
                 numero = int(numero)
             self.itemconfig(canvas_id, text=str(numero), font=tkf.Font(size=int(1.5 * self.minortick)))
@@ -193,7 +191,14 @@ class Medidor(tk.Canvas, object):
         self.coords(self.handid, self.centrex, self.centrey, self.centrex + self.handlen * math.cos(rad),
                     self.centrey + self.handlen * math.sin(rad))
 
-    def set_ajustes(self):
+    def set_ajustes(self, ajustes):
+        self.n_promedios = int(ajustes['n_promedios'])
+        self.colores = ajustes['colores']
+        umbrales_str = ajustes['umbrales']
+        self.umbrales = [int(numeric_string) for numeric_string in umbrales_str]
+        self.minimo_rango = float(ajustes['minimo'])
+        self.maximo_rango = float(ajustes['maximo'])
+
         self.delete("all")
         self.layoutparams()
         self.graphics(self.minimo_rango, self.maximo_rango)

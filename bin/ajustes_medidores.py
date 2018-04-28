@@ -83,6 +83,12 @@ class AjustesMedidores(tk.Frame, object):
         }
         self.main.save_ajustes_medidor(self, ajustes)
 
-    def set_ajustes(self):
+    def set_ajustes(self, ajustes):
+        self.n_promedios = int(ajustes['n_promedios'])
+        self.colores = ajustes['colores']
+        umbrales_str = ajustes['umbrales']
+        self.umbrales = [int(numeric_string) for numeric_string in umbrales_str]
+        self.minimo_rango = float(ajustes['minimo'])
+        self.maximo_rango = float(ajustes['maximo'])
         for i in range(self.n_colores):
             self.elementos["colorLabel" + str(i)].configure(text="Color si: " + str(self.umbrales[i]) + "% < valor <=" + str(self.umbrales[i + 1]) + "%", bg='white')

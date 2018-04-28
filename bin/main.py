@@ -4,11 +4,11 @@ if sys.version_info[0] < 3:
 else:
     import tkinter as tk
 
-import medidor as Medidor
-import indicador as Indicador
-import grafico as Grafico
-import opciones as Opciones
-import ajustes_medidores as AjustesMedidores
+import bin.medidor as medidor
+import bin.indicador as indicador
+import bin.grafico as grafico
+import bin.opciones as opciones
+import bin.ajustes_medidores as ajustes_medidores
 
 import json
 import configparser
@@ -20,7 +20,7 @@ class Main(tk.Frame):
         self.master = master
         # Leer el archivo de configuración
         self.configParser = configparser.RawConfigParser()
-        self.configFile = 'settings.cfg'
+        self.configFile = 'settings.ini'
         if not os.path.exists(self.configFile):
             self.create_config_file()
         self.configParser.read(self.configFile)
@@ -117,11 +117,11 @@ class Main(tk.Frame):
         # Medidores
         ancho_medidor = self.ancho_total / self.n_medidores
         altura_medidor = self.altura_total/ self.n_medidores*2
-        medidor0 = Medidor.Medidor(self.medidoresContainer, bd=2, height=altura_medidor, width=ancho_medidor, bg='white', highlightbackground="black", configuracion=medidor0_conf)
-        medidor1 = Medidor.Medidor(self.medidoresContainer, bd=2, height=altura_medidor, width=ancho_medidor, bg='white', highlightbackground="black", configuracion=medidor1_conf)
-        medidor2 = Medidor.Medidor(self.medidoresContainer, bd=2, height=altura_medidor, width=ancho_medidor, bg='white', highlightbackground="black", configuracion=medidor2_conf)
-        medidor3 = Medidor.Medidor(self.medidoresContainer ,bd=2, height=altura_medidor, width=ancho_medidor, bg='white', highlightbackground="black", configuracion=medidor3_conf)
-        medidor4 = Medidor.Medidor(self.medidoresContainer, bd=2, height=altura_medidor, width=ancho_medidor, bg='white', highlightbackground="black", configuracion=medidor4_conf)
+        medidor0 = medidor.Medidor(self.medidoresContainer, bd=2, height=altura_medidor, width=ancho_medidor, bg='white', highlightbackground="black", configuracion=medidor0_conf)
+        medidor1 = medidor.Medidor(self.medidoresContainer, bd=2, height=altura_medidor, width=ancho_medidor, bg='white', highlightbackground="black", configuracion=medidor1_conf)
+        medidor2 = medidor.Medidor(self.medidoresContainer, bd=2, height=altura_medidor, width=ancho_medidor, bg='white', highlightbackground="black", configuracion=medidor2_conf)
+        medidor3 = medidor.Medidor(self.medidoresContainer ,bd=2, height=altura_medidor, width=ancho_medidor, bg='white', highlightbackground="black", configuracion=medidor3_conf)
+        medidor4 = medidor.Medidor(self.medidoresContainer, bd=2, height=altura_medidor, width=ancho_medidor, bg='white', highlightbackground="black", configuracion=medidor4_conf)
         # Frame de la ventana de ajustes de cada medidor
         medidor0_container = tk.Frame(self.medidoresContainer)
         medidor1_container = tk.Frame(self.medidoresContainer)
@@ -141,11 +141,11 @@ class Main(tk.Frame):
         medidor3_ajustes_conf = {"n_promedios": medidor3_conf["n_promedios"], "colores": medidor3_conf["colores"], "umbrales": medidor3_conf["umbrales"], "minimo": medidor3_conf["minimo"], "maximo": medidor3_conf["maximo"]}
         medidor4_ajustes_conf = {"n_promedios": medidor4_conf["n_promedios"], "colores": medidor4_conf["colores"], "umbrales": medidor4_conf["umbrales"], "minimo": medidor4_conf["minimo"], "maximo": medidor4_conf["maximo"]}
         # Ajustes de los medidores
-        medidor0_ajustes = AjustesMedidores.AjustesMedidores(medidor0_container, self, master, configuracion=medidor0_ajustes_conf)
-        medidor1_ajustes = AjustesMedidores.AjustesMedidores(medidor1_container, self, master, configuracion=medidor1_ajustes_conf)
-        medidor2_ajustes = AjustesMedidores.AjustesMedidores(medidor2_container, self, master, configuracion=medidor2_ajustes_conf)
-        medidor3_ajustes = AjustesMedidores.AjustesMedidores(medidor3_container, self, master, configuracion=medidor3_ajustes_conf)
-        medidor4_ajustes = AjustesMedidores.AjustesMedidores(medidor4_container, self, master, configuracion=medidor4_ajustes_conf)
+        medidor0_ajustes = ajustes_medidores.AjustesMedidores(medidor0_container, self, master, configuracion=medidor0_ajustes_conf)
+        medidor1_ajustes = ajustes_medidores.AjustesMedidores(medidor1_container, self, master, configuracion=medidor1_ajustes_conf)
+        medidor2_ajustes = ajustes_medidores.AjustesMedidores(medidor2_container, self, master, configuracion=medidor2_ajustes_conf)
+        medidor3_ajustes = ajustes_medidores.AjustesMedidores(medidor3_container, self, master, configuracion=medidor3_ajustes_conf)
+        medidor4_ajustes = ajustes_medidores.AjustesMedidores(medidor4_container, self, master, configuracion=medidor4_ajustes_conf)
         # Ajustar el lugar de cada medidor
         medidor0.grid(column=2, row=0, columnspan=2)
         medidor1.grid(column=4, row=0, columnspan=2)
@@ -185,67 +185,112 @@ class Main(tk.Frame):
         }
 
         # Indicadores **************************************************************************************************
-        n_indicadores = 8
-        ancho_indicador = (self.ancho_total / n_indicadores) - n_indicadores*2
-        altura_indicador = self.altura_total / n_indicadores
-        # [Título, descripción, unidad, ancho, altura, minimo, maximo, intervalo, color_bajo, color_medio, color_alto]
-        configuracion_indicador = [
-            {"nombre": "Presión", "unidad": "Pa", "ancho": ancho_indicador, "altura": altura_indicador,
-             "intervalo": 3000, "color_bajo": "green", "color_medio": "yellow", "color_alto": "red"},
-            {"nombre": "Par", "unidad": "rad/s", "ancho": ancho_indicador, "altura": altura_indicador,
-             "intervalo": 1000, "color_bajo": "green", "color_medio": "yellow", "color_alto": "red"},
-            {"nombre": "Vuelta de cigüeñal", "unidad": "rad/s", "ancho": ancho_indicador, "altura": altura_indicador,
-             "intervalo": 1000, "color_bajo": "green", "color_medio": "yellow", "color_alto": "red"},
-            {"nombre": "I/vuelta", "unidad": "rad/s", "ancho": ancho_indicador, "altura": altura_indicador,
-             "intervalo": 1000, "color_bajo": "green", "color_medio": "yellow", "color_alto": "red"},
-            {"nombre": "ω instantánea", "unidad": "Pa", "ancho": ancho_indicador, "altura": altura_indicador,
-             "intervalo": 3000, "color_bajo": "green", "color_medio": "yellow", "color_alto": "red"},
-            {"nombre": "ω promedio/vuelta", "unidad": "rad/s", "ancho": ancho_indicador, "altura": altura_indicador,
-             "intervalo": 1000, "color_bajo": "green", "color_medio": "yellow", "color_alto": "red"},
-            {"nombre": "Volumen", "unidad": "m^3", "ancho": ancho_indicador, "altura": altura_indicador,
-             "intervalo": 1000, "color_bajo": "green", "color_medio": "yellow", "color_alto": "red"},
-            {"nombre": "Potencia", "unidad": "W", "ancho": ancho_indicador, "altura": altura_indicador,
-             "intervalo": 1000, "color_bajo": "green", "color_medio": "yellow", "color_alto": "red"}
-        ]
-        i = 0
-        self.indicadores = [0]*n_indicadores
-        while i < len(configuracion_indicador):
-            altura = configuracion_indicador[i]['altura']
-            ancho = configuracion_indicador[i]['ancho']
-            self.indicadores[i] = Indicador.Indicador(self.bottomContainer,
-                bd=2,height=altura,width=ancho, bg='white', highlightbackground="black",
-                configuracion=configuracion_indicador[i])
-            self.indicadores[i].grid(row=2, column=i, padx=5)
-            i += 1
-
+        # Configuración de cada indicador
+        self.n_indicadores = 8
+        indicador0_conf = {
+            "nombre": self.configParser.get('Indicador0', 'nombre'),
+            "unidad": self.configParser.get('Indicador0', 'unidad')
+        }
+        indicador1_conf = {
+            "nombre": self.configParser.get('Indicador1', 'nombre'),
+            "unidad": self.configParser.get('Indicador1', 'unidad')
+        }
+        indicador2_conf = {
+            "nombre": self.configParser.get('Indicador2', 'nombre'),
+            "unidad": self.configParser.get('Indicador2', 'unidad')
+        }
+        indicador3_conf = {
+            "nombre": self.configParser.get('Indicador3', 'nombre'),
+            "unidad": self.configParser.get('Indicador3', 'unidad')
+        }
+        indicador4_conf = {
+            "nombre": self.configParser.get('Indicador4', 'nombre'),
+            "unidad": self.configParser.get('Indicador4', 'unidad')
+        }
+        indicador5_conf = {
+            "nombre": self.configParser.get('Indicador5', 'nombre'),
+            "unidad": self.configParser.get('Indicador5', 'unidad')
+        }
+        indicador6_conf = {
+            "nombre": self.configParser.get('Indicador6', 'nombre'),
+            "unidad": self.configParser.get('Indicador6', 'unidad')
+        }
+        indicador7_conf = {
+            "nombre": self.configParser.get('Indicador7', 'nombre'),
+            "unidad": self.configParser.get('Indicador7', 'unidad')
+        }
+        # Indicadores
+        ancho_indicador = (self.ancho_total / self.n_indicadores) - self.n_indicadores*2
+        altura_indicador = self.altura_total / self.n_indicadores
+        indicador0 = indicador.Indicador(self.bottomContainer, bd=2, height=altura_indicador, width=ancho_indicador, bg='white', highlightbackground="black",configuracion=indicador0_conf)
+        indicador1 = indicador.Indicador(self.bottomContainer, bd=2, height=altura_indicador, width=ancho_indicador, bg='white', highlightbackground="black",configuracion=indicador1_conf)
+        indicador2 = indicador.Indicador(self.bottomContainer, bd=2, height=altura_indicador, width=ancho_indicador, bg='white', highlightbackground="black",configuracion=indicador2_conf)
+        indicador3 = indicador.Indicador(self.bottomContainer, bd=2, height=altura_indicador, width=ancho_indicador, bg='white', highlightbackground="black",configuracion=indicador3_conf)
+        indicador4 = indicador.Indicador(self.bottomContainer, bd=2, height=altura_indicador, width=ancho_indicador, bg='white', highlightbackground="black",configuracion=indicador4_conf)
+        indicador5 = indicador.Indicador(self.bottomContainer, bd=2, height=altura_indicador, width=ancho_indicador, bg='white', highlightbackground="black",configuracion=indicador5_conf)
+        indicador6 = indicador.Indicador(self.bottomContainer, bd=2, height=altura_indicador, width=ancho_indicador, bg='white', highlightbackground="black",configuracion=indicador6_conf)
+        indicador7 = indicador.Indicador(self.bottomContainer, bd=2, height=altura_indicador, width=ancho_indicador, bg='white', highlightbackground="black",configuracion=indicador7_conf)
+        # Ajustar el lugar de cada indicador
+        indicador0.grid(row=2, column=0, padx=5)
+        indicador1.grid(row=2, column=1, padx=5)
+        indicador2.grid(row=2, column=2, padx=5)
+        indicador3.grid(row=2, column=3, padx=5)
+        indicador4.grid(row=2, column=4, padx=5)
+        indicador5.grid(row=2, column=5, padx=5)
+        indicador6.grid(row=2, column=6, padx=5)
+        indicador7.grid(row=2, column=7, padx=5)
+        # Crear el diccionario de indicadores
+        self.indicadores = {
+            'indicador0': indicador0, 'indicador1': indicador1, 'indicador2': indicador2, 'indicador3': indicador3,
+            'indicador4': indicador4, 'indicador5': indicador5, 'indicador6': indicador6, 'indicador7': indicador7
+        }
         # Gráficos **************************************************************************************************
-        n_graficos = 5
-        ancho_grafico = self.ancho_total / n_graficos
-        altura_grafico = self.altura_total / n_graficos*2
-        configuracion_grafico = [
-            {"nombreX": "Nº de grado de cigüeñal", "nombreY": "Presión/Par",
-             "ancho": ancho_grafico, "altura": altura_grafico, "intervalo": 3000},
-            {"nombreX": "Volumen", "nombreY": "Presión",
-             "ancho": ancho_grafico, "altura": altura_grafico, "intervalo": 3000},
-            {"nombreX": "ω promedio/vuelta", "nombreY": "Potencia/vuelta",
-             "ancho": ancho_grafico, "altura": altura_grafico,"intervalo": 3000},
-            {"nombreX": "Volumen", "nombreY": "Presión",
-             "ancho": ancho_grafico, "altura": altura_grafico, "intervalo": 3000},
-            {"nombreX": "ω promedio/vuelta", "nombreY": "Potencia/vuelta",
-             "ancho": ancho_grafico, "altura": altura_grafico, "intervalo": 3000}
-        ]
-        i = 0
-        filas = [0, 0, 1, 1, 1]
-        columnas = [2, 4, 1, 3, 5]
-        self.graficos = [0] * n_graficos
-        while i < len(configuracion_grafico):
-            self.graficos[i] = Grafico.Grafico(self.graficosContainer, configuracion=configuracion_grafico[i])
-            self.graficos[i].grid(row=filas[i], column=columnas[i], columnspan=2, padx=20, pady=10)
-            i += 1
+        # Configuración de cada gráfico
+        self.n_graficos = 5
+        grafico0_conf = {
+            "nombreX": self.configParser.get('Grafico0', 'nombreX'),
+            "nombreY": self.configParser.get('Grafico0', 'nombreY')
+        }
+        grafico1_conf = {
+            "nombreX": self.configParser.get('Grafico1', 'nombreX'),
+            "nombreY": self.configParser.get('Grafico1', 'nombreY')
+        }
+        grafico2_conf = {
+            "nombreX": self.configParser.get('Grafico2', 'nombreX'),
+            "nombreY": self.configParser.get('Grafico2', 'nombreY')
+        }
+        grafico3_conf = {
+            "nombreX": self.configParser.get('Grafico3', 'nombreX'),
+            "nombreY": self.configParser.get('Grafico3', 'nombreY')
+        }
+        grafico4_conf = {
+            "nombreX": self.configParser.get('Grafico4', 'nombreX'),
+            "nombreY": self.configParser.get('Grafico4', 'nombreY')
+        }
+
+        ancho_grafico = self.ancho_total / self.n_graficos
+        altura_grafico = self.altura_total / self.n_graficos*2
+
+        # Gráficos
+        grafico0 = grafico.Grafico(self.graficosContainer, height=altura_grafico, width=ancho_grafico, configuracion=grafico0_conf)
+        grafico1 = grafico.Grafico(self.graficosContainer, height=altura_grafico, width=ancho_grafico, configuracion=grafico1_conf)
+        grafico2 = grafico.Grafico(self.graficosContainer, height=altura_grafico, width=ancho_grafico, configuracion=grafico2_conf)
+        grafico3 = grafico.Grafico(self.graficosContainer, height=altura_grafico, width=ancho_grafico, configuracion=grafico3_conf)
+        grafico4 = grafico.Grafico(self.graficosContainer, height=altura_grafico, width=ancho_grafico, configuracion=grafico4_conf)
+        # Ajustar el lugar de cada gráfico
+        grafico0.grid(row=0, column=2, columnspan=2, padx=20, pady=10)
+        grafico1.grid(row=0, column=4, columnspan=2, padx=20, pady=10)
+        grafico2.grid(row=1, column=1, columnspan=2, padx=20, pady=10)
+        grafico3.grid(row=1, column=3, columnspan=2, padx=20, pady=10)
+        grafico4.grid(row=1, column=5, columnspan=2, padx=20, pady=10)
         self.graficosContainer.grid_remove()
+        # Crear el diccionario de indicadores
+        self.graficos = {
+            'grafico0': grafico0, 'grafico1': grafico1, 'grafico2': grafico2, 'grafico3': grafico3, 'grafico4': grafico4
+        }
         # OpcionesContainer ******************************************************************************************************
         configuracion_opciones = {"intervalo": self.master.intervalo}
-        self.ajustes = Opciones.Opciones(self.opcionesContainer, master, configuracion=configuracion_opciones)
+        self.ajustes = opciones.Opciones(self.opcionesContainer, master, configuracion=configuracion_opciones)
         self.ajustes.grid(row=0, column=0)
         self.opcionesContainer.grid_remove()
 
@@ -291,6 +336,45 @@ class Main(tk.Frame):
         self.configParser.set('Medidor4', 'n_promedios', '20')
         self.configParser.set('Medidor4', 'colores', '["green", "yellow", "red"]')
         self.configParser.set('Medidor4', 'umbrales', '[0, 33, 66, 100]')
+        self.configParser.add_section('Indicador0')
+        self.configParser.set('Indicador0', 'nombre', 'Presión')
+        self.configParser.set('Indicador0', 'unidad', 'Pa')
+        self.configParser.add_section('Indicador1')
+        self.configParser.set('Indicador1', 'nombre', 'Par')
+        self.configParser.set('Indicador1', 'unidad', 'rad/s')
+        self.configParser.add_section('Indicador2')
+        self.configParser.set('Indicador2', 'nombre', 'Vuelta de cig.')
+        self.configParser.set('Indicador2', 'unidad', 'rad/s')
+        self.configParser.add_section('Indicador3')
+        self.configParser.set('Indicador3', 'nombre', 'I/vuelta')
+        self.configParser.set('Indicador3', 'unidad', 'rad/s')
+        self.configParser.add_section('Indicador4')
+        self.configParser.set('Indicador4', 'nombre', 'w inst.')
+        self.configParser.set('Indicador4', 'unidad', 'Pa')
+        self.configParser.add_section('Indicador5')
+        self.configParser.set('Indicador5', 'nombre', 'w promedio/vuelta')
+        self.configParser.set('Indicador5', 'unidad', 'rad/s')
+        self.configParser.add_section('Indicador6')
+        self.configParser.set('Indicador6', 'nombre', 'Volumen')
+        self.configParser.set('Indicador6', 'unidad', 'm^3')
+        self.configParser.add_section('Indicador7')
+        self.configParser.set('Indicador7', 'nombre', 'Potencia')
+        self.configParser.set('Indicador7', 'unidad', 'W')
+        self.configParser.add_section('Grafico0')
+        self.configParser.set('Grafico0', 'nombreX', 'Nº de grado de cigüeñal')
+        self.configParser.set('Grafico0', 'nombreY', 'Presión/Par')
+        self.configParser.add_section('Grafico1')
+        self.configParser.set('Grafico1', 'nombreX', 'Volumen')
+        self.configParser.set('Grafico1', 'nombreY', 'Presión')
+        self.configParser.add_section('Grafico2')
+        self.configParser.set('Grafico2', 'nombreX', 'w promedio/vuelta')
+        self.configParser.set('Grafico2', 'nombreY', 'Potencia/vuelta')
+        self.configParser.add_section('Grafico3')
+        self.configParser.set('Grafico3', 'nombreX', 'Volumen')
+        self.configParser.set('Grafico3', 'nombreY', 'Presión')
+        self.configParser.add_section('Grafico4')
+        self.configParser.set('Grafico4', 'nombreX', 'w promedio/vuelta')
+        self.configParser.set('Grafico4', 'nombreY', 'Potencia/vuelta')
         with open(self.configFile, 'w') as output:
             self.configParser.write(output)
 
@@ -308,6 +392,7 @@ class Main(tk.Frame):
             self.configParser.write(output)
 
     def cambiar_pagina(self):
+        """Alternar entre la página de medidores o gráficos"""
         if self.paginaFlag:
             self.graficosContainer.grid_remove()
             self.medidoresContainer.grid()
@@ -319,6 +404,7 @@ class Main(tk.Frame):
         self.paginaFlag = not self.paginaFlag
 
     def desplegar_opciones(self):
+        """Desplegar/ocultar las opciones generales"""
         if self.opcionesFlag:
             self.opcionesContainer.grid_remove()
         else:
@@ -326,6 +412,7 @@ class Main(tk.Frame):
         self.opcionesFlag = not self.opcionesFlag
 
     def desplegar_ajustes_medidores(self, ajustes_medidores_container):
+        """Desplegar/ocultar los ajustes de un medidor específico"""
         # Obtiene el número del frame en el que está el medidor:
         # (.!frame3.!frame, .!frame3.!frame2, .!frame3.!frame3, .!frame3.!frame4, .!frame3.!frame5 ...)
         # Se obtiene la última letra. Si es "e", es el frame 0. Si no, hay que restar 1.
@@ -339,6 +426,7 @@ class Main(tk.Frame):
         self.medidores['medidor' + str(int(medidor_index) - 1) + "_flag"] = not self.medidores['medidor' + str(int(medidor_index) - 1) + "_flag"]
 
     def set(self, valores):
+        """Actualizar los valores en la UI"""
         vuelta = valores["vuelta"]
         diente = valores["diente"]
         tiempo = valores["tiempo"]
@@ -347,35 +435,18 @@ class Main(tk.Frame):
         # Fórmulas matemáticas
         for i in range(0, self.n_medidores):
             self.medidores['medidor' + str(i)].set(vuelta)
-        i = 0
-        while i < len(self.indicadores):
-            self.indicadores[i].set(vuelta)
-            i += 1
+        for i in range(0, self.n_indicadores):
+            self.indicadores['indicador' + str(i)].set(vuelta)
 
-    def save_ajustes_medidor(self, medidor, ajustes):
-        # Obtener los ajustes
-        n_promedios = int(ajustes['n_promedios'])
-        colores = ajustes['colores']
-        umbrales_str = ajustes['umbrales']
-        umbrales = [int(numeric_string) for numeric_string in umbrales_str]
-        minimo_rango = float(ajustes['minimo'])
-        maximo_rango = float(ajustes['maximo'])
+    def save_ajustes_medidor(self, medidor_x, ajustes):
+        """Guardar los ajustes de un medidor específico"""
         # Obtiene el número del frame en el que está el medidor:
         # (.!frame3.!frame, .!frame3.!frame2, .!frame3.!frame3, .!frame3.!frame4, .!frame3.!frame5 ...)
         # Se obtiene la última letra. Si es "e", es el frame 0. Si no, hay que restar 1.
-        medidor_index = str(medidor.master)[-1:]
+        medidor_index = str(medidor_x.master)[-1:]
         if medidor_index == 'e':
             medidor_index = 1
-        self.medidores['medidor' + str(int(medidor_index) - 1)].n_promedios = n_promedios
-        self.medidores['medidor' + str(int(medidor_index) - 1)].colores = colores
-        self.medidores['medidor' + str(int(medidor_index) - 1)].umbrales = umbrales
-        self.medidores['medidor' + str(int(medidor_index) - 1)].minimo_rango = minimo_rango
-        self.medidores['medidor' + str(int(medidor_index) - 1)].maximo_rango = maximo_rango
-        self.medidores['medidor' + str(int(medidor_index) - 1)].set_ajustes()
-        self.medidores['medidor' + str(int(medidor_index) - 1) + '_ajustes'].n_promedios = n_promedios
-        self.medidores['medidor' + str(int(medidor_index) - 1) + '_ajustes'].colores = colores
-        self.medidores['medidor' + str(int(medidor_index) - 1) + '_ajustes'].umbrales = umbrales
-        self.medidores['medidor' + str(int(medidor_index) - 1) + '_ajustes'].minimo = minimo_rango
-        self.medidores['medidor' + str(int(medidor_index) - 1) + '_ajustes'].maximo = maximo_rango
-        self.medidores['medidor' + str(int(medidor_index) - 1) + '_ajustes'].set_ajustes()
+        # Guardar los ajustes
+        self.medidores['medidor' + str(int(medidor_index) - 1)].set_ajustes(ajustes)
+        self.medidores['medidor' + str(int(medidor_index) - 1) + '_ajustes'].set_ajustes(ajustes)
         self.save_config_medidor("Medidor" + str(int(medidor_index) - 1), ajustes)

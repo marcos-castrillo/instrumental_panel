@@ -19,9 +19,8 @@ class Grafico(tk.Canvas, object):
             self.titulo = configuracion["titulo"]
         self.nombreX = configuracion["nombreX"]
         self.nombreY = configuracion["nombreY"]
-        self.ancho = configuracion["ancho"]
-        self.altura = configuracion["altura"]
-        self.intervalo = configuracion["intervalo"]
+        self.ancho = int(self['width'])
+        self.altura = int(self['height'])
 
         # 1 inch = 96 pixels
         f = Figure(figsize=(self.altura/96, self.ancho/96), dpi=100)
