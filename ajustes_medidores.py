@@ -18,7 +18,11 @@ class AjustesMedidores(tk.Frame, object):
         self.colores = configuracion["colores"]
         self.n_colores = len(self.colores)
         minimo = configuracion["minimo"]
+        if minimo.is_integer():
+            minimo = int(minimo)
         maximo = configuracion["maximo"]
+        if maximo.is_integer():
+            maximo = int(maximo)
         self.elementos = {}
         # Elementos de los ajustes
         self.promedioLabel = tk.Label(master, text="Promedios por vuelta", bg='white')
@@ -62,7 +66,7 @@ class AjustesMedidores(tk.Frame, object):
         n_promedios = self.promedioEntry.get()
         umbrales = []
         for i in range(self.n_colores - 1):
-            umbrales.append(int(self.elementos["umbralEntry" + str(i)].get()))
+            umbrales.append(float(self.elementos["umbralEntry" + str(i)].get()))
         colores = []
         for i in range(self.n_colores):
             colores.append(self.elementos["colorEntry" + str(i)].cget('text'))

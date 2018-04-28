@@ -143,6 +143,9 @@ class Medidor(tk.Canvas, object):
         if length == self.majortick:
             canvas_id = self.create_text(self.centrex - 0.73 * radius * cos, self.centrey - 0.73 * radius * sin)
             numero = rango_min + (angle + 60) / 30 * (rango_max - rango_min) / 10
+            numero2 = redondear(numero)
+            print(numero,numero2)
+            print(redondear(2.2),'sdddddddddddd')
             if numero.is_integer():
                 numero = int(numero)
             self.itemconfig(canvas_id, text=str(numero), font=tkf.Font(size=int(1.5 * self.minortick)))

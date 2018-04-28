@@ -66,7 +66,10 @@ def redondear(numero):
     else:
         cifras = 0
     # Se redondea el numero a las cifras correspondientes
-    resultado = round(numero, cifras)
+    if cifras != 0:
+        resultado = round(numero, cifras)
+    else:
+        resultado = numero
     # Se evita el ".0" para numeros enteros
     if float(resultado).is_integer():
         resultado = int(resultado)
