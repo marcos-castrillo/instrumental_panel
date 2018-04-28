@@ -20,6 +20,6 @@
 *settings.ini
 
 # Folders #
-docs
-__pycache__
-.idea
+docs/
+__pycache__/
+.idea/
