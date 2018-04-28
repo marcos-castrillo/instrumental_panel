@@ -21,8 +21,8 @@ class Medidor(tk.Canvas, object):
         self.minimo_rango = configuracion["minimo"]
         self.maximo_rango = configuracion["maximo"]
         self.n_promedios = configuracion["n_promedios"]
-        self.colores = configuracion["colores"]
         self.umbrales = configuracion["umbrales"]
+        self.colores = configuracion["colores"]
         self.n_colores = len(self.colores)
         # Se configura el medidor
         self.layoutparams()
@@ -142,7 +142,7 @@ class Medidor(tk.Canvas, object):
         radius = self.radius - self.bezel
         if length == self.majortick:
             canvas_id = self.create_text(self.centrex - 0.73 * radius * cos, self.centrey - 0.73 * radius * sin)
-            numero = (angle + 60) / 30 * (rango_max - rango_min) / 10
+            numero = rango_min + (angle + 60) / 30 * (rango_max - rango_min) / 10
             if numero.is_integer():
                 numero = int(numero)
             self.itemconfig(canvas_id, text=str(numero), font=tkf.Font(size=int(1.5 * self.minortick)))
@@ -190,4 +190,9 @@ class Medidor(tk.Canvas, object):
         self.coords(self.handid, self.centrex, self.centrey, self.centrex + self.handlen * math.cos(rad),
                     self.centrey + self.handlen * math.sin(rad))
 
-    #def config(self, ajustes):
+    def set_ajustes(self):
+        self.delete("all")
+        self.layoutparams()
+        self.graphics(self.minimo_rango, self.maximo_rango)
+        self.createhand()
+        self.setrange(self.minimo_rango, self.maximo_rango)

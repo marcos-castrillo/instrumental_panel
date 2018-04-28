@@ -10,12 +10,20 @@ import grafico as Grafico
 import opciones as Opciones
 import ajustes_medidores as AjustesMedidores
 
+import json
+import configparser
+import os.path
 
 class Main(tk.Frame):
     def __init__(self, master):
         super(Main, self).__init__()
         self.master = master
-        self.paginaButton_text = tk.StringVar()
+        # Leer el archivo de configuración
+        self.configParser = configparser.RawConfigParser()
+        self.configFile = 'settings.cfg'
+        if not os.path.exists(self.configFile):
+            self.create_config_file()
+        self.configParser.read(self.configFile)
         # Obtener ancho/alto de la pantalla
         self.ancho_total = master.winfo_screenwidth()
         self.altura_total = master.winfo_screenheight()
@@ -36,6 +44,7 @@ class Main(tk.Frame):
         self.graficosContainer.grid(column=0, row=1)
         self.bottomContainer.grid(column=0, row=2)
         # Botones
+        self.paginaButton_text = tk.StringVar()
         self.salirButton = tk.Button(self.topContainer, text='Salir', width=10, command=master.destroy)
         self.paginaButton = tk.Button(self.topContainer, textvariable=self.paginaButton_text, width=10, command=lambda: self.cambiar_pagina())
         self.ajustesButton = tk.Button(self.topContainer, text="Ajustes", width=10, command=lambda: self.desplegar_opciones())
@@ -54,16 +63,51 @@ class Main(tk.Frame):
         # Si se quiere cambiar el nº de colores (3 por defecto), basta con modificar en las conf. siguientes
         # las variables "colores" y "umbrales" de forma adecuada
         self.n_medidores = 5
-        medidor0_conf = {"nombre": "Presión", "unidad": "Pa", "minimo": 0, "maximo": 100,
-        "n_promedios":20, "colores": ["green","yellow","red",], "umbrales": [0,33,66,100]}
-        medidor1_conf = {"nombre": "Par", "unidad": "N*m", "minimo": 0, "maximo": 100,
-        "n_promedios":20, "colores": ["green","yellow","red"], "umbrales": [0,33,66,100]}
-        medidor2_conf = {"nombre": "V. angular", "unidad": "rad/s", "minimo": 0,"maximo": 100,
-        "n_promedios":20, "colores": ["green","yellow","red"], "umbrales": [0,33,66,100]}
-        medidor3_conf = {"nombre": "Ángulo cig", "unidad": "º", "minimo": 0, "maximo": 100,
-        "n_promedios":20, "colores": ["green","yellow","red"], "umbrales": [0,33,66,100]}
-        medidor4_conf = {"nombre": "Potencia", "unidad": "W", "minimo": 0, "maximo": 100,
-        "n_promedios":20, "colores": ["green","yellow","red"], "umbrales": [0,33,66,100]}
+        medidor0_conf = {
+            "nombre": self.configParser.get('Medidor0', 'nombre'),
+            "unidad": self.configParser.get('Medidor0', 'unidad'),
+            "minimo": self.configParser.getfloat('Medidor0', 'minimo'),
+            "maximo": self.configParser.getfloat('Medidor0', 'maximo'),
+            "n_promedios": self.configParser.getint('Medidor0', 'n_promedios'),
+            "colores": json.loads(self.configParser.get('Medidor0', 'colores')),
+            "umbrales": json.loads(self.configParser.get('Medidor0', 'umbrales'))
+        }
+        medidor1_conf = {
+            "nombre": self.configParser.get('Medidor1', 'nombre'),
+            "unidad": self.configParser.get('Medidor1', 'unidad'),
+            "minimo": self.configParser.getfloat('Medidor1', 'minimo'),
+            "maximo": self.configParser.getfloat('Medidor1', 'maximo'),
+            "n_promedios": self.configParser.getint('Medidor1', 'n_promedios'),
+            "colores": json.loads(self.configParser.get('Medidor1', 'colores')),
+            "umbrales": json.loads(self.configParser.get('Medidor1', 'umbrales'))
+        }
+        medidor2_conf = {
+            "nombre": self.configParser.get('Medidor2', 'nombre'),
+            "unidad": self.configParser.get('Medidor2', 'unidad'),
+            "minimo": self.configParser.getfloat('Medidor2', 'minimo'),
+            "maximo": self.configParser.getfloat('Medidor2', 'maximo'),
+            "n_promedios": self.configParser.getint('Medidor2', 'n_promedios'),
+            "colores": json.loads(self.configParser.get('Medidor2', 'colores')),
+            "umbrales": json.loads(self.configParser.get('Medidor2', 'umbrales'))
+        }
+        medidor3_conf = {
+            "nombre": self.configParser.get('Medidor3', 'nombre'),
+            "unidad": self.configParser.get('Medidor3', 'unidad'),
+            "minimo": self.configParser.getfloat('Medidor3', 'minimo'),
+            "maximo": self.configParser.getfloat('Medidor3', 'maximo'),
+            "n_promedios": self.configParser.getint('Medidor3', 'n_promedios'),
+            "colores": json.loads(self.configParser.get('Medidor3', 'colores')),
+            "umbrales": json.loads(self.configParser.get('Medidor3', 'umbrales'))
+        }
+        medidor4_conf = {
+            "nombre": self.configParser.get('Medidor4', 'nombre'),
+            "unidad": self.configParser.get('Medidor4', 'unidad'),
+            "minimo": self.configParser.getfloat('Medidor4', 'minimo'),
+            "maximo": self.configParser.getfloat('Medidor4', 'maximo'),
+            "n_promedios": self.configParser.getint('Medidor4', 'n_promedios'),
+            "colores": json.loads(self.configParser.get('Medidor4', 'colores')),
+            "umbrales": json.loads(self.configParser.get('Medidor4', 'umbrales'))
+        }
         # Flags para controlar el mostrar u ocultar la ventana de ajustes
         medidor0_flag = False
         medidor1_flag = False
@@ -91,11 +135,11 @@ class Main(tk.Frame):
         medidor3_button = tk.Button(self.medidoresContainer, text="Ajustes", image=self.image_medidor_button, command=lambda: self.desplegar_ajustes_medidores(medidor3_container))
         medidor4_button = tk.Button(self.medidoresContainer, text="Ajustes", image=self.image_medidor_button, command=lambda: self.desplegar_ajustes_medidores(medidor4_container))
         # Configuración de los ajustes los medidores
-        medidor0_ajustes_conf = {"n_promedios": medidor0_conf["n_promedios"], "colores": medidor0_conf["colores"], "umbrales": medidor0_conf["umbrales"]}
-        medidor1_ajustes_conf = {"n_promedios": medidor1_conf["n_promedios"], "colores": medidor1_conf["colores"], "umbrales": medidor1_conf["umbrales"]}
-        medidor2_ajustes_conf = {"n_promedios": medidor2_conf["n_promedios"], "colores": medidor2_conf["colores"], "umbrales": medidor2_conf["umbrales"]}
-        medidor3_ajustes_conf = {"n_promedios": medidor3_conf["n_promedios"], "colores": medidor3_conf["colores"], "umbrales": medidor3_conf["umbrales"]}
-        medidor4_ajustes_conf = {"n_promedios": medidor4_conf["n_promedios"], "colores": medidor4_conf["colores"], "umbrales": medidor4_conf["umbrales"]}
+        medidor0_ajustes_conf = {"n_promedios": medidor0_conf["n_promedios"], "colores": medidor0_conf["colores"], "umbrales": medidor0_conf["umbrales"], "minimo": medidor0_conf["minimo"], "maximo": medidor0_conf["maximo"]}
+        medidor1_ajustes_conf = {"n_promedios": medidor1_conf["n_promedios"], "colores": medidor1_conf["colores"], "umbrales": medidor1_conf["umbrales"], "minimo": medidor1_conf["minimo"], "maximo": medidor1_conf["maximo"]}
+        medidor2_ajustes_conf = {"n_promedios": medidor2_conf["n_promedios"], "colores": medidor2_conf["colores"], "umbrales": medidor2_conf["umbrales"], "minimo": medidor2_conf["minimo"], "maximo": medidor2_conf["maximo"]}
+        medidor3_ajustes_conf = {"n_promedios": medidor3_conf["n_promedios"], "colores": medidor3_conf["colores"], "umbrales": medidor3_conf["umbrales"], "minimo": medidor3_conf["minimo"], "maximo": medidor3_conf["maximo"]}
+        medidor4_ajustes_conf = {"n_promedios": medidor4_conf["n_promedios"], "colores": medidor4_conf["colores"], "umbrales": medidor4_conf["umbrales"], "minimo": medidor4_conf["minimo"], "maximo": medidor4_conf["maximo"]}
         # Ajustes de los medidores
         medidor0_ajustes = AjustesMedidores.AjustesMedidores(medidor0_container, self, master, configuracion=medidor0_ajustes_conf)
         medidor1_ajustes = AjustesMedidores.AjustesMedidores(medidor1_container, self, master, configuracion=medidor1_ajustes_conf)
@@ -205,12 +249,69 @@ class Main(tk.Frame):
         self.ajustes.grid(row=0, column=0)
         self.opcionesContainer.grid_remove()
 
+    def create_config_file(self):
+        """Crea un archivo de configuración si no existe"""
+        self.configParser.add_section('Medidor0')
+        self.configParser.set('Medidor0', 'nombre', 'Presión')
+        self.configParser.set('Medidor0', 'unidad', 'Pa')
+        self.configParser.set('Medidor0', 'minimo', '0')
+        self.configParser.set('Medidor0', 'maximo', '100')
+        self.configParser.set('Medidor0', 'n_promedios', '20')
+        self.configParser.set('Medidor0', 'colores', '["green", "yellow", "red"]')
+        self.configParser.set('Medidor0', 'umbrales', '[0, 33, 66, 100]')
+        self.configParser.add_section('Medidor1')
+        self.configParser.set('Medidor1', 'nombre', 'Par')
+        self.configParser.set('Medidor1', 'unidad', 'N*m')
+        self.configParser.set('Medidor1', 'minimo', '0')
+        self.configParser.set('Medidor1', 'maximo', '100')
+        self.configParser.set('Medidor1', 'n_promedios', '20')
+        self.configParser.set('Medidor1', 'colores', '["green", "yellow", "red"]')
+        self.configParser.set('Medidor1', 'umbrales', '[0, 33, 66, 100]')
+        self.configParser.add_section('Medidor2')
+        self.configParser.set('Medidor2', 'nombre', 'V. angular')
+        self.configParser.set('Medidor2', 'unidad', 'rad/s')
+        self.configParser.set('Medidor2', 'minimo', '0')
+        self.configParser.set('Medidor2', 'maximo', '100')
+        self.configParser.set('Medidor2', 'n_promedios', '20')
+        self.configParser.set('Medidor2', 'colores', '["green", "yellow", "red"]')
+        self.configParser.set('Medidor2', 'umbrales', '[0, 33, 66, 100]')
+        self.configParser.add_section('Medidor3')
+        self.configParser.set('Medidor3', 'nombre', 'Áng. cig.')
+        self.configParser.set('Medidor3', 'unidad', 'º')
+        self.configParser.set('Medidor3', 'minimo', '0')
+        self.configParser.set('Medidor3', 'maximo', '100')
+        self.configParser.set('Medidor3', 'n_promedios', '20')
+        self.configParser.set('Medidor3', 'colores', '["green", "yellow", "red"]')
+        self.configParser.set('Medidor3', 'umbrales', '[0, 33, 66, 100]')
+        self.configParser.add_section('Medidor4')
+        self.configParser.set('Medidor4', 'nombre', 'Potencia')
+        self.configParser.set('Medidor4', 'unidad', 'W')
+        self.configParser.set('Medidor4', 'minimo', '0')
+        self.configParser.set('Medidor4', 'maximo', '100')
+        self.configParser.set('Medidor4', 'n_promedios', '20')
+        self.configParser.set('Medidor4', 'colores', '["green", "yellow", "red"]')
+        self.configParser.set('Medidor4', 'umbrales', '[0, 33, 66, 100]')
+        with open(self.configFile, 'w') as output:
+            self.configParser.write(output)
+
+    def save_config_medidor(self, seccion, config):
+        """Guarda la nueva configuración del medidor"""
+        if not self.configParser.has_section(seccion):
+            self.configParser.add_section(seccion)
+        self.configParser.set(seccion, 'n_promedios', config['n_promedios'])
+        config['colores'] = str(config['colores']).replace("'", '"')
+        self.configParser.set(seccion, 'colores', config['colores'])
+        self.configParser.set(seccion, 'umbrales', config['umbrales'])
+        self.configParser.set(seccion, 'minimo', config['minimo'])
+        self.configParser.set(seccion, 'maximo', config['maximo'])
+        with open(self.configFile, 'w') as output:
+            self.configParser.write(output)
+
     def cambiar_pagina(self):
         if self.paginaFlag:
             self.graficosContainer.grid_remove()
             self.medidoresContainer.grid()
             self.paginaButton_text.set("Gráficos")
-
         else:
             self.graficosContainer.grid()
             self.medidoresContainer.grid_remove()
@@ -232,7 +333,6 @@ class Main(tk.Frame):
         if medidor_index == "e":
             medidor_index = 1
         if self.medidores['medidor' + str(int(medidor_index) - 1) + "_flag"]:
-
             ajustes_medidores_container.grid_remove()
         else:
             ajustes_medidores_container.grid()
@@ -258,8 +358,8 @@ class Main(tk.Frame):
         colores = ajustes['colores']
         umbrales_str = ajustes['umbrales']
         umbrales = [int(numeric_string) for numeric_string in umbrales_str]
-        umbrales.insert(0, 0)
-        umbrales.append(100)
+        minimo_rango = float(ajustes['minimo'])
+        maximo_rango = float(ajustes['maximo'])
         # Obtiene el número del frame en el que está el medidor:
         # (.!frame3.!frame, .!frame3.!frame2, .!frame3.!frame3, .!frame3.!frame4, .!frame3.!frame5 ...)
         # Se obtiene la última letra. Si es "e", es el frame 0. Si no, hay que restar 1.
@@ -269,7 +369,13 @@ class Main(tk.Frame):
         self.medidores['medidor' + str(int(medidor_index) - 1)].n_promedios = n_promedios
         self.medidores['medidor' + str(int(medidor_index) - 1)].colores = colores
         self.medidores['medidor' + str(int(medidor_index) - 1)].umbrales = umbrales
+        self.medidores['medidor' + str(int(medidor_index) - 1)].minimo_rango = minimo_rango
+        self.medidores['medidor' + str(int(medidor_index) - 1)].maximo_rango = maximo_rango
+        self.medidores['medidor' + str(int(medidor_index) - 1)].set_ajustes()
         self.medidores['medidor' + str(int(medidor_index) - 1) + '_ajustes'].n_promedios = n_promedios
         self.medidores['medidor' + str(int(medidor_index) - 1) + '_ajustes'].colores = colores
         self.medidores['medidor' + str(int(medidor_index) - 1) + '_ajustes'].umbrales = umbrales
+        self.medidores['medidor' + str(int(medidor_index) - 1) + '_ajustes'].minimo = minimo_rango
+        self.medidores['medidor' + str(int(medidor_index) - 1) + '_ajustes'].maximo = maximo_rango
         self.medidores['medidor' + str(int(medidor_index) - 1) + '_ajustes'].set_ajustes()
+        self.save_config_medidor("Medidor" + str(int(medidor_index) - 1), ajustes)
