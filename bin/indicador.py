@@ -47,8 +47,9 @@ class Indicador(tk.Canvas, object):
         self.itemconfigure(self.unidadid, text=str(self.unidad), fill='black')
         self.itemconfigure(self.tituloid, text=str(self.titulo), fill='black')
 
-    def set(self, valor):
-        valor = redondear(valor)
-        self.itemconfigure(self.valorid, text=str(valor))
+    def set(self, valor, cambio_vuelta):
+        if cambio_vuelta:
+            valor = redondear(valor)
+            self.itemconfigure(self.valorid, text=str(valor))
 
 

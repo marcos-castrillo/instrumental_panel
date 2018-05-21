@@ -55,7 +55,7 @@ def redondear(numero):
     elif int(digito) == 1 and n == 0:
         # ...y la coma esta mas alla de despues del primer digito, se cogen (decimales - n - 1 - coma) cifras
         if coma > 1:
-            cifras = decimales - n - 1 - coma
+            cifras = decimales - n - coma
         # ...y la coma no esta mas alla de despues del primer digito, se cogen (decimales - n - 1) cifras
         else:
             cifras = decimales - n - 1
@@ -66,10 +66,7 @@ def redondear(numero):
     else:
         cifras = 0
     # Se redondea el numero a las cifras correspondientes
-    if cifras != 0:
-        resultado = round(numero, cifras)
-    else:
-        resultado = numero
+    resultado = round(numero, cifras)
     # Se evita el ".0" para numeros enteros
     if float(resultado).is_integer():
         resultado = int(resultado)

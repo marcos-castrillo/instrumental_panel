@@ -13,7 +13,7 @@ class Opciones(tk.Frame, object):
         intervalo = configuracion["intervalo"]
         # Elementos
         self.guardarButton = tk.Button(master, text='Guardar', width=10, command=self.save_opciones)
-        self.intervaloLabel = tk.Label(master, text="Intervalo de n vueltas")
+        self.intervaloLabel = tk.Label(master, text="Intervalo de medición")
         self.intervaloEntry = tk.Entry(master, bd=5, width=6)
         self.intervaloEntry.insert(0, intervalo)
 

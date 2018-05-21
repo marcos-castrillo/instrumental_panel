@@ -20,8 +20,9 @@ class Medidor(tk.Canvas, object):
         self.altura = int(self['height'])
         self.minimo_rango = configuracion["minimo"]
         self.maximo_rango = configuracion["maximo"]
-        self.n_promedios = configuracion["n_promedios"]
-        self.umbrales = configuracion["umbrales"]
+        self.umbrales_porc = configuracion["umbrales_porc"]
+        self.umbrales_val = configuracion["umbrales_val"]
+        self.tipo_umbral = configuracion["tipo_umbral"]
         self.colores = configuracion["colores"]
         self.n_colores = len(self.colores)
         # Se configura el medidor
@@ -29,8 +30,10 @@ class Medidor(tk.Canvas, object):
         self.graphics(self.minimo_rango, self.maximo_rango)
         self.createhand()
         self.setrange(self.minimo_rango, self.maximo_rango)
-        self.promedios_array = []
         self.valores_array = []
+        self.vuelta_actual = 0
+        self.color = 'black'
+        self.deg = 0
 
     def layoutparams(self):
         # find a square that fits in the window
@@ -115,8 +118,8 @@ class Medidor(tk.Canvas, object):
                                        , self.centrey * 2 - self.centrey*0.3
                                        , font=tkf.Font(size=-int(1.5*self.majortick)))
         self.tituloid = self.create_text(self.centrex
-                                       , self.centrey * 2  - self.centrey*0.8
-                                       , font=tkf.Font(size=-int(self.majortick)*2))
+                                       , self.centrey * 2  - self.centrey*0.7
+                                       , font=tkf.Font(size=-int(self.majortick*1.5)),width='150', justify='center')
 
         self.handid = self.create_line(self.centrex, self.centrey
                                        , self.centrex - self.handlen, self.centrey
@@ -157,48 +160,74 @@ class Medidor(tk.Canvas, object):
         self.start = start
         self.range = end - start
 
-    def set(self, valor):
+    def set(self, valor, cambio_vuelta):
+        try:
+            self.valor_min
+        except AttributeError:
+            self.valor_min = valor
+            self.valor_max = valor
         # Se llena el array de últimos valores
-        if len(self.valores_array) < self.n_promedios:
+        if len(self.valores_array) < 360:
             self.valores_array.append(valor)
         else:
             self.valores_array.pop(0)
             self.valores_array.append(valor)
-        if len(self.valores_array) > 1:
-            promedio = sum(self.valores_array) / len(self.valores_array)
+        # Se comprueban el máximo y minimo
+        if valor < self.valor_min:
+            self.valor_min = valor
+        if valor > self.valor_max:
+            self.valor_max = valor
+        if cambio_vuelta:
+            self.vuelta_actual += 1
+            promedio = redondear(sum(self.valores_array) / len(self.valores_array))
+            # Se asigna el número al medidor
+            if self.tipo_umbral == "P":
+                porcentaje = promedio/(self.minimo_rango + self.maximo_rango)
+                if porcentaje < float(self.umbrales_porc[0]):
+                    self.color = self.colores[0]
+                elif float(self.umbrales_porc[0]) <= porcentaje < float(self.umbrales_porc[1]):
+                    self.color = self.colores[1]
+                else:
+                    self.color = self.colores[2]
+            else:
+                if promedio < self.umbrales_val[0]:
+                    self.color = self.colores[0]
+                elif self.umbrales_val[0] <= promedio < self.umbrales_val[1]:
+                    self.color = self.colores[1]
+                else:
+                    self.color = self.colores[2]
+            if promedio <= self.minimo_rango:
+                self.deg = 120
+            elif promedio >= self.maximo_rango:
+                self.deg = 60
+            else:
+                self.deg = 300 * (promedio - self.start) / self.range - 240
+            self.itemconfigure(self.ovalo, outline=self.color)
+            # reposition hand
+            rad = math.radians(self.deg)
+            self.coords(self.handid, self.centrex, self.centrey, self.centrex + self.handlen * math.cos(rad),
+                        self.centrey + self.handlen * math.sin(rad))
+        if valor == self.valor_min:
+            self.itemconfigure(self.minimo, text=str(redondear(self.valor_min)), fill=self.color)
         else:
-            promedio = sum(self.valores_array)
-        promedio = redondear(promedio)
-        if len(self.promedios_array) < self.n_promedios:
-            self.promedios_array.append(promedio)
+            self.itemconfigure(self.minimo, text=str(redondear(self.valor_min)), fill='black')
+        if valor == self.valor_max:
+            self.itemconfigure(self.maximo, text=str(redondear(self.valor_max)), fill=self.color)
         else:
-            self.promedios_array.pop(0)
-            self.promedios_array.append(promedio)
-        minimo = min(self.promedios_array)
-        maximo = max(self.promedios_array)
-        # Se asigna el numero al medidor
-        for i in range(self.n_colores):
-            if self.umbrales[i] < valor <= self.umbrales[i + 1]:
-                color = self.colores[i]
-        deg = 300 * (valor - self.start) / self.range - 240
+            self.itemconfigure(self.maximo, text=str(redondear(self.valor_max)), fill='black')
 
-        # self.itemconfigure(self.descripcionid, text=str(descripcion), fill='black')
-        self.itemconfigure(self.ovalo, outline=color)
-        self.itemconfigure(self.minimo, text=str(minimo), fill=color)
-        self.itemconfigure(self.maximo, text=str(maximo), fill=color)
-        rad = math.radians(deg)
-        # reposition hand
-        self.coords(self.handid, self.centrex, self.centrey, self.centrex + self.handlen * math.cos(rad),
-                    self.centrey + self.handlen * math.sin(rad))
 
     def set_ajustes(self, ajustes):
-        self.n_promedios = int(ajustes['n_promedios'])
         self.colores = ajustes['colores']
-        umbrales_str = ajustes['umbrales']
-        self.umbrales = [int(numeric_string) for numeric_string in umbrales_str]
         self.minimo_rango = float(ajustes['minimo'])
         self.maximo_rango = float(ajustes['maximo'])
-
+        umbrales_porc_str = ajustes['umbrales_porc']
+        umbrales_porc = [float(numeric_string) for numeric_string in umbrales_porc_str]
+        self.umbrales_porc = umbrales_porc
+        umbrales_val_str = ajustes['umbrales_porc']
+        umbrales_val = [float(numeric_string) for numeric_string in umbrales_val_str]
+        self.umbrales_val = umbrales_val
+        self.tipo_umbral = ajustes['tipo_umbral']
         self.delete("all")
         self.layoutparams()
         self.graphics(self.minimo_rango, self.maximo_rango)

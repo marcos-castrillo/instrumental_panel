@@ -5,6 +5,7 @@ else:
     import tkinter as tk
 
 from tkinter.colorchooser import *
+from bin.redondeo import redondear
 
 class AjustesMedidores(tk.Frame, object):
     def __init__(self, master, main, app, configuracion, **kwargs):
@@ -13,82 +14,142 @@ class AjustesMedidores(tk.Frame, object):
         self.master.configure(bg='white', highlightbackground="black", highlightcolor="black", highlightthickness=2)
         self.main = main
         self.app = app
-        n_promedios = configuracion["n_promedios"]
-        self.umbrales = configuracion["umbrales"]
+        self.nombre = configuracion["nombre"]
+        self.unidad = configuracion["unidad"]
+        self.umbrales_porc = configuracion["umbrales_porc"]
+        self.umbrales_val = configuracion["umbrales_val"]
         self.colores = configuracion["colores"]
         self.n_colores = len(self.colores)
+        self.tipo_umbral = configuracion["tipo_umbral"]
         minimo = configuracion["minimo"]
         if minimo.is_integer():
             minimo = int(minimo)
         maximo = configuracion["maximo"]
         if maximo.is_integer():
             maximo = int(maximo)
-        self.elementos = {}
         # Elementos de los ajustes
-        self.promedioLabel = tk.Label(master, text="Promedios por vuelta", bg='white')
-        self.promedioEntry = tk.Entry(master, bd=5, width=5)
-        self.promedioEntry.insert(0, n_promedios)
-        self.minimoLabel = tk.Label(master, text="Mínimo del rango", bg='white')
+        if self.tipo_umbral == 'P':
+            self.umbrales_actual = self.umbrales_porc
+            self.unidad_actual = "%"
+        else:
+            self.umbrales_actual = self.umbrales_val
+            self.unidad_actual = " " + self.unidad
+        self.rangoLabel = tk.Label(master, text="Rango", bg='white')
         self.minimoEntry = tk.Entry(master, bd=5, width=5)
         self.minimoEntry.insert(0, minimo)
-        self.maximoLabel = tk.Label(master, text="Máximo del rango", bg='white')
         self.maximoEntry = tk.Entry(master, bd=5, width=5)
         self.maximoEntry.insert(0, maximo)
-        for i in range(self.n_colores - 1):
-            self.elementos["umbralLabel" + str(i)] = tk.Label(master, text="Umbral " + str(i+1) + " (%)", bg='white')
-            self.elementos["umbralEntry" + str(i)] = tk.Entry(master, bd=5, width="4")
-            self.elementos["umbralEntry" + str(i)].insert(0, self.umbrales[i + 1])
-        for i in range(self.n_colores):
-            self.elementos["colorLabel" + str(i)] = tk.Label(master, text="Color si: " + str(self.umbrales[i]) + "% < valor <=" + str(self.umbrales[i + 1]) + "%", bg='white')
-            self.elementos["colorEntry" + str(i)] = tk.Button(master, width="10", command = lambda i=i: self.set_color(i))
-            self.elementos["colorEntry" + str(i)].config(text=self.colores[i], bg=self.colores[i])
-        self.guardarButton = tk.Button(master, text='Guardar', width=10, command=self.save_ajustes)
+        self.umbralRadioLabel = tk.Label(master, text="Tipo de umbral", bg='white')
+        self.umbralRadio0 = tk.Radiobutton(master, text="Porcentaje", variable=self.tipo_umbral, value='P', command=self.cambiar_umbral)
+        self.umbralRadio1 = tk.Radiobutton(master, text="Valor", variable=self.tipo_umbral, value='V', command=self.cambiar_umbral)
+        self.umbralLabel = tk.Label(master, text="Umbrales", bg='white')
+        self.umbral0 = tk.StringVar()
+        self.umbralEntry0 = tk.Entry(master, textvariable=self.umbral0, bd=5, width="7")
+        self.umbralEntry0.insert(0, self.umbrales_actual[0])
+        self.umbralEntry0.bind("<FocusOut>", lambda event, arg=self.umbral0: self.guardar_umbral(event, arg))
+        self.umbral1 = tk.StringVar()
+        self.umbralEntry1 = tk.Entry(master, textvariable=self.umbral1, bd=5, width="7")
+        self.umbralEntry1.insert(0, self.umbrales_actual[1])
+        self.umbralEntry1.bind("<FocusOut>", lambda event, arg=self.umbral1: self.guardar_umbral(event, arg))
+        self.colorEntry0 = tk.Button(master, width="15", command = lambda: self.set_color(self.colorEntry0))
+        self.colorEntry0.config(font='Helvetica 9 bold',text="< " + str(self.umbrales_actual[0]) + self.unidad_actual, bg=self.colores[0])
+        self.colorEntry1 = tk.Button(master, width="15", command = lambda: self.set_color(self.colorEntry1))
+        self.colorEntry1.config(font='Helvetica 9 bold',text=">= " + str(self.umbrales_actual[0]) + self.unidad_actual + " y < " + str(self.umbrales_actual[1]) + self.unidad_actual, bg=self.colores[1])
+        self.colorEntry2 = tk.Button(master, width="15", command = lambda: self.set_color(self.colorEntry2))
+        self.colorEntry2.config(font='Helvetica 9 bold',text=">= " + str(self.umbrales_actual[1]) + self.unidad_actual, bg=self.colores[2])
+        self.aceptarButton = tk.Button(master, text='Aceptar', width=10, command= lambda: self.aceptar_ajustes('aceptar'))
+        self.aplicarButton = tk.Button(master, text='Aplicar', width=10,command= lambda: self.aceptar_ajustes('aplicar'))
         # Ajustar la posición de los elementos
-        self.promedioLabel.grid(row=0, column=0, columnspan=2)
-        self.promedioEntry.grid(row=1, column=0, columnspan=2)
-        self.minimoLabel.grid(row=2, column=0)
-        self.minimoEntry.grid(row=3, column=0)
-        self.maximoLabel.grid(row=2, column=1)
-        self.maximoEntry.grid(row=3, column=1)
-        for i in range(self.n_colores - 1):
-            self.elementos["umbralLabel" + str(i)].grid(row=2*i+4, column=0)
-            self.elementos["umbralEntry" + str(i)].grid(row=2*i+5, column=0)
-        for i in range(self.n_colores):
-            self.elementos["colorLabel" + str(i)].grid(row=2*i+4, column=1)
-            self.elementos["colorEntry" + str(i)].grid(row=2*i+5, column=1)
-        self.guardarButton.grid(row=2*i+self.n_colores+7, column=0, columnspan=2)
+        self.rangoLabel.grid(row=0, column=0)
+        self.minimoEntry.grid(row=1, column=0, sticky='w')
+        self.maximoEntry.grid(row=1, column=0, sticky='e')
+        self.umbralRadioLabel.grid(row=2, column=0)
+        self.umbralRadio0.grid(row=3, column=0)
+        self.umbralRadio1.grid(row=4, column=0)
+        self.umbralLabel.grid(row=0, column=1)
+        self.umbralEntry0.grid(row=1, column=1, sticky='w')
+        self.umbralEntry1.grid(row=1, column=1, sticky='e')
+        self.colorEntry0.grid(row=2, column=1)
+        self.colorEntry1.grid(row=3, column=1)
+        self.colorEntry2.grid(row=4, column=1)
+        self.aceptarButton.grid(row=5, column=0)
+        self.aplicarButton.grid(row=5, column=1)
 
-    def set_color(self, i):
-        color = askcolor(initialcolor = self.colores[i])
-        self.elementos["colorEntry" + str(i)].config(text=color[1], bg=color[1])
+    def set_color(self, widget):
+        button_index = str(widget)[-1:]
+        if button_index == 'n':
+            button_index = 1
+        print(button_index,widget)
+        button_index = int(button_index)-1
+        color = askcolor(initialcolor = self.colores[button_index])
+        if button_index == 0:
+            widget.config(font='Helvetica 9 bold',  text="< " + str(self.umbrales_actual[0]) + self.unidad_actual, bg=color[1])
+        elif button_index == 1:
+            widget.config(font='Helvetica 9 bold',  text=">= " + str(self.umbrales_actual[0]) + self.unidad_actual + " y < " + str(self.umbrales_actual[1]) + self.unidad_actual, bg=color[1])
+        else:
+            widget.config(font='Helvetica 9 bold',  text=">= " + str(self.umbrales_actual[1]) + self.unidad_actual, bg=color[1])
 
-    def save_ajustes(self):
-        n_promedios = self.promedioEntry.get()
-        umbrales = []
-        for i in range(self.n_colores - 1):
-            umbrales.append(float(self.elementos["umbralEntry" + str(i)].get()))
-        colores = []
-        for i in range(self.n_colores):
-            colores.append(self.elementos["colorEntry" + str(i)].cget('text'))
-        umbrales.insert(0,0)
-        umbrales.append(100)
+    def guardar_umbral(self, evento, umbral):
+        umbral_index = str(evento.widget)[-1:]
+        if umbral_index == '3':
+            umbral_index = 0
+        elif umbral_index == '4':
+            umbral_index = 1
+        if self.tipo_umbral == 'P':
+            self.umbrales_porc[umbral_index] = redondear(float(umbral.get()))
+        else:
+            self.umbrales_val[umbral_index] = redondear(float(umbral.get()))
+
+    def cambiar_umbral(self):
+        self.minimoEntry.focus_set()
+        if self.tipo_umbral == 'V':
+            self.tipo_umbral = 'P'
+            self.umbrales_actual = self.umbrales_porc
+            self.unidad_actual = "%"
+        else:
+            self.tipo_umbral = 'V'
+            self.umbrales_actual = self.umbrales_val
+            self.unidad_actual = " " + self.unidad
+        self.umbralEntry0.delete(0,'end')
+        self.umbralEntry0.insert(0, self.umbrales_actual[0])
+        self.umbralEntry1.delete(0,'end')
+        self.umbralEntry1.insert(0, self.umbrales_actual[1])
+        self.colorEntry0.config(text="< " + str(self.umbrales_actual[0]) + self.unidad_actual, bg=self.colores[0])
+        self.colorEntry1.config(text=">= " + str(self.umbrales_actual[0]) + self.unidad_actual + " y < " + str(self.umbrales_actual[1]) + self.unidad_actual, bg=self.colores[1])
+        self.colorEntry2.config(text=">= " + str(self.umbrales_actual[1]) + self.unidad_actual, bg=self.colores[2])
+
+    def aceptar_ajustes(self, tipo_accion):
+        if self.tipo_umbral == 'P':
+            umbrales_porc = [float(self.umbralEntry0.get())]
+            umbrales_porc.append(float(self.umbralEntry1.get()))
+            umbrales_val = self.umbrales_val
+        else:
+            umbrales_val = [float(self.umbralEntry0.get())]
+            umbrales_val.append(float(self.umbralEntry1.get()))
+            umbrales_porc = self.umbrales_porc
+        colores = [self.colorEntry0.cget('background')]
+        colores.append(self.colorEntry1.cget('background'))
+        colores.append(self.colorEntry2.cget('background'))
         minimo = self.minimoEntry.get()
         maximo = self.maximoEntry.get()
         ajustes = {
-            "n_promedios": n_promedios,
-            "umbrales": umbrales,
+            "umbrales_porc": umbrales_porc,
+            "umbrales_val": umbrales_val,
+            "tipo_umbral": self.tipo_umbral,
             "colores": colores,
             "minimo": minimo,
             "maximo": maximo
         }
-        self.main.save_ajustes_medidor(self, ajustes)
+        self.main.save_ajustes_medidor(self, ajustes, tipo_accion)
 
     def set_ajustes(self, ajustes):
-        self.n_promedios = int(ajustes['n_promedios'])
         self.colores = ajustes['colores']
-        umbrales_str = ajustes['umbrales']
-        self.umbrales = [int(numeric_string) for numeric_string in umbrales_str]
+        umbrales_porc_str = ajustes['umbrales_porc']
+        umbrales_val_str = ajustes['umbrales_val']
+        self.umbrales_porc = [float(numeric_string) for numeric_string in umbrales_porc_str]
+        self.umbrales_val = [float(numeric_string) for numeric_string in umbrales_val_str]
         self.minimo_rango = float(ajustes['minimo'])
         self.maximo_rango = float(ajustes['maximo'])
-        for i in range(self.n_colores):
-            self.elementos["colorLabel" + str(i)].configure(text="Color si: " + str(self.umbrales[i]) + "% < valor <=" + str(self.umbrales[i + 1]) + "%", bg='white')
+        self.colorLabel0 = tk.Label(self.master, text="Color si: " + self.nombre + " < " + str(self.umbrales_actual[0]) + self.unidad_actual, bg='white')
+        self.colorLabel1 = tk.Label(self.master, text="Color si: " + str(self.umbrales_actual[0]) + self.unidad_actual + " < " + self.nombre + " <= " + str(self.umbrales_actual[1]) + self.unidad_actual, bg='white')
+        self.colorLabel2 = tk.Label(self.master, text="Color si: " + str(self.umbrales_actual[1]) + self.unidad_actual + " <= " + self.nombre, bg='white')
