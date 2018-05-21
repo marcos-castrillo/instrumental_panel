@@ -14,6 +14,7 @@ class App(tk.Tk):
         # Inicializar variables
         self.job = None
         self.intervalo = 1  #Borrar
+        self.reiniciar = False
         self.vuelta = 0
         self.diente = 0
         self.tiempo = 0
@@ -45,11 +46,13 @@ class App(tk.Tk):
         serial = ""
         mensaje = [0]
         valores = {"vuelta": self.vuelta, "diente": self.diente, "tiempo": self.tiempo, "presion": self.presion, "par": self.par}
-        self.main.set(valores)
+        self.main.set(valores, self.reiniciar)
+        self.reiniciar = False
 
     def leer_datos(self, fila):
         if fila == 0:
             self.stop_set_datos()
+            self.reiniciar = True
         datos = self.csv[fila]
         self.vuelta = int(datos[0])
         self.diente = int(datos[1])
@@ -150,6 +153,9 @@ class App(tk.Tk):
     def play(self):
         self.cambiar_estado('simular')
         self.simular_datos(0)
+
+    def reset(self):
+        self.reiniciar = True
 
     def cambiar_estado(self, estado):
         if estado == 'simular':

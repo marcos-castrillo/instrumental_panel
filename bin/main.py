@@ -74,26 +74,30 @@ class Main(tk.Frame):
         self.indicadoresContainer.grid(column=0, row=1, sticky="S", columnspan=2)
         # Botones
         self.paginaButton_text = tk.StringVar()
-        self.salirButton = tk.Button(self.menuContainer, text='Salir', bg='white', font=tkf.Font(size=20), command=self.master.destroy)
         self.paginaButton = tk.Button(self.menuContainer, textvariable=self.paginaButton_text, bg='white', font=tkf.Font(size=20),
                                       command=lambda: self.cambiar_pagina())
         self.ajustesButton = tk.Button(self.menuContainer, text="Ajustes", bg='white', font=tkf.Font(size=20),
                                        command=lambda: self.desplegar_opciones())
+        self.salirButton = tk.Button(self.menuContainer, text='Salir', bg='white', font=tkf.Font(size=20),
+                                     command=self.master.destroy)
         stop = tk.PhotoImage(file='images/stop.png')
         play = tk.PhotoImage(file='images/play.png')
         record = tk.PhotoImage(file='images/record.png')
         pause = tk.PhotoImage(file='images/pause.png')
         open = tk.PhotoImage(file='images/open.png')
-        self.stopButton = tk.Button(self.controlContainer, bg='white', text='stop', image = stop, command=self.master.stop)
+        reset = tk.PhotoImage(file='images/reset.png')
+        self.stopButton = tk.Button(self.controlContainer, bg='white', text='Parar y guardar', image = stop, command=self.master.stop,compound="top")
         self.stopButton.image = stop
-        self.playButton = tk.Button(self.controlContainer, bg='white', text='stop', image = play, command=self.master.play)
+        self.playButton = tk.Button(self.controlContainer, bg='white', text='Reanudar', image = play, command=self.master.play,compound="top")
         self.playButton.image = play
-        self.pauseButton = tk.Button(self.controlContainer, bg='white', text='pause', image = pause, command=self.master.pause)
+        self.pauseButton = tk.Button(self.controlContainer, bg='white', text='Pausar', image = pause, command=self.master.pause,compound="top")
         self.pauseButton.image = pause
-        self.recordButton = tk.Button(self.controlContainer, bg='white', text='stop', image = record, command=self.master.record)
+        self.recordButton = tk.Button(self.controlContainer, bg='white', text='Grabar', image = record, command=self.master.record,compound="top")
         self.recordButton.image = record
-        self.openButton = tk.Button(self.controlContainer, bg='white', text='open', image = open, command=self.master.open)
+        self.openButton = tk.Button(self.controlContainer, bg='white', text='Abrir archivo', image = open, command=self.master.open,compound="top")
         self.openButton.image = open
+        self.resetButton = tk.Button(self.controlContainer, bg='white', text='Reiniciar datos', image = reset, command=self.master.reset,compound="top")
+        self.resetButton.image = reset
         # Ajustar el lugar de los botones
         self.paginaButton.grid(row=1, column=2, padx=5, pady=5)
         self.ajustesButton.grid(row=2, column=2, padx=5, pady=5)
@@ -105,7 +109,8 @@ class Main(tk.Frame):
         self.pauseButton.grid(row=0, column=1, pady=5)
         self.playButton.grid_remove()
         self.recordButton.grid(row=0, column=2, pady=5)
-        self.openButton.grid(row=0, column=3, pady=5)
+        self.openButton.grid(row=1, column=0, pady=5)
+        self.resetButton.grid(row=1, column=1, pady=5)
 
     def crear_medidores(self):
         # Inicializar las variables
@@ -454,7 +459,7 @@ class Main(tk.Frame):
             ajustes_medidores_container.grid()
         self.medidores['medidor' + str(int(medidor_index) - 1) + "_flag"] = not self.medidores['medidor' + str(int(medidor_index) - 1) + "_flag"]
 
-    def set(self, valores):
+    def set(self, valores, reiniciar):
         """Actualizar los valores en la UI"""
         self.cambio_vuelta = False
         vuelta = valores["vuelta"]
@@ -462,9 +467,6 @@ class Main(tk.Frame):
         periodo = valores["tiempo"]
         presion = valores["presion"]
         par = valores["par"]
-        if vuelta > self.vuelta_actual or (vuelta == 0 and diente == 1):
-            self.vuelta_actual += 1
-            self.cambio_vuelta = True
         # Fórmulas matemáticas
         frecuencia_diente = 1/periodo
         frecuencia_vuelta = frecuencia_diente/360
@@ -476,6 +478,18 @@ class Main(tk.Frame):
         # Medidor2: Velocidad angular
         # Medidor3: Potencia
         # Medidor4: Ángulo de cigüeñal
+        if reiniciar:
+            self.medidores['medidor0'].valor_min = presion
+            self.medidores['medidor0'].valor_max = presion
+            self.medidores['medidor1'].valor_min = par
+            self.medidores['medidor1'].valor_max = par
+            self.medidores['medidor2'].valor_min = vel_angular
+            self.medidores['medidor2'].valor_max = vel_angular
+            self.medidores['medidor3'].valor_min = potencia
+            self.medidores['medidor3'].valor_max = potencia
+        if (vuelta > self.vuelta_actual) or (vuelta == 0 and diente == 1):
+            self.vuelta_actual += 1
+            self.cambio_vuelta = True
         self.medidores['medidor0'].set(presion, self.cambio_vuelta)
         self.medidores['medidor1'].set(par, self.cambio_vuelta)
         self.medidores['medidor2'].set(vel_angular, self.cambio_vuelta)
