@@ -31,7 +31,6 @@ class Main(tk.Frame):
         # Configurar la aplicación
         self.crear_elementos()
         # Estado inicial de las variables
-        self.paginaButton_text.set("Gráficos")
         self.paginaFlag = False
         self.opcionesFlag = False
         self.intervalo = self.master.intervalo
@@ -60,7 +59,6 @@ class Main(tk.Frame):
         self.master.grid_rowconfigure(1, weight=1)
         # Resto de frames
         self.menuContainer = tk.Frame(self.master)
-        self.controlContainer = tk.Frame(self.master)
         self.opcionesContainer = tk.Frame(self.master)
         self.medidoresContainer = tk.Frame(self.master)
         self.graficosContainer = tk.Frame(self.master)
@@ -69,40 +67,40 @@ class Main(tk.Frame):
         self.opcionesContainer.grid(column=0, row=0, rowspan=2, sticky="NW")
         self.medidoresContainer.grid(column=0, row=0)
         self.graficosContainer.grid(column=0, row=0)
-        self.menuContainer.grid(column=1, row=0)
-        self.controlContainer.grid(column=1, row=0, sticky="N")
+        self.menuContainer.grid(column=1, row=0, sticky="N")
         self.indicadoresContainer.grid(column=0, row=1, sticky="S", columnspan=2)
         # Botones
-        self.paginaButton_text = tk.StringVar()
-        self.paginaButton = tk.Button(self.menuContainer, textvariable=self.paginaButton_text, bg='white', font=tkf.Font(size=20),
-                                      command=lambda: self.cambiar_pagina())
-        self.ajustesButton = tk.Button(self.menuContainer, text="Ajustes", bg='white', font=tkf.Font(size=20),
-                                       command=lambda: self.desplegar_opciones())
-        self.salirButton = tk.Button(self.menuContainer, text='Salir', bg='white', font=tkf.Font(size=20),
-                                     command=self.master.destroy)
         stop = tk.PhotoImage(file='images/stop.png')
         play = tk.PhotoImage(file='images/play.png')
         record = tk.PhotoImage(file='images/record.png')
         pause = tk.PhotoImage(file='images/pause.png')
         open = tk.PhotoImage(file='images/open.png')
         reset = tk.PhotoImage(file='images/reset.png')
-        self.stopButton = tk.Button(self.controlContainer, bg='white', text='Parar y guardar', image = stop, command=self.master.stop,compound="top")
+        ajustes = tk.PhotoImage(file='images/opciones.png')
+        grafico = tk.PhotoImage(file='images/chart.png')
+        medidor = tk.PhotoImage(file='images/gauge.png')
+        salir = tk.PhotoImage(file='images/exit.png')
+        self.paginaMedidoresButton = tk.Button(self.menuContainer, bg='white', text='Medidores', image=medidor, command=self.cambiar_pagina, compound="top")
+        self.paginaMedidoresButton.image = medidor
+        self.paginaGraficosButton = tk.Button(self.menuContainer, bg='white', text='Gráficos', image=grafico, command=self.cambiar_pagina, compound="top")
+        self.paginaGraficosButton.image = grafico
+        self.ajustesButton = tk.Button(self.menuContainer, bg='white', text='Ajustes', image=ajustes, command=self.desplegar_opciones, compound="top")
+        self.ajustesButton.image = ajustes
+        self.salirButton = tk.Button(self.menuContainer, bg='white', text='Salir', image=salir, command=self.master.destroy, compound="top")
+        self.salirButton.image = salir
+        self.stopButton = tk.Button(self.menuContainer, bg='white', text='Parar y guardar', image = stop, command=self.master.stop,compound="top")
         self.stopButton.image = stop
-        self.playButton = tk.Button(self.controlContainer, bg='white', text='Reanudar', image = play, command=self.master.play,compound="top")
+        self.playButton = tk.Button(self.menuContainer, bg='white', text='Reanudar', image = play, command=self.master.play,compound="top")
         self.playButton.image = play
-        self.pauseButton = tk.Button(self.controlContainer, bg='white', text='Pausar', image = pause, command=self.master.pause,compound="top")
+        self.pauseButton = tk.Button(self.menuContainer, bg='white', text='Pausar', image = pause, command=self.master.pause,compound="top")
         self.pauseButton.image = pause
-        self.recordButton = tk.Button(self.controlContainer, bg='white', text='Grabar', image = record, command=self.master.record,compound="top")
+        self.recordButton = tk.Button(self.menuContainer, bg='white', text='Grabar', image = record, command=self.master.record,compound="top")
         self.recordButton.image = record
-        self.openButton = tk.Button(self.controlContainer, bg='white', text='Abrir archivo', image = open, command=self.master.open,compound="top")
+        self.openButton = tk.Button(self.menuContainer, bg='white', text='Abrir archivo', image = open, command=self.master.open,compound="top")
         self.openButton.image = open
-        self.resetButton = tk.Button(self.controlContainer, bg='white', text='Reiniciar datos', image = reset, command=self.master.reset,compound="top")
+        self.resetButton = tk.Button(self.menuContainer, bg='white', text='Reiniciar datos', image = reset, command=self.master.reset,compound="top")
         self.resetButton.image = reset
         # Ajustar el lugar de los botones
-        self.paginaButton.grid(row=1, column=2, padx=5, pady=5)
-        self.ajustesButton.grid(row=2, column=2, padx=5, pady=5)
-        self.salirButton.grid(row=3, column=2, padx=5, pady=5)
-        # Botones de control
         self.stopButton.grid(row=0, column=0, pady=5)
         self.stopButton.configure(state='disabled')
         self.playButton.grid(row=0, column=1, pady=5)
@@ -111,6 +109,11 @@ class Main(tk.Frame):
         self.recordButton.grid(row=0, column=2, pady=5)
         self.openButton.grid(row=1, column=0, pady=5)
         self.resetButton.grid(row=1, column=1, pady=5)
+        self.paginaMedidoresButton.grid(row=2, column=0, pady=5)
+        self.paginaGraficosButton.grid(row=2, column=0, pady=5)
+        self.paginaMedidoresButton.grid_remove()
+        self.ajustesButton.grid(row=2, column=1, pady=5)
+        self.salirButton.grid(row=2, column=2, pady=5)
 
     def crear_medidores(self):
         # Inicializar las variables
@@ -430,11 +433,13 @@ class Main(tk.Frame):
         if self.paginaFlag:
             self.graficosContainer.grid_remove()
             self.medidoresContainer.grid()
-            self.paginaButton_text.set("Gráficos")
+            self.paginaGraficosButton.grid()
+            self.paginaMedidoresButton.grid_remove()
         else:
             self.graficosContainer.grid()
             self.medidoresContainer.grid_remove()
-            self.paginaButton_text.set("Medidores")
+            self.paginaGraficosButton.grid_remove()
+            self.paginaMedidoresButton.grid()
         self.paginaFlag = not self.paginaFlag
 
     def desplegar_opciones(self):
