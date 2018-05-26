@@ -1,3 +1,4 @@
+# coding=utf-8
 import sys
 if sys.version_info[0] < 3:
     import Tkinter as tk
@@ -5,7 +6,7 @@ else:
     import tkinter as tk
 import tkinter.font as tkf
 
-from bin.redondeo import redondear
+from redondeo import redondear
 
 
 # Clase Indicador: Engloba cada uno de los indicadores
@@ -49,7 +50,7 @@ class Indicador(tk.Canvas, object):
 
     def set(self, valor, cambio_vuelta):
         if cambio_vuelta:
-            valor = redondear(valor)
+            valor = redondear(valor, 0)
             self.itemconfigure(self.valorid, text=str(valor))
 
 

@@ -1,11 +1,12 @@
+# coding=utf-8
 # Función para redondear el valor pasado por argumento
-def redondear(numero):
+def redondear(numero, full_scale):
     # Se convierte el numero (argumento) a cadena de texto
     numero_s = str(numero)
     # Se halla su longitud
     longitud = len(numero_s)
-    # Si el numero es 0, se devuelve directamente
-    if numero == 0:
+    # Si el numero es menor que 0.1%, se devuelve 0
+    if numero <= 0.001 * full_scale:
         return 0
     # Se encuentra la posición de la coma, si hay. Si no, coma = -1
     coma = numero_s.find('.')

@@ -1,3 +1,4 @@
+# coding=utf-8
 import sys
 if sys.version_info[0] < 3:
     import Tkinter as tk
@@ -5,7 +6,7 @@ else:
     import tkinter as tk
 
 from tkinter.colorchooser import *
-from bin.redondeo import redondear
+from redondeo import redondear
 
 class AjustesMedidores(tk.Frame, object):
     def __init__(self, master, main, app, configuracion, **kwargs):
@@ -96,9 +97,9 @@ class AjustesMedidores(tk.Frame, object):
         elif umbral_index == '4':
             umbral_index = 1
         if self.tipo_umbral == 'P':
-            self.umbrales_porc[umbral_index] = redondear(float(umbral.get()))
+            self.umbrales_porc[umbral_index] = redondear(float(umbral.get()),0)
         else:
-            self.umbrales_val[umbral_index] = redondear(float(umbral.get()))
+            self.umbrales_val[umbral_index] = redondear(float(umbral.get()),0)
 
     def cambiar_umbral(self):
         self.minimoEntry.focus_set()

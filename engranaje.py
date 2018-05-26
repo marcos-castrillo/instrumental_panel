@@ -1,3 +1,4 @@
+# coding=utf-8
 import sys
 if sys.version_info[0] < 3:
     import Tkinter as tk
@@ -6,7 +7,6 @@ else:
 import tkinter.font as tkf
 
 import math
-from bin.redondeo import redondear
 
 # Clase Medidor: Engloba cada uno de los medidores
 class Engranaje(tk.Canvas, object):

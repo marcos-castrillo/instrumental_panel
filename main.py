@@ -1,3 +1,4 @@
+# coding=utf-8
 import sys
 if sys.version_info[0] < 3:
     import Tkinter as tk
@@ -8,18 +9,19 @@ else:
 
 from tkinter import filedialog
 
-import bin.medidor as medidor
-import bin.engranaje as engranaje
-import bin.indicador as indicador
-import bin.grafico as grafico
-import bin.opciones as opciones
-import bin.ajustes_medidores as ajustes_medidores
+import medidor as medidor
+import engranaje as engranaje
+import indicador as indicador
+import grafico as grafico
+import grafico_live as grafico_live
+import opciones as opciones
+import ajustes_medidores as ajustes_medidores
 
 import math
 import json
 import configparser
 import os.path
-import csv
+import datetime as datetime
 
 class Main(tk.Frame):
     def __init__(self, master):
@@ -36,6 +38,7 @@ class Main(tk.Frame):
         self.intervalo = self.master.intervalo
         self.vuelta = 0
         self.diente = 0
+        self.tiempo = 0
         self.vuelta_actual = 0
         self.cambio_vuelta = False
         # Leer el archivo de configuración
@@ -56,7 +59,7 @@ class Main(tk.Frame):
         self.altura_total = self.master.winfo_screenheight()
         # Frame master
         self.master.grid_columnconfigure(0, weight=1)
-        self.master.grid_rowconfigure(1, weight=1)
+        self.master.grid_rowconfigure(0, weight=1)
         # Resto de frames
         self.menuContainer = tk.Frame(self.master)
         self.opcionesContainer = tk.Frame(self.master)
@@ -67,7 +70,7 @@ class Main(tk.Frame):
         self.opcionesContainer.grid(column=0, row=0, rowspan=2, sticky="NW")
         self.medidoresContainer.grid(column=0, row=0)
         self.graficosContainer.grid(column=0, row=0)
-        self.menuContainer.grid(column=1, row=0, sticky="N")
+        self.menuContainer.grid(column=1, row=0, sticky="N", padx=20)
         self.indicadoresContainer.grid(column=0, row=1, sticky="S", columnspan=2)
         # Botones
         stop = tk.PhotoImage(file='images/stop.png')
@@ -80,32 +83,33 @@ class Main(tk.Frame):
         grafico = tk.PhotoImage(file='images/chart.png')
         medidor = tk.PhotoImage(file='images/gauge.png')
         salir = tk.PhotoImage(file='images/exit.png')
-        self.paginaMedidoresButton = tk.Button(self.menuContainer, bg='white', text='Medidores', image=medidor, command=self.cambiar_pagina, compound="top")
-        self.paginaMedidoresButton.image = medidor
-        self.paginaGraficosButton = tk.Button(self.menuContainer, bg='white', text='Gráficos', image=grafico, command=self.cambiar_pagina, compound="top")
-        self.paginaGraficosButton.image = grafico
-        self.ajustesButton = tk.Button(self.menuContainer, bg='white', text='Ajustes', image=ajustes, command=self.desplegar_opciones, compound="top")
-        self.ajustesButton.image = ajustes
-        self.salirButton = tk.Button(self.menuContainer, bg='white', text='Salir', image=salir, command=self.master.destroy, compound="top")
-        self.salirButton.image = salir
-        self.stopButton = tk.Button(self.menuContainer, bg='white', text='Parar y guardar', image = stop, command=self.master.stop,compound="top")
+        self.stopButton = tk.Button(self.menuContainer, bg='white', text='Parar', font='Helvetica 10 bold', image = stop, command=self.master.stop,compound="top")
         self.stopButton.image = stop
-        self.playButton = tk.Button(self.menuContainer, bg='white', text='Reanudar', image = play, command=self.master.play,compound="top")
+        self.playButton = tk.Button(self.menuContainer, bg='white', text='Reanudar', font='Helvetica 10 bold', image = play, command=self.master.play,compound="top")
         self.playButton.image = play
-        self.pauseButton = tk.Button(self.menuContainer, bg='white', text='Pausar', image = pause, command=self.master.pause,compound="top")
+        self.pauseButton = tk.Button(self.menuContainer, bg='white', text='Pausar', font='Helvetica 10 bold', image = pause, command=self.master.pause,compound="top")
         self.pauseButton.image = pause
-        self.recordButton = tk.Button(self.menuContainer, bg='white', text='Grabar', image = record, command=self.master.record,compound="top")
+        self.recordButton = tk.Button(self.menuContainer, bg='white', text='Grabar', font='Helvetica 10 bold', image = record, command=self.master.record,compound="top")
         self.recordButton.image = record
-        self.openButton = tk.Button(self.menuContainer, bg='white', text='Abrir archivo', image = open, command=self.master.open,compound="top")
+        self.openButton = tk.Button(self.menuContainer, bg='white', text='Abrir', font='Helvetica 10 bold', image = open, command=self.master.open,compound="top")
         self.openButton.image = open
-        self.resetButton = tk.Button(self.menuContainer, bg='white', text='Reiniciar datos', image = reset, command=self.master.reset,compound="top")
+        self.resetButton = tk.Button(self.menuContainer, bg='white', text='Borrar datos', font='Helvetica 10 bold', image = reset, command=self.master.reset,compound="top")
         self.resetButton.image = reset
+        self.paginaMedidoresButton = tk.Button(self.menuContainer, bg='white', text='Medidores', font='Helvetica 10 bold', image=medidor, command=self.cambiar_pagina, compound="top")
+        self.paginaMedidoresButton.image = medidor
+        self.paginaGraficosButton = tk.Button(self.menuContainer, bg='white', text='Gráficos', font='Helvetica 10 bold', image=grafico, command=self.cambiar_pagina, compound="top")
+        self.paginaGraficosButton.image = grafico
+        self.ajustesButton = tk.Button(self.menuContainer, bg='white', text='Ajustes', font='Helvetica 10 bold', image=ajustes, command=self.desplegar_opciones, compound="top")
+        self.ajustesButton.image = ajustes
+        self.salirButton = tk.Button(self.menuContainer, bg='white', text='Salir', font='Helvetica 10 bold', image=salir, command=self.master.destroy, compound="top")
+        self.salirButton.image = salir
+        self.motorLabel = tk.Label(self.menuContainer, font='Helvetica 18 bold', bg='white', borderwidth=2, relief="solid", padx=10)
         # Ajustar el lugar de los botones
         self.stopButton.grid(row=0, column=0, pady=5)
         self.stopButton.configure(state='disabled')
         self.playButton.grid(row=0, column=1, pady=5)
-        self.pauseButton.grid(row=0, column=1, pady=5)
         self.playButton.grid_remove()
+        self.pauseButton.grid(row=0, column=1, pady=5)
         self.recordButton.grid(row=0, column=2, pady=5)
         self.openButton.grid(row=1, column=0, pady=5)
         self.resetButton.grid(row=1, column=1, pady=5)
@@ -114,7 +118,7 @@ class Main(tk.Frame):
         self.paginaMedidoresButton.grid_remove()
         self.ajustesButton.grid(row=2, column=1, pady=5)
         self.salirButton.grid(row=2, column=2, pady=5)
-
+        self.motorLabel.grid(row=3, column=0, columnspan=3, pady=5)
     def crear_medidores(self):
         # Inicializar las variables
         self.image_medidor_button = tk.PhotoImage(file="images/ajustes.png")
@@ -311,18 +315,18 @@ class Main(tk.Frame):
             "nombreX": self.configParser.get('Grafico2', 'nombreX'),
             "nombreY": self.configParser.get('Grafico2', 'nombreY')
         }
-
-        ancho_grafico = self.ancho_total / self.n_graficos
-        altura_grafico = self.altura_total / self.n_graficos*2.5
+        # 1 inch = 96 pixels
+        ancho_grafico = self.ancho_total / self.n_graficos/90
+        altura_grafico = self.altura_total / self.n_graficos/45
 
         # Gráficos
-        grafico0 = grafico.Grafico(self.graficosContainer, height=altura_grafico, width=ancho_grafico, configuracion=grafico0_conf)
+        grafico0 = grafico_live.GraficoLive(self.graficosContainer, height=altura_grafico, width=ancho_grafico, configuracion=grafico0_conf)
         grafico1 = grafico.Grafico(self.graficosContainer, height=altura_grafico, width=ancho_grafico, configuracion=grafico1_conf)
         grafico2 = grafico.Grafico(self.graficosContainer, height=altura_grafico, width=ancho_grafico, configuracion=grafico2_conf)
         # Ajustar el lugar de cada gráfico
-        grafico0.grid(row=0, column=3, columnspan=2, padx=20, pady=10)
-        grafico1.grid(row=1, column=2, columnspan=2, padx=20, pady=10)
-        grafico2.grid(row=1, column=4, columnspan=2, padx=20, pady=10)
+        grafico0.grid(row=0, column=2, columnspan=2, padx=10, pady=10)
+        grafico1.grid(row=1, column=2, pady=10)
+        grafico2.grid(row=1, column=3, pady=10)
         self.graficosContainer.grid_remove()
         # Crear el diccionario de indicadores
         self.graficos = {
@@ -470,6 +474,9 @@ class Main(tk.Frame):
         vuelta = valores["vuelta"]
         diente = valores["diente"]
         periodo = valores["tiempo"]
+        self.tiempo += periodo
+        self.motorLabel.config(text=str(datetime.timedelta(milliseconds=self.tiempo)))
+
         presion = valores["presion"]
         par = valores["par"]
         # Fórmulas matemáticas
@@ -484,6 +491,7 @@ class Main(tk.Frame):
         # Medidor3: Potencia
         # Medidor4: Ángulo de cigüeñal
         if reiniciar:
+            self.tiempo = periodo
             self.medidores['medidor0'].valor_min = presion
             self.medidores['medidor0'].valor_max = presion
             self.medidores['medidor1'].valor_min = par

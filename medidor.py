@@ -1,3 +1,4 @@
+# coding=utf-8
 import sys
 if sys.version_info[0] < 3:
     import Tkinter as tk
@@ -6,7 +7,7 @@ else:
 import tkinter.font as tkf
 
 import math
-from bin.redondeo import redondear
+from redondeo import redondear
 
 # Clase Medidor: Engloba cada uno de los medidores
 class Medidor(tk.Canvas, object):
@@ -101,16 +102,16 @@ class Medidor(tk.Canvas, object):
             self.createtick(deg, self.majortick, rango_min, rango_max)
 
     def createhand(self):
-        self.maximo = self.create_text(self.centrex * 1.7
+        self.maximo = self.create_text(self.centrex * 1.5
                                        , self.centrey * 2.1
-                                       , font=tkf.Font(size=-int(3 * self.majortick)))
-        self.maximoid = self.create_text(self.centrex * 1.75
+                                       , font=tkf.Font(size=-int(2.5 * self.majortick)))
+        self.maximoid = self.create_text(self.centrex * 1.5
                                        , self.centrey * 1.9
                                        , font=tkf.Font(size=int(self.majortick)))
-        self.minimo = self.create_text(self.centrex / 2.5
+        self.minimo = self.create_text(self.centrex / 2
                                         , self.centrey * 2.1
-                                        , font=tkf.Font(size=-int(3 * self.majortick)))
-        self.minimoid = self.create_text(self.centrex / 3
+                                        , font=tkf.Font(size=-int(2.5 * self.majortick)))
+        self.minimoid = self.create_text(self.centrex / 2.5
                                         , self.centrey * 1.9
                                         , font=tkf.Font(size=int(self.majortick)))
 
@@ -146,7 +147,7 @@ class Medidor(tk.Canvas, object):
         if length == self.majortick:
             canvas_id = self.create_text(self.centrex - 0.73 * radius * cos, self.centrey - 0.73 * radius * sin)
             numero = rango_min + (angle + 60) / 30 * (rango_max - rango_min) / 10
-            numero2 = redondear(numero)
+            numero2 = redondear(numero, self.maximo_rango)
             if numero.is_integer():
                 numero = int(numero)
             self.itemconfig(canvas_id, text=str(numero), font=tkf.Font(size=int(1.5 * self.minortick)))
@@ -179,7 +180,7 @@ class Medidor(tk.Canvas, object):
             self.valor_max = valor
         if cambio_vuelta:
             self.vuelta_actual += 1
-            promedio = redondear(sum(self.valores_array) / len(self.valores_array))
+            promedio = redondear(sum(self.valores_array) / len(self.valores_array), self.maximo_rango)
             # Se asigna el número al medidor
             if self.tipo_umbral == "P":
                 porcentaje = promedio/(self.minimo_rango + self.maximo_rango)
@@ -208,13 +209,13 @@ class Medidor(tk.Canvas, object):
             self.coords(self.handid, self.centrex, self.centrey, self.centrex + self.handlen * math.cos(rad),
                         self.centrey + self.handlen * math.sin(rad))
         if valor == self.valor_min:
-            self.itemconfigure(self.minimo, text=str(redondear(self.valor_min)), fill=self.color)
+            self.itemconfigure(self.minimo, text=str(redondear(self.valor_min, self.maximo_rango)), fill=self.color)
         else:
-            self.itemconfigure(self.minimo, text=str(redondear(self.valor_min)), fill='black')
+            self.itemconfigure(self.minimo, text=str(redondear(self.valor_min, self.maximo_rango)), fill='black')
         if valor == self.valor_max:
-            self.itemconfigure(self.maximo, text=str(redondear(self.valor_max)), fill=self.color)
+            self.itemconfigure(self.maximo, text=str(redondear(self.valor_max, self.maximo_rango)), fill=self.color)
         else:
-            self.itemconfigure(self.maximo, text=str(redondear(self.valor_max)), fill='black')
+            self.itemconfigure(self.maximo, text=str(redondear(self.valor_max, self.maximo_rango)), fill='black')
 
 
     def set_ajustes(self, ajustes):

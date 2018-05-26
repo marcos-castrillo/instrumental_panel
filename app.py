@@ -1,13 +1,15 @@
+# coding=utf-8
 import sys
 if sys.version_info[0] < 3:
     import Tkinter as tk
 else:
     import tkinter as tk
 
-from bin.main import Main
-
+from main import Main
+import datetime as datetime
 import random
 
+LARGE_FONT = ("VERDANA", 12)
 class App(tk.Tk):
     def __init__(self):
         tk.Tk.__init__(self)
@@ -56,7 +58,7 @@ class App(tk.Tk):
         datos = self.csv[fila]
         self.vuelta = int(datos[0])
         self.diente = int(datos[1])
-        self.tiempo = float(datos[2])*1000
+        self.tiempo = float(datos[2])
         self.presion = float(datos[3])
         self.par = float(datos[4])
         self.fila = fila + 1
@@ -78,7 +80,7 @@ class App(tk.Tk):
         if (self.diente == 360):
             self.vuelta += 1
         # Tiempo
-        self.tiempo += random.uniform(0.00006, 0.0001)
+        self.tiempo = random.uniform(0.00006, 0.0001)
         # Presión
         if self.presion < 40:
             self.presion += 0.5
@@ -156,6 +158,7 @@ class App(tk.Tk):
 
     def reset(self):
         self.reiniciar = True
+        self.main.motorLabel.config(text=str(datetime.timedelta(milliseconds=0)))
 
     def cambiar_estado(self, estado):
         if estado == 'simular':
