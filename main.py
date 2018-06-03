@@ -35,7 +35,6 @@ class Main(tk.Frame):
         # Estado inicial de las variables
         self.paginaFlag = False
         self.opcionesFlag = False
-        self.intervalo = self.master.intervalo
         self.vuelta = 0
         self.diente = 0
         self.tiempo = 0
@@ -103,7 +102,8 @@ class Main(tk.Frame):
         self.ajustesButton.image = ajustes
         self.salirButton = tk.Button(self.menuContainer, bg='white', text='Salir', font='Helvetica 10 bold', image=salir, command=self.master.destroy, compound="top")
         self.salirButton.image = salir
-        self.motorLabel = tk.Label(self.menuContainer, font='Helvetica 18 bold', bg='white', borderwidth=2, relief="solid", padx=10)
+        self.estadoLabel = tk.Label(self.menuContainer, font='Helvetica 18 bold', bg='white', borderwidth=2, relief="solid", padx=10)
+        self.timeLabel = tk.Label(self.menuContainer, font='Helvetica 18 bold', bg='white', borderwidth=2, relief="solid", padx=10)
         # Ajustar el lugar de los botones
         self.stopButton.grid(row=0, column=0, pady=5)
         self.stopButton.configure(state='disabled')
@@ -118,7 +118,9 @@ class Main(tk.Frame):
         self.paginaMedidoresButton.grid_remove()
         self.ajustesButton.grid(row=2, column=1, pady=5)
         self.salirButton.grid(row=2, column=2, pady=5)
-        self.motorLabel.grid(row=3, column=0, columnspan=3, pady=5)
+        self.estadoLabel.grid(row=3, column=0, columnspan=3, pady=5)
+        self.timeLabel.grid(row=4, column=0, columnspan=3, pady=5)
+
     def crear_medidores(self):
         # Inicializar las variables
         self.image_medidor_button = tk.PhotoImage(file="images/ajustes.png")
@@ -334,7 +336,7 @@ class Main(tk.Frame):
         }
 
     def crear_opciones(self):
-        configuracion_opciones = {"intervalo": self.master.intervalo}
+        configuracion_opciones = {"modo": self.master.modo}
         self.ajustes = opciones.Opciones(self.opcionesContainer, self.master, configuracion=configuracion_opciones)
         self.ajustes.grid(row=0, column=0)
         self.opcionesContainer.grid_remove()
@@ -407,7 +409,7 @@ class Main(tk.Frame):
         self.configParser.set('Indicador7', 'nombre', 'Potencia')
         self.configParser.set('Indicador7', 'unidad', 'W')
         self.configParser.add_section('Grafico0')
-        self.configParser.set('Grafico0', 'nombreX', 'Nº de grado de cigüeñal')
+        self.configParser.set('Grafico0', 'nombreX', 'Grado de cigüeñal')
         self.configParser.set('Grafico0', 'nombreY', 'Presión/Par')
         self.configParser.add_section('Grafico1')
         self.configParser.set('Grafico1', 'nombreX', 'Volumen')
@@ -475,7 +477,7 @@ class Main(tk.Frame):
         diente = valores["diente"]
         periodo = valores["tiempo"]
         self.tiempo += periodo
-        self.motorLabel.config(text=str(datetime.timedelta(milliseconds=self.tiempo)))
+        self.timeLabel.config(text=str(datetime.timedelta(milliseconds=self.tiempo)))
 
         presion = valores["presion"]
         par = valores["par"]
