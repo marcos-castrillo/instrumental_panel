@@ -9,6 +9,7 @@ from main import Main
 import datetime as datetime
 import random
 import serial
+import time
 
 class App(tk.Tk):
     def __init__(self):
@@ -129,6 +130,43 @@ class App(tk.Tk):
                 if fila > 0:
                     self.file.append(str(self.vuelta) + ',' + str(self.diente) + ',' + str(self.tiempo) + ',' + str(self.presion) + ',' + str(self.par) + '\n')
                 fila += 1
+
+        else:
+            def desconectar():
+                toplevel.destroy()
+                self.after_cancel(self.cuenta_atras)
+                self.cuenta_atras = None
+            def reconectar():
+                desconectar()
+                self.adquirir_datos(fila)
+            def bucle_reconectar(i):
+                label2.config(text='Reconectando en ' + str(i) + ' segundos')
+                if self.modo.get() != 'Adquisición':
+                    desconectar()
+                elif i > 0:
+                    i -= 1
+                    self.cuenta_atras = self.after(1000, bucle_reconectar, i)
+                else:
+                    reconectar()
+            toplevel = tk.Toplevel(self, bd=2, relief="solid")
+            # Posición del TopLevel
+            g = "+%s+%s" % (self.winfo_rootx()*50, self.winfo_rooty()*5)
+            toplevel.geometry(g)
+            # Ocultar botones de minimizar, cerrar, expandir
+            toplevel.overrideredirect(1)
+            ERROR_CONEXION = 'No se ha podido establecer la conexión con ' + puerto + '.'
+            label1 = tk.Label(toplevel, text=ERROR_CONEXION, height=5, width=60)
+            desconexion = tk.PhotoImage(file='images/desconexion.png')
+            imagen = tk.Label(toplevel, image=desconexion)
+            imagen.image = desconexion
+            boton = tk.Button(toplevel, text='Reconectar', command=reconectar)
+            TIEMPO = 'Reconectando en 10 segundos'
+            label2 = tk.Label(toplevel, text=TIEMPO, font='Helvetica 12 bold')
+            label1.grid(row=0, column=0)
+            imagen.grid(row=1, column=0)
+            boton.grid(row=3, column=0, pady=20)
+            label2.grid(row=2, column=0)
+            bucle_reconectar(10)
 
     def puerto_disponible(self, puerto):
         try:
