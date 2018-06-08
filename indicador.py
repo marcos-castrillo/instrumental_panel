@@ -37,13 +37,13 @@ class Indicador(tk.Canvas, object):
     def createhand(self,altura, ancho):
         # create text display
         self.tituloid = self.create_text(self.centrex
-                                       ,  self.centrey - self.centrey*0.8
-                                       , font=tkf.Font(size=-int(self.side/7),weight="bold"))
+                                       ,  self.centrey - self.centrey*0.6
+                                       , font=tkf.Font(size=-int(self.side/7),weight="bold"),width='170')
         self.valorid = self.create_text(self.centrex
-                                       , self.centrey/1.5
+                                       , self.centrey/1
                                        , font=tkf.Font(size=-int(self.side/4)))
         self.unidadid = self.create_text(self.centrex
-                                       , self.centrey
+                                       , self.centrey*1.35
                                        , font=tkf.Font(size=-int(self.side/10)))
         self.itemconfigure(self.unidadid, text=str(self.unidad), fill='black')
         self.itemconfigure(self.tituloid, text=str(self.titulo), fill='black')

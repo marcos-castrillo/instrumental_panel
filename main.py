@@ -61,12 +61,11 @@ class Main(tk.Frame):
         self.master.grid_rowconfigure(0, weight=1)
         # Resto de frames
         self.menuContainer = tk.Frame(self.master)
-        self.opcionesContainer = tk.Frame(self.master)
+        self.opcionesContainer = tk.Frame(self.menuContainer, bg='white', bd=2, highlightbackground="black", pady=5, relief="solid", padx=10)
         self.medidoresContainer = tk.Frame(self.master)
         self.graficosContainer = tk.Frame(self.master)
         self.indicadoresContainer = tk.Frame(self.master)
         # Ajustar el lugar de los frames
-        self.opcionesContainer.grid(column=0, row=0, rowspan=2, sticky="NW")
         self.medidoresContainer.grid(column=0, row=0)
         self.graficosContainer.grid(column=0, row=0)
         self.menuContainer.grid(column=1, row=0, sticky="N", padx=20)
@@ -81,6 +80,7 @@ class Main(tk.Frame):
         ajustes = tk.PhotoImage(file='images/opciones.png')
         grafico = tk.PhotoImage(file='images/chart.png')
         medidor = tk.PhotoImage(file='images/gauge.png')
+        pantalla_completa = tk.PhotoImage(file='images/pantalla_completa.png')
         salir = tk.PhotoImage(file='images/exit.png')
         self.stopButton = tk.Button(self.menuContainer, bg='white', text='Parar', font='Helvetica 10 bold', image = stop, command=self.master.stop,compound="top")
         self.stopButton.image = stop
@@ -94,32 +94,39 @@ class Main(tk.Frame):
         self.openButton.image = open
         self.resetButton = tk.Button(self.menuContainer, bg='white', text='Borrar datos', font='Helvetica 10 bold', image = reset, command=self.master.reset,compound="top")
         self.resetButton.image = reset
+        self.ajustesButton = tk.Button(self.menuContainer, bg='white', text='Ajustes', font='Helvetica 10 bold',
+                                       image=ajustes, command=self.desplegar_opciones, compound="top")
+        self.ajustesButton.image = ajustes
         self.paginaMedidoresButton = tk.Button(self.menuContainer, bg='white', text='Medidores', font='Helvetica 10 bold', image=medidor, command=self.cambiar_pagina, compound="top")
         self.paginaMedidoresButton.image = medidor
         self.paginaGraficosButton = tk.Button(self.menuContainer, bg='white', text='Gráficos', font='Helvetica 10 bold', image=grafico, command=self.cambiar_pagina, compound="top")
         self.paginaGraficosButton.image = grafico
-        self.ajustesButton = tk.Button(self.menuContainer, bg='white', text='Ajustes', font='Helvetica 10 bold', image=ajustes, command=self.desplegar_opciones, compound="top")
-        self.ajustesButton.image = ajustes
+        self.pantallaCompletaButton = tk.Button(self.menuContainer, bg='white', text='P. completa', font='Helvetica 10 bold', image=pantalla_completa, command=self.master.toggle_fullscreen, compound="top")
+        self.pantallaCompletaButton.image = pantalla_completa
         self.salirButton = tk.Button(self.menuContainer, bg='white', text='Salir', font='Helvetica 10 bold', image=salir, command=self.master.destroy, compound="top")
         self.salirButton.image = salir
         self.estadoLabel = tk.Label(self.menuContainer, font='Helvetica 18 bold', bg='white', borderwidth=2, relief="solid", padx=10)
         self.timeLabel = tk.Label(self.menuContainer, font='Helvetica 18 bold', bg='white', borderwidth=2, relief="solid", padx=10)
+        self.timeLabel.config(text=str(datetime.timedelta(milliseconds=0)))
         # Ajustar el lugar de los botones
-        self.stopButton.grid(row=0, column=0, pady=5)
-        self.stopButton.configure(state='disabled')
-        self.playButton.grid(row=0, column=1, pady=5)
-        self.playButton.grid_remove()
-        self.pauseButton.grid(row=0, column=1, pady=5)
-        self.recordButton.grid(row=0, column=2, pady=5)
-        self.openButton.grid(row=1, column=0, pady=5)
-        self.resetButton.grid(row=1, column=1, pady=5)
-        self.paginaMedidoresButton.grid(row=2, column=0, pady=5)
-        self.paginaGraficosButton.grid(row=2, column=0, pady=5)
+        self.paginaMedidoresButton.grid(row=0, column=0, pady=5)
+        self.paginaGraficosButton.grid(row=0, column=0, pady=5)
         self.paginaMedidoresButton.grid_remove()
-        self.ajustesButton.grid(row=2, column=1, pady=5)
-        self.salirButton.grid(row=2, column=2, pady=5)
+        self.pantallaCompletaButton.grid(row=0, column=1, pady=5)
+        self.salirButton.grid(row=0, column=2, pady=5)
+        self.stopButton.grid(row=1, column=0, pady=5)
+        self.stopButton.configure(state='disabled')
+        self.playButton.grid(row=1, column=1, pady=5)
+        self.playButton.grid_remove()
+        self.pauseButton.grid(row=1, column=1, pady=5)
+        self.recordButton.grid(row=1, column=2, pady=5)
+        self.openButton.grid(row=2, column=0, pady=5)
+        self.resetButton.grid(row=2, column=1, pady=5)
+        self.ajustesButton.grid(row=2, column=2, pady=5)
         self.estadoLabel.grid(row=3, column=0, columnspan=3, pady=5)
         self.timeLabel.grid(row=4, column=0, columnspan=3, pady=5)
+        self.opcionesContainer.grid(row=5, column=0, columnspan=3, pady=5)
+
 
     def crear_medidores(self):
         # Inicializar las variables
@@ -186,7 +193,7 @@ class Main(tk.Frame):
         medidor1 = medidor.Medidor(self.medidoresContainer, bd=2, height=altura_medidor, width=ancho_medidor, bg='white', highlightbackground="black", configuracion=medidor1_conf)
         medidor2 = medidor.Medidor(self.medidoresContainer, bd=2, height=altura_medidor, width=ancho_medidor, bg='white', highlightbackground="black", configuracion=medidor2_conf)
         medidor3 = medidor.Medidor(self.medidoresContainer, bd=2, height=altura_medidor, width=ancho_medidor, bg='white', highlightbackground="black", configuracion=medidor3_conf)
-        medidor4 = engranaje.Engranaje(self.medidoresContainer ,bd=2, height=altura_medidor, width=ancho_medidor, bg='white', highlightbackground="black", configuracion=medidor4_conf)
+        medidor4 = engranaje.Engranaje(self.medidoresContainer, bd=2, height=altura_medidor, width=ancho_medidor, bg='white', highlightbackground="black", configuracion=medidor4_conf)
         # Frame de la ventana de ajustes de cada medidor
         medidor0_container = tk.Frame(self.medidoresContainer)
         medidor1_container = tk.Frame(self.medidoresContainer)
@@ -208,11 +215,11 @@ class Main(tk.Frame):
         medidor2_ajustes = ajustes_medidores.AjustesMedidores(medidor2_container, self, self.master, configuracion=medidor2_ajustes_conf)
         medidor3_ajustes = ajustes_medidores.AjustesMedidores(medidor3_container, self, self.master, configuracion=medidor3_ajustes_conf)
         # Ajustar el lugar de cada medidor
-        medidor0.grid(column=2, row=0, columnspan=2)
-        medidor1.grid(column=4, row=0, columnspan=2)
-        medidor2.grid(column=1, row=1, columnspan=2)
-        medidor3.grid(column=3, row=1, columnspan=2)
-        medidor4.grid(column=5, row=1, columnspan=2)
+        medidor0.grid(column=2, row=0, columnspan=2, padx=(0,10), pady=(5,10))
+        medidor1.grid(column=4, row=0, columnspan=2, padx=(10,0), pady=(5,10))
+        medidor2.grid(column=1, row=1, columnspan=2, padx=(0,10), pady=(0,10))
+        medidor3.grid(column=3, row=1, columnspan=2, padx=(10,10), pady=(0,10))
+        medidor4.grid(column=5, row=1, columnspan=2, padx=(10,0), pady=(0,10))
         # Ajustar el lugar de cada ventana de ajustes
         medidor0_container.grid(column=2, row=0, columnspan=2)
         medidor0_container.grid_remove()
@@ -226,12 +233,12 @@ class Main(tk.Frame):
         medidor0_ajustes.grid(row=0, column=0)
         medidor1_ajustes.grid(row=0, column=0)
         medidor2_ajustes.grid(row=0, column=0)
-        medidor3_ajustes.grid(row=0, column=0,)
+        medidor3_ajustes.grid(row=0, column=0)
         # Ajustar el lugar de los botones
-        medidor0_button.grid(column=2, row=0, columnspan=2, sticky="NE")
-        medidor1_button.grid(column=4, row=0, columnspan=2, sticky="NE")
-        medidor2_button.grid(column=1, row=1, columnspan=2, sticky="NE")
-        medidor3_button.grid(column=3, row=1, columnspan=2, sticky="NE")
+        medidor0_button.grid(column=2, row=0, columnspan=2, sticky="NE", padx=(0,13), pady=(5,10))
+        medidor1_button.grid(column=4, row=0, columnspan=2, sticky="NE", padx=(0,3), pady=(5,10))
+        medidor2_button.grid(column=1, row=1, columnspan=2, sticky="NE", padx=(0,10), pady=(0,10))
+        medidor3_button.grid(column=3, row=1, columnspan=2, sticky="NE", padx=(0,10), pady=(0,10))
         # Crear el diccionario de medidores
         self.medidores = {
             'medidor0': medidor0, 'medidor0_flag': medidor0_flag, 'medidor0_ajustes': medidor0_ajustes,
@@ -278,7 +285,7 @@ class Main(tk.Frame):
         }
         # Indicadores
         ancho_indicador = (self.ancho_total / self.n_indicadores) - self.n_indicadores*2
-        altura_indicador = self.altura_total / self.n_indicadores
+        altura_indicador = self.altura_total / self.n_indicadores * 1.15
         indicador0 = indicador.Indicador(self.indicadoresContainer, bd=2, height=altura_indicador, width=ancho_indicador, bg='white', highlightbackground="black",configuracion=indicador0_conf)
         indicador1 = indicador.Indicador(self.indicadoresContainer, bd=2, height=altura_indicador, width=ancho_indicador, bg='white', highlightbackground="black",configuracion=indicador1_conf)
         indicador2 = indicador.Indicador(self.indicadoresContainer, bd=2, height=altura_indicador, width=ancho_indicador, bg='white', highlightbackground="black",configuracion=indicador2_conf)
@@ -288,14 +295,14 @@ class Main(tk.Frame):
         indicador6 = indicador.Indicador(self.indicadoresContainer, bd=2, height=altura_indicador, width=ancho_indicador, bg='white', highlightbackground="black",configuracion=indicador6_conf)
         indicador7 = indicador.Indicador(self.indicadoresContainer, bd=2, height=altura_indicador, width=ancho_indicador, bg='white', highlightbackground="black",configuracion=indicador7_conf)
         # Ajustar el lugar de cada indicador
-        indicador0.grid(row=2, column=0, padx=5)
-        indicador1.grid(row=2, column=1, padx=5)
-        indicador2.grid(row=2, column=2, padx=5)
-        indicador3.grid(row=2, column=3, padx=5)
-        indicador4.grid(row=2, column=4, padx=5)
-        indicador5.grid(row=2, column=5, padx=5)
-        indicador6.grid(row=2, column=6, padx=5)
-        indicador7.grid(row=2, column=7, padx=5)
+        indicador0.grid(row=2, column=0, padx=(5,0), pady=(0,5))
+        indicador1.grid(row=2, column=1, padx=(5,0), pady=(0,5))
+        indicador2.grid(row=2, column=2, padx=(5,0), pady=(0,5))
+        indicador3.grid(row=2, column=3, padx=(5,0), pady=(0,5))
+        indicador4.grid(row=2, column=4, padx=(5,0), pady=(0,5))
+        indicador5.grid(row=2, column=5, padx=(5,0), pady=(0,5))
+        indicador6.grid(row=2, column=6, padx=(5,0), pady=(0,5))
+        indicador7.grid(row=2, column=7, padx=(5,0), pady=(0,5))
         # Crear el diccionario de indicadores
         self.indicadores = {
             'indicador0': indicador0, 'indicador1': indicador1, 'indicador2': indicador2, 'indicador3': indicador3,
@@ -306,29 +313,57 @@ class Main(tk.Frame):
         # Configuración de cada gráfico
         self.n_graficos = 5
         grafico0_conf = {
+            "titulo": self.configParser.get('Grafico0', 'titulo'),
             "nombreX": self.configParser.get('Grafico0', 'nombreX'),
-            "nombreY": self.configParser.get('Grafico0', 'nombreY')
+            "minX": self.configParser.get('Grafico0', 'minX'),
+            "maxX": self.configParser.get('Grafico0', 'maxX'),
+            "stepX": self.configParser.get('Grafico0', 'stepX'),
+            "nombreY1": self.configParser.get('Grafico0', 'nombreY1'),
+            "minY1": self.configParser.get('Grafico0', 'minY1'),
+            "maxY1": self.configParser.get('Grafico0', 'maxY1'),
+            "stepY1": self.configParser.get('Grafico0', 'stepY1'),
+            "nombreY2": self.configParser.get('Grafico0', 'nombreY2'),
+            "minY2": self.configParser.get('Grafico0', 'minY2'),
+            "maxY2": self.configParser.get('Grafico0', 'maxY2'),
+            "stepY2": self.configParser.get('Grafico0', 'stepY2'),
+            "n_lineas": self.configParser.get('Opciones', 'n_lineas')
         }
         grafico1_conf = {
+            "titulo": self.configParser.get('Grafico1', 'titulo'),
             "nombreX": self.configParser.get('Grafico1', 'nombreX'),
-            "nombreY": self.configParser.get('Grafico1', 'nombreY')
+            "minX": self.configParser.get('Grafico1', 'minX'),
+            "maxX": self.configParser.get('Grafico1', 'maxX'),
+            "stepX": self.configParser.get('Grafico1', 'stepX'),
+            "nombreY": self.configParser.get('Grafico1', 'nombreY'),
+            "minY": self.configParser.get('Grafico1', 'minY'),
+            "maxY": self.configParser.get('Grafico1', 'maxY'),
+            "stepY": self.configParser.get('Grafico1', 'stepY'),
         }
         grafico2_conf = {
+            "titulo": self.configParser.get('Grafico2', 'titulo'),
             "nombreX": self.configParser.get('Grafico2', 'nombreX'),
-            "nombreY": self.configParser.get('Grafico2', 'nombreY')
+            "minX": self.configParser.get('Grafico2', 'minX'),
+            "maxX": self.configParser.get('Grafico2', 'maxX'),
+            "stepX": self.configParser.get('Grafico2', 'stepX'),
+            "nombreY": self.configParser.get('Grafico2', 'nombreY'),
+            "minY": self.configParser.get('Grafico2', 'minY'),
+            "maxY": self.configParser.get('Grafico2', 'maxY'),
+            "stepY": self.configParser.get('Grafico2', 'stepX'),
         }
         # 1 inch = 96 pixels
-        ancho_grafico = self.ancho_total / self.n_graficos/90
-        altura_grafico = self.altura_total / self.n_graficos/45
+        ancho_grafico = self.ancho_total / self.n_graficos / 88
+        altura_grafico = self.altura_total / self.n_graficos / 30
+        ancho_grafico_live = self.ancho_total / self.n_graficos / 70
+        altura_grafico_live = self.altura_total / self.n_graficos / 15
 
         # Gráficos
-        grafico0 = grafico_live.GraficoLive(self.graficosContainer, height=altura_grafico, width=ancho_grafico, configuracion=grafico0_conf)
+        grafico0 = grafico_live.GraficoLive(self.graficosContainer, height=altura_grafico_live, width=ancho_grafico_live, configuracion=grafico0_conf)
         grafico1 = grafico.Grafico(self.graficosContainer, height=altura_grafico, width=ancho_grafico, configuracion=grafico1_conf)
         grafico2 = grafico.Grafico(self.graficosContainer, height=altura_grafico, width=ancho_grafico, configuracion=grafico2_conf)
         # Ajustar el lugar de cada gráfico
-        grafico0.grid(row=0, column=2, columnspan=2, padx=10, pady=10)
-        grafico1.grid(row=1, column=2, pady=10)
-        grafico2.grid(row=1, column=3, pady=10)
+        grafico0.grid(row=0, column=2, columnspan=2, padx=(5,5), pady=(5,5))
+        grafico1.grid(row=1, column=2, padx=(5,5), pady=(0,5))
+        grafico2.grid(row=1, column=3, padx=(5,5), pady=(0,5))
         self.graficosContainer.grid_remove()
         # Crear el diccionario de indicadores
         self.graficos = {
@@ -336,16 +371,18 @@ class Main(tk.Frame):
         }
 
     def crear_opciones(self):
-        configuracion_opciones = {"modo": self.master.modo}
+        configuracion_opciones = {"modo": self.master.modo, "n_lineas": self.configParser.get('Opciones', 'n_lineas')}
         self.ajustes = opciones.Opciones(self.opcionesContainer, self.master, configuracion=configuracion_opciones)
         self.ajustes.grid(row=0, column=0)
         self.opcionesContainer.grid_remove()
 
     def create_config_file(self):
         """Crea un archivo de configuración si no existe"""
+        self.configParser.add_section('Opciones')
+        self.configParser.set('Opciones', 'n_lineas', '5')
         self.configParser.add_section('Medidor0')
         self.configParser.set('Medidor0', 'nombre', 'Presión')
-        self.configParser.set('Medidor0', 'unidad', 'atm')
+        self.configParser.set('Medidor0', 'unidad', 'bar')
         self.configParser.set('Medidor0', 'minimo', '0')
         self.configParser.set('Medidor0', 'maximo', '100')
         self.configParser.set('Medidor0', 'colores', '["green", "yellow", "red"]')
@@ -385,38 +422,63 @@ class Main(tk.Frame):
         self.configParser.set('Medidor4', 'minimo', '0')
         self.configParser.set('Medidor4', 'maximo', '360')
         self.configParser.add_section('Indicador0')
-        self.configParser.set('Indicador0', 'nombre', 'Presión')
-        self.configParser.set('Indicador0', 'unidad', 'atm')
+        self.configParser.set('Indicador0', 'nombre', 'Vuelta del cigüeñal')
+        self.configParser.set('Indicador0', 'unidad', '')
         self.configParser.add_section('Indicador1')
-        self.configParser.set('Indicador1', 'nombre', 'Par')
-        self.configParser.set('Indicador1', 'unidad', 'rad/s')
+        self.configParser.set('Indicador1', 'nombre', 'Grados girados')
+        self.configParser.set('Indicador1', 'unidad', 'º')
         self.configParser.add_section('Indicador2')
-        self.configParser.set('Indicador2', 'nombre', 'Vuelta')
-        self.configParser.set('Indicador2', 'unidad', 'rad/s')
+        self.configParser.set('Indicador2', 'nombre', 'Presión instantánea')
+        self.configParser.set('Indicador2', 'unidad', 'bar')
         self.configParser.add_section('Indicador3')
-        self.configParser.set('Indicador3', 'nombre', 'I/vuelta')
-        self.configParser.set('Indicador3', 'unidad', 'rad/s')
+        self.configParser.set('Indicador3', 'nombre', 'Par motor instantáneo')
+        self.configParser.set('Indicador3', 'unidad', 'N*m')
         self.configParser.add_section('Indicador4')
-        self.configParser.set('Indicador4', 'nombre', 'w inst.')
-        self.configParser.set('Indicador4', 'unidad', 'atm')
+        self.configParser.set('Indicador4', 'nombre', 'Volumen instantáneo')
+        self.configParser.set('Indicador4', 'unidad', 'm^3')
         self.configParser.add_section('Indicador5')
-        self.configParser.set('Indicador5', 'nombre', 'w promedio/vuelta')
+        self.configParser.set('Indicador5', 'nombre', 'Velocidad angular inst.')
         self.configParser.set('Indicador5', 'unidad', 'rad/s')
         self.configParser.add_section('Indicador6')
-        self.configParser.set('Indicador6', 'nombre', 'Volumen')
-        self.configParser.set('Indicador6', 'unidad', 'm^3')
+        self.configParser.set('Indicador6', 'nombre', 'Velocidad angular prom.')
+        self.configParser.set('Indicador6', 'unidad', 'rad/s')
         self.configParser.add_section('Indicador7')
-        self.configParser.set('Indicador7', 'nombre', 'Potencia')
+        self.configParser.set('Indicador7', 'nombre', 'Potencia promedio')
         self.configParser.set('Indicador7', 'unidad', 'W')
         self.configParser.add_section('Grafico0')
-        self.configParser.set('Grafico0', 'nombreX', 'Grado de cigüeñal')
-        self.configParser.set('Grafico0', 'nombreY', 'Presión/Par')
+        self.configParser.set('Grafico0', 'titulo', 'Grado de cigüeñal/presión/par')
+        self.configParser.set('Grafico0', 'nombreX', 'Grado de cigüeñal (º)')
+        self.configParser.set('Grafico0', 'minX', '0')
+        self.configParser.set('Grafico0', 'maxX', '360')
+        self.configParser.set('Grafico0', 'stepX', '30')
+        self.configParser.set('Grafico0', 'nombreY1', 'Presión (bar)')
+        self.configParser.set('Grafico0', 'minY1', '0')
+        self.configParser.set('Grafico0', 'maxY1', '30')
+        self.configParser.set('Grafico0', 'stepY1', '2.5')
+        self.configParser.set('Grafico0', 'nombreY2', 'Par (N*m)')
+        self.configParser.set('Grafico0', 'minY2', '-20')
+        self.configParser.set('Grafico0', 'maxY2', '20')
+        self.configParser.set('Grafico0', 'stepY2', '5')
         self.configParser.add_section('Grafico1')
-        self.configParser.set('Grafico1', 'nombreX', 'Volumen')
-        self.configParser.set('Grafico1', 'nombreY', 'Presión')
+        self.configParser.set('Grafico1', 'titulo', 'Diagrama P-V')
+        self.configParser.set('Grafico1', 'nombreX', 'Volumen (m^3)')
+        self.configParser.set('Grafico1', 'minX', '0')
+        self.configParser.set('Grafico1', 'maxX', '1500')
+        self.configParser.set('Grafico1', 'stepX', '125')
+        self.configParser.set('Grafico1', 'nombreY', 'Presión (bar)')
+        self.configParser.set('Grafico1', 'minY', '0')
+        self.configParser.set('Grafico1', 'maxY', '30')
+        self.configParser.set('Grafico1', 'stepY', '5')
         self.configParser.add_section('Grafico2')
-        self.configParser.set('Grafico2', 'nombreX', 'w promedio/vuelta')
-        self.configParser.set('Grafico2', 'nombreY', 'Potencia/vuelta')
+        self.configParser.set('Grafico2', 'titulo', 'Velocidad angular/potencia')
+        self.configParser.set('Grafico2', 'nombreX', 'w promedio/vuelta (rad/s)')
+        self.configParser.set('Grafico2', 'minX', '0')
+        self.configParser.set('Grafico2', 'maxX', '1500')
+        self.configParser.set('Grafico2', 'stepX', '250')
+        self.configParser.set('Grafico2', 'nombreY', 'Potencia/vuelta (W)')
+        self.configParser.set('Grafico2', 'minY', '0')
+        self.configParser.set('Grafico2', 'maxY', '1500')
+        self.configParser.set('Grafico2', 'stepY', '125')
         with open(self.configFile, 'w') as output:
             self.configParser.write(output)
 
@@ -476,17 +538,19 @@ class Main(tk.Frame):
         vuelta = valores["vuelta"]
         diente = valores["diente"]
         periodo = valores["tiempo"]
-        self.tiempo += periodo
-        self.timeLabel.config(text=str(datetime.timedelta(milliseconds=self.tiempo)))
-
         presion = valores["presion"]
         par = valores["par"]
+        # Actualizar tiempo
+        self.tiempo += periodo
+        self.timeLabel.config(text=str(datetime.timedelta(milliseconds=self.tiempo)))
         # Fórmulas matemáticas
         frecuencia_diente = 1/periodo
         frecuencia_vuelta = frecuencia_diente/360
         vel_angular = 2*math.pi*frecuencia_vuelta
         potencia = par*vel_angular
-        volumen = 0
+        diametro = 10
+        carrera = 30
+        volumen = ((math.pi*diametro**2)/4) * (carrera/2) * math.sin(diente)
         # Medidor0: Presión
         # Medidor1: Par
         # Medidor2: Velocidad angular
@@ -502,36 +566,40 @@ class Main(tk.Frame):
             self.medidores['medidor2'].valor_max = vel_angular
             self.medidores['medidor3'].valor_min = potencia
             self.medidores['medidor3'].valor_max = potencia
-        if (vuelta > self.vuelta_actual) or (vuelta == 0 and diente == 1):
+        if vuelta > self.vuelta_actual:
             self.vuelta_actual += 1
             self.cambio_vuelta = True
-        self.medidores['medidor0'].set(presion, self.cambio_vuelta)
-        self.medidores['medidor1'].set(par, self.cambio_vuelta)
-        self.medidores['medidor2'].set(vel_angular, self.cambio_vuelta)
-        self.medidores['medidor3'].set(potencia, self.cambio_vuelta)
-        self.medidores['medidor4'].set(diente)
-        # Indicador0: Presión
-        # Indicador1: Par
-        # Indicador2: Número de vuelta de cigüeñal
-        # Indicador3: Número de impulso dentro de la vuelta (grados girados)
-        # Indicador4: Velocidad angular instantánea
-        # Indicador5: Velocidad angular promedio en una vuelta
-        # Indicador6: Volumen
-        # Indicador7: Potencia
-        self.indicadores['indicador0'].set(presion, self.cambio_vuelta)
-        self.indicadores['indicador1'].set(par, self.cambio_vuelta)
-        self.indicadores['indicador2'].set(vuelta, self.cambio_vuelta)
-        self.indicadores['indicador3'].set(diente, True)
-        self.indicadores['indicador4'].set(vel_angular, True)
-        self.indicadores['indicador5'].set(vel_angular, self.cambio_vuelta)
-        self.indicadores['indicador6'].set(volumen, self.cambio_vuelta)
-        self.indicadores['indicador7'].set(potencia, self.cambio_vuelta)
+        elif vuelta == 0 and diente == 1:
+            self.cambio_vuelta = True
+        if not self.paginaFlag:
+            self.medidores['medidor0'].set(presion, self.cambio_vuelta)
+            self.medidores['medidor1'].set(par, self.cambio_vuelta)
+            self.medidores['medidor2'].set(vel_angular, self.cambio_vuelta)
+            self.medidores['medidor3'].set(potencia, self.cambio_vuelta)
+            self.medidores['medidor4'].set(diente)
         # Gráfico 0: Eje X: nº grado cigüeñal, eje Y: Presión y par -> Gráfico móvil
         # Gráfico 1: Eje X: Volumen, eje Y: Presión -> Diagrama P-V
         # Gráfico 2: Eje X: Velocidad angular promedio de vuelta, eje Y: Potencia de vuelta
-        self.graficos['grafico0'].set(diente, presion, self.cambio_vuelta)
-        self.graficos['grafico1'].set(volumen, presion, self.cambio_vuelta)
-        self.graficos['grafico2'].set(vel_angular, potencia, self.cambio_vuelta)
+        else:
+            self.graficos['grafico0'].set(diente, presion, par, self.cambio_vuelta)
+            self.graficos['grafico1'].set(volumen, presion, self.cambio_vuelta)
+            self.graficos['grafico2'].set(vel_angular, potencia, self.cambio_vuelta)
+        # Indicador0: Número de vuelta de cigüeñal
+        # Indicador1: Número de impulso dentro de la vuelta (grados girados)
+        # Indicador2: Presión
+        # Indicador3: Par
+        # Indicador4: Volumen
+        # Indicador5: Velocidad angular instantánea
+        # Indicador6: Velocidad angular promedio en una vuelta
+        # Indicador7: Potencia
+        self.indicadores['indicador0'].set(vuelta, self.cambio_vuelta)
+        self.indicadores['indicador1'].set(diente, True)
+        self.indicadores['indicador2'].set(presion, True)
+        self.indicadores['indicador3'].set(par, True)
+        self.indicadores['indicador4'].set(volumen, True)
+        self.indicadores['indicador5'].set(vel_angular, True)
+        self.indicadores['indicador6'].set(vel_angular, self.cambio_vuelta)
+        self.indicadores['indicador7'].set(potencia, self.cambio_vuelta)
 
     def save_ajustes_medidor(self, medidor_x, ajustes, tipo_accion):
         """Guardar los ajustes de un medidor específico"""

@@ -10,6 +10,9 @@ matplotlib.use('TkAgg')
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.figure import Figure
 
+import numpy as np
+from scipy.interpolate import spline
+
 from redondeo import redondear
 
 
@@ -18,43 +21,83 @@ class GraficoLive(tk.Canvas, object):
     def __init__(self, master, configuracion, **kwargs):
         super(GraficoLive, self).__init__(master,configuracion=None, **kwargs)
         # Parámetros
-        if hasattr(configuracion, 'titulo'):
-            self.titulo = configuracion["titulo"]
-        else:
-            self.titulo = ""
+        self.titulo = configuracion["titulo"]
         self.nombreX = configuracion["nombreX"]
-        self.nombreY = configuracion["nombreY"]
+        self.minX = float(configuracion["minX"])
+        self.maxX = float(configuracion["maxX"])
+        self.stepX = float(configuracion["stepX"])
+        self.nombreY = configuracion["nombreY1"]
+        self.minY1 = float(configuracion["minY1"])
+        self.maxY1 = float(configuracion["maxY1"])
+        self.stepY1 = float(configuracion["stepY1"])
+        self.nombreY2 = configuracion["nombreY2"]
+        self.minY2 = float(configuracion["minY2"])
+        self.maxY2 = float(configuracion["maxY2"])
+        self.stepY2 = float(configuracion["stepY2"])
         self.ancho = int(self['width'])
         self.altura = int(self['height'])
+        self.n_lineas = int(configuracion["n_lineas"])
         self.arrayX = []
         self.arrayY = []
+        self.arrayY2 = []
+        self.listaX = []
+        self.listaY = []
+        self.listaY2 = []
+        self.line = []
+        self.line2 = []
 
-        # 1 inch = 96 pixels
-        f = Figure(figsize=(self.altura*3.5, self.ancho), dpi=100)
-        self.grafico = f.add_subplot(111)
         self.config_grafico()
 
-        # a tk.DrawingArea
-        self.canvas = FigureCanvasTkAgg(f, self)
-        self.canvas.draw()
-        self.canvas.get_tk_widget().grid()
-        f.subplots_adjust(left=0.04, right=0.85, top=0.96, bottom=0.15)
-
-    def set(self, valorX, valorY, cambio_vuelta):
-        if cambio_vuelta:
-            if len(self.arrayX) == 10:
-                self.arrayX.pop(0)
-            if len(self.arrayY) == 10:
-                self.arrayY.pop(0)
-            self.arrayX.append(redondear(valorX, 0))
-            self.arrayY.append(redondear(valorY, 0))
-
-            self.grafico.clear()
-            self.grafico.plot(self.arrayX,self.arrayY,'ro')
-            self.config_grafico()
+    def set(self, valorX, valorY, valorY2, cambio_vuelta):
+        self.arrayX.append(redondear(valorX, 0))
+        self.arrayY.append(redondear(valorY, 0))
+        self.arrayY2.append(redondear(valorY2, 0))
+        if cambio_vuelta and len(self.arrayX) >= 1:
+            a, = self.grafico.plot(self.arrayX, self.arrayY, 'red', linewidth=1)
+            a2, = self.second_axis.plot(self.arrayX, self.arrayY2, 'green', linewidth=1)
+            self.line.append(a)
+            self.line2.append(a2)
             self.canvas.draw()
+            self.canvas.flush_events()
+            self.listaX.append(self.arrayX)
+            self.listaY.append(self.arrayY)
+            self.listaY2.append(self.arrayY2)
+            n_lineas = len(self.listaX)
+            if n_lineas - 1 > 0:
+                self.line[n_lineas-1].set_color("#d88668")
+                self.line2[n_lineas-1].set_color("#93e064")
+            if n_lineas >= self.n_lineas:
+                self.listaX.pop(0)
+                self.listaY.pop(0)
+                self.listaY2.pop(0)
+                erase = self.line.pop(0)
+                erase.remove()
+                erase = self.line2.pop(0)
+                erase.remove()
+            self.arrayX = []
+            self.arrayY = []
+            self.arrayY2 = []
 
     def config_grafico(self):
+        f = Figure(figsize=(self.altura, self.ancho), dpi=100)
+        self.grafico = f.add_subplot(111)
+        self.second_axis = self.grafico.twinx()
+        f.subplots_adjust(left=0.06, right=0.94, bottom=0.12, top=0.92)
         self.grafico.set_title(self.titulo)
         self.grafico.set_xlabel(self.nombreX)
         self.grafico.set_ylabel(self.nombreY)
+        self.second_axis.set_ylabel(self.nombreY2)
+        a = self.grafico.plot(self.arrayX, self.arrayY, 'red', linewidth=1, label='Presión')
+        a2 = self.second_axis.plot(self.arrayX, self.arrayY2, 'green', linewidth=1, label='Par')
+        self.grafico.set_xlim(xmin=self.minX, xmax=self.maxX)
+        self.grafico.set_ylim(ymin=self.minY1, ymax=self.maxY1)
+        self.second_axis.set_ylim(ymin=self.minY2, ymax=self.maxY2)
+        self.grafico.set_xticks(np.arange(self.minX, self.maxX+1, self.stepX))
+        self.grafico.set_yticks(np.arange(self.minY1, self.maxY1+1, self.stepY1))
+        lines = a + a2
+        labs = [l.get_label() for l in lines]
+        self.grafico.legend(lines, labs, loc='lower right')
+        self.grafico.grid()
+        self.canvas = FigureCanvasTkAgg(f, self)
+        self.canvas.draw()
+        self.canvas.get_tk_widget().grid()

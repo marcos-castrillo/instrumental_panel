@@ -35,15 +35,15 @@ class AjustesMedidores(tk.Frame, object):
         else:
             self.umbrales_actual = self.umbrales_val
             self.unidad_actual = " " + self.unidad
-        self.rangoLabel = tk.Label(master, text="Rango", bg='white')
+        self.rangoLabel = tk.Label(master, text="Rango", bg='white', font='Helvetica 10 bold')
         self.minimoEntry = tk.Entry(master, bd=5, width=5)
         self.minimoEntry.insert(0, minimo)
         self.maximoEntry = tk.Entry(master, bd=5, width=5)
         self.maximoEntry.insert(0, maximo)
-        self.umbralRadioLabel = tk.Label(master, text="Tipo de umbral", bg='white')
+        self.umbralRadioLabel = tk.Label(master, text="Tipo de umbral", bg='white', font='Helvetica 10 bold')
         self.umbralRadio0 = tk.Radiobutton(master, text="Porcentaje", variable=self.tipo_umbral, value='P', command=self.cambiar_umbral)
         self.umbralRadio1 = tk.Radiobutton(master, text="Valor", variable=self.tipo_umbral, value='V', command=self.cambiar_umbral)
-        self.umbralLabel = tk.Label(master, text="Umbrales", bg='white')
+        self.umbralLabel = tk.Label(master, text="Umbrales", bg='white', font='Helvetica 10 bold')
         self.umbral0 = tk.StringVar()
         self.umbralEntry0 = tk.Entry(master, textvariable=self.umbral0, bd=5, width="7")
         self.umbralEntry0.insert(0, self.umbrales_actual[0])
@@ -61,20 +61,20 @@ class AjustesMedidores(tk.Frame, object):
         self.aceptarButton = tk.Button(master, text='Aceptar', width=10, command= lambda: self.aceptar_ajustes('aceptar'))
         self.aplicarButton = tk.Button(master, text='Aplicar', width=10,command= lambda: self.aceptar_ajustes('aplicar'))
         # Ajustar la posición de los elementos
-        self.rangoLabel.grid(row=0, column=0)
-        self.minimoEntry.grid(row=1, column=0, sticky='w')
-        self.maximoEntry.grid(row=1, column=0, sticky='e')
-        self.umbralRadioLabel.grid(row=2, column=0)
-        self.umbralRadio0.grid(row=3, column=0)
-        self.umbralRadio1.grid(row=4, column=0)
-        self.umbralLabel.grid(row=0, column=1)
-        self.umbralEntry0.grid(row=1, column=1, sticky='w')
-        self.umbralEntry1.grid(row=1, column=1, sticky='e')
-        self.colorEntry0.grid(row=2, column=1)
-        self.colorEntry1.grid(row=3, column=1)
-        self.colorEntry2.grid(row=4, column=1)
-        self.aceptarButton.grid(row=5, column=0)
-        self.aplicarButton.grid(row=5, column=1)
+        self.rangoLabel.grid(row=0, column=0, padx=(25, 25), pady=(25,0))
+        self.minimoEntry.grid(row=1, column=0, padx=(25, 25), sticky='W')
+        self.maximoEntry.grid(row=1, column=0, padx=(25, 25), sticky='E')
+        self.umbralRadioLabel.grid(row=2, column=0, padx=(25, 25), pady=(25,0))
+        self.umbralRadio0.grid(row=3, column=0, padx=(25, 25))
+        self.umbralRadio1.grid(row=4, column=0, padx=(25, 25))
+        self.umbralLabel.grid(row=0, column=1, padx=(0, 25), pady=(25,0))
+        self.umbralEntry0.grid(row=1, column=1, padx=(0, 25), sticky='W')
+        self.umbralEntry1.grid(row=1, column=1, padx=(0, 25), sticky='E')
+        self.colorEntry0.grid(row=2, column=1, padx=(0, 25), pady=(25,0))
+        self.colorEntry1.grid(row=3, column=1, padx=(0, 25))
+        self.colorEntry2.grid(row=4, column=1, padx=(0, 25))
+        self.aceptarButton.grid(row=5, column=0, padx=(25, 25), pady=(25,25))
+        self.aplicarButton.grid(row=5, column=1, padx=(0, 25), pady=(25,25))
 
     def set_color(self, widget):
         button_index = str(widget)[-1:]
@@ -133,6 +133,11 @@ class AjustesMedidores(tk.Frame, object):
         colores.append(self.colorEntry2.cget('background'))
         minimo = self.minimoEntry.get()
         maximo = self.maximoEntry.get()
+        # Prevenir ambos valores de ser 0
+        if (minimo == '0') and (maximo == '0'):
+            self.maximoEntry.config(text='100')
+            maximo = '100'
+            print(minimo,maximo)
         ajustes = {
             "umbrales_porc": umbrales_porc,
             "umbrales_val": umbrales_val,

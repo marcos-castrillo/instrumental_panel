@@ -11,6 +11,9 @@ matplotlib.use('TkAgg')
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.figure import Figure
 
+import numpy as np
+from scipy.interpolate import spline
+
 from redondeo import redondear
 
 
@@ -19,12 +22,15 @@ class Grafico(tk.Canvas, object):
     def __init__(self, master, configuracion, **kwargs):
         super(Grafico, self).__init__(master,configuracion=None, **kwargs)
         # Parámetros
-        if hasattr(configuracion, 'titulo'):
-            self.titulo = configuracion["titulo"]
-        else:
-            self.titulo = ""
+        self.titulo = configuracion["titulo"]
         self.nombreX = configuracion["nombreX"]
+        self.minX = float(configuracion["minX"])
+        self.maxX = float(configuracion["maxX"])
+        self.stepX = float(configuracion["stepX"])
         self.nombreY = configuracion["nombreY"]
+        self.minY = float(configuracion["minY"])
+        self.maxY = float(configuracion["maxY"])
+        self.stepY = float(configuracion["stepY"])
         self.ancho = int(self['width'])
         self.altura = int(self['height'])
         self.arrayX = []
@@ -34,31 +40,33 @@ class Grafico(tk.Canvas, object):
         self.container = tk.Frame(self)
         self.container.grid()
 
-        f = Figure(figsize=(self.altura*1.5, self.ancho), dpi=100)
+        f = Figure(figsize=(self.altura, self.ancho), dpi=100)
         self.grafico = f.add_subplot(111)
         self.config_grafico()
 
         self.canvas = FigureCanvasTkAgg(f, master=self.container)
         self.canvas.draw()
         self.canvas.get_tk_widget().grid(row=0, column=0)
+        self.line, = self.grafico.plot(0,0, 'red', linewidth=1)
+        f.subplots_adjust(left=0.12, right=0.97, bottom=0.15, top=0.9)
 
     def set(self, valorX, valorY, cambio_vuelta):
-        if cambio_vuelta:
-            if len(self.arrayX) == 10:
-                self.arrayX.pop(0)
-            if len(self.arrayY) == 10:
-                self.arrayY.pop(0)
-            self.arrayX.append(redondear(valorX, 0))
-            self.arrayY.append(redondear(valorY, 0))
-
-            self.grafico.clear()
-            self.grafico.plot(self.arrayX,self.arrayY, linestyle='--', marker='o', color='b')
-            self.config_grafico()
+        self.arrayX.append(redondear(valorX, 0))
+        self.arrayY.append(redondear(valorY, 0))
+        if cambio_vuelta and len(self.arrayX) > 1:
+            self.line.set_xdata(self.arrayX)
+            self.line.set_ydata(self.arrayY)
             self.canvas.draw()
+            self.canvas.flush_events()
+            self.arrayX = []
+            self.arrayY = []
 
     def config_grafico(self):
         self.grafico.set_title(self.titulo)
         self.grafico.set_xlabel(self.nombreX)
         self.grafico.set_ylabel(self.nombreY)
-        self.grafico.set_xlim(xmin=0, xmax=1)
-        self.grafico.set_ylim(ymin=0, ymax=1)
+        self.grafico.set_xlim(xmin=self.minX, xmax=self.maxX)
+        self.grafico.set_ylim(ymin=self.minY, ymax=self.maxY)
+        self.grafico.set_xticks(np.arange(self.minX, self.maxX+1, self.stepX))
+        self.grafico.set_yticks(np.arange(self.minY, self.maxY+1, self.stepY))
+        self.grafico.grid()
