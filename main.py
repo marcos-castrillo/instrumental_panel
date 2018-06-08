@@ -16,6 +16,7 @@ import grafico as grafico
 import grafico_live as grafico_live
 import opciones as opciones
 import ajustes_medidores as ajustes_medidores
+import ajustes_graficos as ajustes_graficos
 
 import math
 import json
@@ -71,6 +72,7 @@ class Main(tk.Frame):
         self.menuContainer.grid(column=1, row=0, sticky="N", padx=20)
         self.indicadoresContainer.grid(column=0, row=1, sticky="S", columnspan=2)
         # Botones
+        self.imagen_ajustes = tk.PhotoImage(file="images/ajustes.png")
         stop = tk.PhotoImage(file='images/stop.png')
         play = tk.PhotoImage(file='images/play.png')
         record = tk.PhotoImage(file='images/record.png')
@@ -129,8 +131,6 @@ class Main(tk.Frame):
 
 
     def crear_medidores(self):
-        # Inicializar las variables
-        self.image_medidor_button = tk.PhotoImage(file="images/ajustes.png")
         # Configuración de cada medidor
         # Si se quiere cambiar el nº de colores (3 por defecto), basta con modificar en las conf. siguientes
         # las variables "colores" y "umbrales" de forma adecuada
@@ -200,10 +200,10 @@ class Main(tk.Frame):
         medidor2_container = tk.Frame(self.medidoresContainer)
         medidor3_container = tk.Frame(self.medidoresContainer)
         # Botones de ajustes
-        medidor0_button = tk.Button(self.medidoresContainer, text="Ajustes", image=self.image_medidor_button, command=lambda: self.desplegar_ajustes_medidores(medidor0_container))
-        medidor1_button = tk.Button(self.medidoresContainer, text="Ajustes", image=self.image_medidor_button, command=lambda: self.desplegar_ajustes_medidores(medidor1_container))
-        medidor2_button = tk.Button(self.medidoresContainer, text="Ajustes", image=self.image_medidor_button, command=lambda: self.desplegar_ajustes_medidores(medidor2_container))
-        medidor3_button = tk.Button(self.medidoresContainer, text="Ajustes", image=self.image_medidor_button, command=lambda: self.desplegar_ajustes_medidores(medidor3_container))
+        medidor0_button = tk.Button(self.medidoresContainer, text="Ajustes", image=self.imagen_ajustes, command=lambda: self.desplegar_ajustes_medidores(medidor0_container))
+        medidor1_button = tk.Button(self.medidoresContainer, text="Ajustes", image=self.imagen_ajustes, command=lambda: self.desplegar_ajustes_medidores(medidor1_container))
+        medidor2_button = tk.Button(self.medidoresContainer, text="Ajustes", image=self.imagen_ajustes, command=lambda: self.desplegar_ajustes_medidores(medidor2_container))
+        medidor3_button = tk.Button(self.medidoresContainer, text="Ajustes", image=self.imagen_ajustes, command=lambda: self.desplegar_ajustes_medidores(medidor3_container))
         # Configuración de los ajustes los medidores
         medidor0_ajustes_conf = {"nombre": medidor0_conf["nombre"], "unidad": medidor0_conf["unidad"], "colores": medidor0_conf["colores"], "umbrales_porc": medidor0_conf["umbrales_porc"], "umbrales_val": medidor0_conf["umbrales_val"], "tipo_umbral": medidor0_conf["tipo_umbral"], "minimo": medidor0_conf["minimo"], "maximo": medidor0_conf["maximo"]}
         medidor1_ajustes_conf = {"nombre": medidor1_conf["nombre"], "unidad": medidor1_conf["unidad"], "colores": medidor1_conf["colores"], "umbrales_porc": medidor1_conf["umbrales_porc"], "umbrales_val": medidor1_conf["umbrales_val"], "tipo_umbral": medidor1_conf["tipo_umbral"], "minimo": medidor1_conf["minimo"], "maximo": medidor1_conf["maximo"]}
@@ -350,6 +350,10 @@ class Main(tk.Frame):
             "maxY": self.configParser.get('Grafico2', 'maxY'),
             "stepY": self.configParser.get('Grafico2', 'stepX'),
         }
+        # Flags para controlar el mostrar u ocultar la ventana de ajustes
+        grafico0_flag = False
+        grafico1_flag = False
+        grafico2_flag = False
         # 1 inch = 96 pixels
         ancho_grafico = self.ancho_total / self.n_graficos / 88
         altura_grafico = self.altura_total / self.n_graficos / 30
@@ -365,9 +369,52 @@ class Main(tk.Frame):
         grafico1.grid(row=1, column=2, padx=(5,5), pady=(0,5))
         grafico2.grid(row=1, column=3, padx=(5,5), pady=(0,5))
         self.graficosContainer.grid_remove()
+        # Frame de la ventana de ajustes de cada medidor
+        grafico0_container = tk.Frame(self.graficosContainer)
+        grafico1_container = tk.Frame(self.graficosContainer)
+        grafico2_container = tk.Frame(self.graficosContainer)
+        # Botones de ajustes
+        grafico0_button = tk.Button(self.graficosContainer, text="Ajustes", image=self.imagen_ajustes,
+                                    command=lambda: self.desplegar_ajustes_medidores(grafico0_container))
+        grafico1_button = tk.Button(self.graficosContainer, text="Ajustes", image=self.imagen_ajustes,
+                                    command=lambda: self.desplegar_ajustes_medidores(grafico1_container))
+        grafico2_button = tk.Button(self.graficosContainer, text="Ajustes", image=self.imagen_ajustes,
+                                    command=lambda: self.desplegar_ajustes_medidores(grafico2_container))
+        # Configuración de los ajustes los medidores
+        grafico0_ajustes_conf = {"minX": grafico0_conf["minX"], "maxX": grafico0_conf["maxX"], "stepX": grafico0_conf["stepX"],
+                                 "minY1": grafico0_conf["minY1"], "maxY1": grafico0_conf["maxY1"], "stepY1": grafico0_conf["stepY1"],
+                                 "minY2": grafico0_conf["minY2"], "maxY2": grafico0_conf["maxY2"], "stepY2": grafico0_conf["stepY2"], "live": True}
+        grafico1_ajustes_conf = {"minX": grafico1_conf["minX"], "maxX": grafico1_conf["maxX"], "stepX": grafico1_conf["stepX"],
+                                 "minY": grafico1_conf["minY"], "maxY": grafico1_conf["maxY"], "stepY": grafico1_conf["stepY"], "live": False}
+        grafico2_ajustes_conf = {"minX": grafico2_conf["minX"], "maxX": grafico2_conf["maxX"], "stepX": grafico2_conf["stepX"],
+                                 "minY": grafico2_conf["minY"], "maxY": grafico2_conf["maxY"], "stepY": grafico2_conf["stepY"], "live": False}
+        # Ajustes de los medidores
+        grafico0_ajustes = ajustes_graficos.AjustesGraficos(grafico0_container, self, self.master,
+                                                              configuracion=grafico0_ajustes_conf)
+        grafico1_ajustes = ajustes_graficos.AjustesGraficos(grafico1_container, self, self.master,
+                                                              configuracion=grafico1_ajustes_conf)
+        grafico2_ajustes = ajustes_graficos.AjustesGraficos(grafico2_container, self, self.master,
+                                                              configuracion=grafico2_ajustes_conf)
+        # Ajustar el lugar de cada ventana de ajustes
+        grafico0_container.grid(row=0, column=2, columnspan=2)
+        grafico0_container.grid_remove()
+        grafico1_container.grid(row=1, column=2)
+        grafico1_container.grid_remove()
+        grafico2_container.grid(row=1, column=3)
+        grafico2_container.grid_remove()
+        # Ajustar el lugar del contenido de cada frame de ajustes
+        grafico0_ajustes.grid(row=0, column=0)
+        grafico1_ajustes.grid(row=0, column=0)
+        grafico2_ajustes.grid(row=0, column=0)
+        # Ajustar el lugar de los botones
+        grafico0_button.grid(column=2, row=0, columnspan=2, sticky="SW", padx=(10, 0), pady=(0, 5))
+        grafico1_button.grid(column=2, row=1, columnspan=2, sticky="SW", padx=(5, 0), pady=(0, 5))
+        grafico2_button.grid(column=3, row=1, columnspan=2, sticky="SW", padx=(5, 0), pady=(0, 5))
         # Crear el diccionario de indicadores
         self.graficos = {
-            'grafico0': grafico0, 'grafico1': grafico1, 'grafico2': grafico2
+            'grafico0': grafico0, 'grafico0_flag': grafico0_flag, 'grafico0_ajustes': grafico0_ajustes,
+            'grafico1': grafico1, 'grafico1_flag': grafico1_flag, 'grafico1_ajustes': grafico1_ajustes,
+            'grafico2': grafico2, 'grafico2_flag': grafico2_flag, 'grafico2_ajustes': grafico2_ajustes,
         }
 
     def crear_opciones(self):
@@ -482,20 +529,6 @@ class Main(tk.Frame):
         with open(self.configFile, 'w') as output:
             self.configParser.write(output)
 
-    def save_config_medidor(self, seccion, config):
-        """Guarda la nueva configuración del medidor"""
-        if not self.configParser.has_section(seccion):
-            self.configParser.add_section(seccion)
-        config['colores'] = str(config['colores']).replace("'", '"')
-        self.configParser.set(seccion, 'colores', config['colores'])
-        self.configParser.set(seccion, 'umbrales_porc', config['umbrales_porc'])
-        self.configParser.set(seccion, 'umbrales_val', config['umbrales_val'])
-        self.configParser.set(seccion, 'tipo_umbral', config['tipo_umbral'])
-        self.configParser.set(seccion, 'minimo', config['minimo'])
-        self.configParser.set(seccion, 'maximo', config['maximo'])
-        with open(self.configFile, 'w') as output:
-            self.configParser.write(output)
-
     def cambiar_pagina(self):
         """Alternar entre la página de medidores o gráficos"""
         if self.paginaFlag:
@@ -517,20 +550,6 @@ class Main(tk.Frame):
         else:
             self.opcionesContainer.grid()
         self.opcionesFlag = not self.opcionesFlag
-
-    def desplegar_ajustes_medidores(self, ajustes_medidores_container):
-        """Desplegar/ocultar los ajustes de un medidor específico"""
-        # Obtiene el número del frame en el que está el medidor:
-        # (.!frame3.!frame, .!frame3.!frame2, .!frame3.!frame3, .!frame3.!frame4, .!frame3.!frame5 ...)
-        # Se obtiene la última letra. Si es "e", es el frame 0. Si no, hay que restar 1.
-        medidor_index = str(ajustes_medidores_container)[-1:]
-        if medidor_index == "e":
-            medidor_index = 1
-        if self.medidores['medidor' + str(int(medidor_index) - 1) + "_flag"]:
-            ajustes_medidores_container.grid_remove()
-        else:
-            ajustes_medidores_container.grid()
-        self.medidores['medidor' + str(int(medidor_index) - 1) + "_flag"] = not self.medidores['medidor' + str(int(medidor_index) - 1) + "_flag"]
 
     def set(self, valores, reiniciar):
         """Actualizar los valores en la UI"""
@@ -612,6 +631,61 @@ class Main(tk.Frame):
         # Guardar los ajustes
         self.medidores['medidor' + str(int(medidor_index) - 1)].set_ajustes(ajustes)
         self.medidores['medidor' + str(int(medidor_index) - 1) + '_ajustes'].set_ajustes(ajustes)
-        self.save_config_medidor("Medidor" + str(int(medidor_index) - 1), ajustes)
+        ajustes['colores'] = str(ajustes['colores']).replace("'", '"')
+        seccion = "Medidor" + str(int(medidor_index) - 1)
+        subsecciones = list(ajustes)
+        self.save_config(seccion,subsecciones, ajustes)
         if tipo_accion == 'aceptar':
             self.desplegar_ajustes_medidores(medidor_x.master)
+
+    def desplegar_ajustes_medidores(self, ajustes_medidores_container):
+        """Desplegar/ocultar los ajustes de un medidor específico"""
+        # Obtiene el número del frame en el que está el medidor:
+        # (.!frame3.!frame, .!frame3.!frame2, .!frame3.!frame3, .!frame3.!frame4, .!frame3.!frame5 ...)
+        # Se obtiene la última letra. Si es "e", es el frame 0. Si no, hay que restar 1.
+        medidor_index = str(ajustes_medidores_container)[-1:]
+        if medidor_index == "e":
+            medidor_index = 1
+        if self.medidores['medidor' + str(int(medidor_index) - 1) + "_flag"]:
+            ajustes_medidores_container.grid_remove()
+        else:
+            ajustes_medidores_container.grid()
+        self.medidores['medidor' + str(int(medidor_index) - 1) + "_flag"] = not self.medidores['medidor' + str(int(medidor_index) - 1) + "_flag"]
+
+    def save_ajustes_grafico(self, grafico_x, ajustes, tipo_accion):
+        """Guardar los ajustes de un gráfico específico"""
+        grafico_index = str(grafico_x.master)[-1:]
+        if grafico_index == 'e':
+            grafico_index = 1
+        # Guardar los ajustes
+        self.graficos['grafico' + str(int(grafico_index) - 1)].set_ajustes(ajustes)
+        self.graficos['grafico' + str(int(grafico_index) - 1) + '_ajustes'].set_ajustes(ajustes)
+        seccion = "Grafico" + str(int(grafico_index) - 1)
+        subsecciones = list(ajustes)
+        self.save_config(seccion, subsecciones, ajustes)
+        if tipo_accion == 'aceptar':
+            self.desplegar_ajustes_graficos(grafico_x.master)
+
+    def desplegar_ajustes_graficos(self, ajustes_medidores_container):
+        """Desplegar/ocultar los ajustes de un medidor específico"""
+        # Obtiene el número del frame en el que está el medidor:
+        # (.!frame3.!frame, .!frame3.!frame2, .!frame3.!frame3, .!frame3.!frame4, .!frame3.!frame5 ...)
+        # Se obtiene la última letra. Si es "e", es el frame 0. Si no, hay que restar 1.
+        medidor_index = str(ajustes_medidores_container)[-1:]
+        if medidor_index == "e":
+            medidor_index = 1
+        if self.medidores['medidor' + str(int(medidor_index) - 1) + "_flag"]:
+            ajustes_medidores_container.grid_remove()
+        else:
+            ajustes_medidores_container.grid()
+        self.medidores['medidor' + str(int(medidor_index) - 1) + "_flag"] = not self.medidores['medidor' + str(int(medidor_index) - 1) + "_flag"]
+
+
+    def save_config(self, seccion, subsecciones, config):
+        """Guarda la nueva configuracion en el archivo """
+        if not self.configParser.has_section(seccion):
+            self.configParser.add_section(seccion)
+        for i in range(0, len(subsecciones), 1):
+            self.configParser.set(seccion, subsecciones[i], config[subsecciones[i]])
+        with open(self.configFile, 'w') as output:
+            self.configParser.write(output)

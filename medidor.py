@@ -217,7 +217,6 @@ class Medidor(tk.Canvas, object):
         else:
             self.itemconfigure(self.maximo, text=str(redondear(self.valor_max, self.maximo_rango)), fill='black')
 
-
     def set_ajustes(self, ajustes):
         self.colores = ajustes['colores']
         self.minimo_rango = float(ajustes['minimo'])

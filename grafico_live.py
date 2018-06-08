@@ -7,7 +7,7 @@ else:
 
 import matplotlib
 matplotlib.use('TkAgg')
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 
 import numpy as np
@@ -45,7 +45,6 @@ class GraficoLive(tk.Canvas, object):
         self.listaY2 = []
         self.line = []
         self.line2 = []
-
         self.config_grafico()
 
     def set(self, valorX, valorY, valorY2, cambio_vuelta):
@@ -94,6 +93,7 @@ class GraficoLive(tk.Canvas, object):
         self.second_axis.set_ylim(ymin=self.minY2, ymax=self.maxY2)
         self.grafico.set_xticks(np.arange(self.minX, self.maxX+1, self.stepX))
         self.grafico.set_yticks(np.arange(self.minY1, self.maxY1+1, self.stepY1))
+        self.second_axis.set_yticks(np.arange(self.minY2, self.maxY2+1, self.stepY2))
         lines = a + a2
         labs = [l.get_label() for l in lines]
         self.grafico.legend(lines, labs, loc='lower right')
@@ -101,3 +101,16 @@ class GraficoLive(tk.Canvas, object):
         self.canvas = FigureCanvasTkAgg(f, self)
         self.canvas.draw()
         self.canvas.get_tk_widget().grid()
+
+    def set_ajustes(self, ajustes):
+        self.minX = float(ajustes["minX"])
+        self.maxX = float(ajustes["maxX"])
+        self.stepX = float(ajustes["stepX"])
+        self.minY1 = float(ajustes["minY1"])
+        self.maxY1 = float(ajustes["maxY1"])
+        self.stepY1 = float(ajustes["stepY1"])
+        self.minY2 = float(ajustes["minY2"])
+        self.maxY2 = float(ajustes["maxY2"])
+        self.stepY2 = float(ajustes["stepY2"])
+        self.canvas.get_tk_widget().destroy()
+        self.config_grafico()

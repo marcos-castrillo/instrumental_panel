@@ -35,20 +35,7 @@ class Grafico(tk.Canvas, object):
         self.altura = int(self['height'])
         self.arrayX = []
         self.arrayY = []
-
-        # 1 inch = 96 pixels
-        self.container = tk.Frame(self)
-        self.container.grid()
-
-        f = Figure(figsize=(self.altura, self.ancho), dpi=100)
-        self.grafico = f.add_subplot(111)
         self.config_grafico()
-
-        self.canvas = FigureCanvasTkAgg(f, master=self.container)
-        self.canvas.draw()
-        self.canvas.get_tk_widget().grid(row=0, column=0)
-        self.line, = self.grafico.plot(0,0, 'red', linewidth=1)
-        f.subplots_adjust(left=0.12, right=0.97, bottom=0.15, top=0.9)
 
     def set(self, valorX, valorY, cambio_vuelta):
         self.arrayX.append(redondear(valorX, 0))
@@ -62,6 +49,10 @@ class Grafico(tk.Canvas, object):
             self.arrayY = []
 
     def config_grafico(self):
+        f = Figure(figsize=(self.altura, self.ancho), dpi=100)
+        self.grafico = f.add_subplot(111)
+        self.line, = self.grafico.plot(0, 0, 'red', linewidth=1)
+        f.subplots_adjust(left=0.12, right=0.97, bottom=0.15, top=0.9)
         self.grafico.set_title(self.titulo)
         self.grafico.set_xlabel(self.nombreX)
         self.grafico.set_ylabel(self.nombreY)
@@ -70,3 +61,15 @@ class Grafico(tk.Canvas, object):
         self.grafico.set_xticks(np.arange(self.minX, self.maxX+1, self.stepX))
         self.grafico.set_yticks(np.arange(self.minY, self.maxY+1, self.stepY))
         self.grafico.grid()
+        self.canvas = FigureCanvasTkAgg(f, self)
+        self.canvas.draw()
+        self.canvas.get_tk_widget().grid(row=0, column=0)
+
+    def set_ajustes(self, ajustes):
+        self.minX = float(ajustes["minX"])
+        self.maxX = float(ajustes["maxX"])
+        self.stepX = float(ajustes["stepX"])
+        self.minY = float(ajustes["minY"])
+        self.maxY = float(ajustes["maxY"])
+        self.stepY = float(ajustes["stepY"])
+        self.config_grafico()
