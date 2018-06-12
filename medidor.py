@@ -31,7 +31,6 @@ class Medidor(tk.Canvas, object):
         self.graphics(self.minimo_rango, self.maximo_rango)
         self.createhand()
         self.setrange(self.minimo_rango, self.maximo_rango)
-        self.valores_array = []
         self.vuelta_actual = 0
         self.color = 'black'
         self.deg = 0
@@ -161,29 +160,24 @@ class Medidor(tk.Canvas, object):
         self.start = start
         self.range = end - start
 
-    def set(self, valor, cambio_vuelta):
+    def set(self, valor, valor_promedio, cambio_vuelta):
+        # Si no hay valores guardados, se establecen los nuevos valores como min y max
         try:
             self.valor_min
         except AttributeError:
             self.valor_min = valor
             self.valor_max = valor
-        # Se llena el array de últimos valores
-        if len(self.valores_array) < 360:
-            self.valores_array.append(valor)
         else:
-            self.valores_array.pop(0)
-            self.valores_array.append(valor)
-        # Se comprueban el máximo y minimo
-        if valor < self.valor_min:
-            self.valor_min = valor
-        if valor > self.valor_max:
-            self.valor_max = valor
+            # Se comprueban el máximo y minimo
+            if valor < self.valor_min:
+                self.valor_min = valor
+            if valor > self.valor_max:
+                self.valor_max = valor
         if cambio_vuelta:
             self.vuelta_actual += 1
-            promedio = redondear(sum(self.valores_array) / len(self.valores_array), self.maximo_rango)
             # Se asigna el número al medidor
             if self.tipo_umbral == "P":
-                porcentaje = promedio/(self.minimo_rango + self.maximo_rango)
+                porcentaje = valor_promedio/(self.minimo_rango + self.maximo_rango)
                 if porcentaje < float(self.umbrales_porc[0]):
                     self.color = self.colores[0]
                 elif float(self.umbrales_porc[0]) <= porcentaje < float(self.umbrales_porc[1]):
@@ -191,18 +185,18 @@ class Medidor(tk.Canvas, object):
                 else:
                     self.color = self.colores[2]
             else:
-                if promedio < self.umbrales_val[0]:
+                if valor_promedio < self.umbrales_val[0]:
                     self.color = self.colores[0]
-                elif self.umbrales_val[0] <= promedio < self.umbrales_val[1]:
+                elif self.umbrales_val[0] <= valor_promedio < self.umbrales_val[1]:
                     self.color = self.colores[1]
                 else:
                     self.color = self.colores[2]
-            if promedio <= self.minimo_rango:
+            if valor_promedio <= self.minimo_rango:
                 self.deg = 120
-            elif promedio >= self.maximo_rango:
+            elif valor_promedio >= self.maximo_rango:
                 self.deg = 60
             else:
-                self.deg = 300 * (promedio - self.start) / self.range - 240
+                self.deg = 300 * (valor_promedio - self.start) / self.range - 240
             self.itemconfigure(self.ovalo, outline=self.color)
             # reposition hand
             rad = math.radians(self.deg)

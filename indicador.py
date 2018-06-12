@@ -6,12 +6,9 @@ else:
     import tkinter as tk
 import tkinter.font as tkf
 
-from redondeo import redondear
-
-
 # Clase Indicador: Engloba cada uno de los indicadores
 class Indicador(tk.Canvas, object):
-    def __init__(self, master,configuracion, **kwargs):
+    def __init__(self, master, configuracion, **kwargs):
         super(Indicador, self).__init__(master, configuracion=None, **kwargs)
         # Parámetros
         self.titulo = configuracion["nombre"]
@@ -34,7 +31,7 @@ class Indicador(tk.Canvas, object):
         self.centrey = self.side / 2
 
 
-    def createhand(self,altura, ancho):
+    def createhand(self, altura, ancho):
         # create text display
         self.tituloid = self.create_text(self.centrex
                                        ,  self.centrey - self.centrey*0.6
@@ -48,9 +45,5 @@ class Indicador(tk.Canvas, object):
         self.itemconfigure(self.unidadid, text=str(self.unidad), fill='black')
         self.itemconfigure(self.tituloid, text=str(self.titulo), fill='black')
 
-    def set(self, valor, cambio_vuelta):
-        if cambio_vuelta:
-            valor = redondear(valor, 0)
-            self.itemconfigure(self.valorid, text=str(valor))
-
-
+    def set(self, valor):
+        self.itemconfigure(self.valorid, text=str(valor))

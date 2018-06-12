@@ -24,6 +24,8 @@ import configparser
 import os.path
 import datetime as datetime
 
+from redondeo import redondear
+
 class Main(tk.Frame):
     def __init__(self, master):
         super(Main, self).__init__()
@@ -41,6 +43,10 @@ class Main(tk.Frame):
         self.tiempo = 0
         self.vuelta_actual = 0
         self.cambio_vuelta = False
+        self.presion_array = []
+        self.par_array = []
+        self.vel_angular_array = []
+        self.potencia_array = []
         # Leer el archivo de configuración
         self.configParser = configparser.RawConfigParser()
         self.configFile = 'settings.ini'
@@ -552,24 +558,77 @@ class Main(tk.Frame):
         self.opcionesFlag = not self.opcionesFlag
 
     def set(self, valores, reiniciar):
-        """Actualizar los valores en la UI"""
-        self.cambio_vuelta = False
+        calculos = self.calcular(valores)
+        self.actualizar_elementos(calculos, reiniciar)
+
+    def calcular(self, valores):
         vuelta = valores["vuelta"]
         diente = valores["diente"]
         periodo = valores["tiempo"]
-        presion = valores["presion"]
         par = valores["par"]
+        presion = valores["presion"]
+        if vuelta > self.vuelta_actual:
+            self.vuelta_actual += 1
+            self.cambio_vuelta = True
+        elif vuelta == 0 and diente == 1:
+            self.cambio_vuelta = True
+        else:
+            self.cambio_vuelta = False
+        # Fórmulas matemáticas
+        frecuencia_diente = 1 / periodo
+        frecuencia_vuelta = frecuencia_diente / 360
+        vel_angular = 2 * math.pi * frecuencia_vuelta
+        potencia = par * vel_angular
+        diametro = 10
+        carrera = 30
+        volumen = ((math.pi * diametro ** 2) / 4) * (carrera / 2) * math.sin(diente)
+        # Guardar datos en los arrays
+        self.presion_array.append(presion)
+        self.par_array.append(par)
+        self.vel_angular_array.append(vel_angular)
+        self.potencia_array.append(potencia)
+        if len(self.presion_array) > 360:
+            self.presion_array.pop(0)
+            self.par_array.pop(0)
+            self.vel_angular_array.pop(0)
+            self.potencia_array.pop(0)
+        if self.cambio_vuelta:
+            presion_promedio = redondear(sum(self.presion_array) / len(self.presion_array), 0)
+            par_promedio = redondear(sum(self.par_array) / len(self.par_array), 0)
+            vel_angular_promedio = redondear(sum(self.vel_angular_array) / len(self.vel_angular_array), 0)
+            potencia_promedio = redondear(sum(self.potencia_array) / len(self.potencia_array), 0)
+        else:
+            presion_promedio = 0
+            par_promedio = 0
+            vel_angular_promedio = 0
+            potencia_promedio = 0
+        # Devolver los valores calculados
+        valores["vel_angular"] = vel_angular
+        valores["potencia"] = potencia
+        valores["volumen"] = volumen
+        valores["presion_promedio"] = presion_promedio
+        valores["par_promedio"] = par_promedio
+        valores["vel_angular_promedio"] = vel_angular_promedio
+        valores["potencia_promedio"] = potencia_promedio
+        return valores
+
+    def actualizar_elementos(self, calculos, reiniciar):
+        """Actualizar los valores en la UI"""
+        vuelta = calculos["vuelta"]
+        diente = calculos["diente"]
+        periodo = calculos["tiempo"]
+        presion = redondear(calculos["presion"], 0)
+        par = redondear(calculos["par"], 0)
+        vel_angular = redondear(calculos["vel_angular"], 0)
+        potencia = redondear(calculos["potencia"], 0)
+        volumen = redondear(calculos["volumen"], 0)
+        presion_promedio = calculos["presion_promedio"]
+        par_promedio = calculos["par_promedio"]
+        vel_angular_promedio = calculos["vel_angular_promedio"]
+        potencia_promedio = calculos["potencia_promedio"]
         # Actualizar tiempo
         self.tiempo += periodo
         self.timeLabel.config(text=str(datetime.timedelta(milliseconds=self.tiempo)))
-        # Fórmulas matemáticas
-        frecuencia_diente = 1/periodo
-        frecuencia_vuelta = frecuencia_diente/360
-        vel_angular = 2*math.pi*frecuencia_vuelta
-        potencia = par*vel_angular
-        diametro = 10
-        carrera = 30
-        volumen = ((math.pi*diametro**2)/4) * (carrera/2) * math.sin(diente)
         # Medidor0: Presión
         # Medidor1: Par
         # Medidor2: Velocidad angular
@@ -585,21 +644,16 @@ class Main(tk.Frame):
             self.medidores['medidor2'].valor_max = vel_angular
             self.medidores['medidor3'].valor_min = potencia
             self.medidores['medidor3'].valor_max = potencia
-        if vuelta > self.vuelta_actual:
-            self.vuelta_actual += 1
-            self.cambio_vuelta = True
-        elif vuelta == 0 and diente == 1:
-            self.cambio_vuelta = True
         if not self.paginaFlag:
-            self.medidores['medidor0'].set(presion, self.cambio_vuelta)
-            self.medidores['medidor1'].set(par, self.cambio_vuelta)
-            self.medidores['medidor2'].set(vel_angular, self.cambio_vuelta)
-            self.medidores['medidor3'].set(potencia, self.cambio_vuelta)
+            self.medidores['medidor0'].set(presion, presion_promedio, self.cambio_vuelta)
+            self.medidores['medidor1'].set(par, par_promedio, self.cambio_vuelta)
+            self.medidores['medidor2'].set(vel_angular, vel_angular_promedio, self.cambio_vuelta)
+            self.medidores['medidor3'].set(potencia, potencia_promedio, self.cambio_vuelta)
             self.medidores['medidor4'].set(diente)
-        # Gráfico 0: Eje X: nº grado cigüeñal, eje Y: Presión y par -> Gráfico móvil
-        # Gráfico 1: Eje X: Volumen, eje Y: Presión -> Diagrama P-V
-        # Gráfico 2: Eje X: Velocidad angular promedio de vuelta, eje Y: Potencia de vuelta
         else:
+            # Gráfico 0: Eje X: nº grado cigüeñal, eje Y: Presión y par -> Gráfico móvil
+            # Gráfico 1: Eje X: Volumen, eje Y: Presión -> Diagrama P-V
+            # Gráfico 2: Eje X: Velocidad angular promedio de vuelta, eje Y: Potencia de vuelta
             self.graficos['grafico0'].set(diente, presion, par, self.cambio_vuelta)
             self.graficos['grafico1'].set(volumen, presion, self.cambio_vuelta)
             self.graficos['grafico2'].set(vel_angular, potencia, self.cambio_vuelta)
@@ -611,14 +665,15 @@ class Main(tk.Frame):
         # Indicador5: Velocidad angular instantánea
         # Indicador6: Velocidad angular promedio en una vuelta
         # Indicador7: Potencia
-        self.indicadores['indicador0'].set(vuelta, self.cambio_vuelta)
-        self.indicadores['indicador1'].set(diente, True)
-        self.indicadores['indicador2'].set(presion, True)
-        self.indicadores['indicador3'].set(par, True)
-        self.indicadores['indicador4'].set(volumen, True)
-        self.indicadores['indicador5'].set(vel_angular, True)
-        self.indicadores['indicador6'].set(vel_angular, self.cambio_vuelta)
-        self.indicadores['indicador7'].set(potencia, self.cambio_vuelta)
+        self.indicadores['indicador1'].set(diente)
+        self.indicadores['indicador2'].set(presion)
+        self.indicadores['indicador3'].set(par)
+        self.indicadores['indicador4'].set(volumen)
+        self.indicadores['indicador5'].set(vel_angular)
+        if self.cambio_vuelta:
+            self.indicadores['indicador0'].set(vuelta)
+            self.indicadores['indicador6'].set(vel_angular_promedio)
+            self.indicadores['indicador7'].set(potencia_promedio)
 
     def save_ajustes_medidor(self, medidor_x, ajustes, tipo_accion):
         """Guardar los ajustes de un medidor específico"""
