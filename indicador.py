@@ -15,6 +15,7 @@ class Indicador(tk.Canvas, object):
         self.unidad = configuracion["unidad"]
         self.ancho = int(self['width'])
         self.altura = int(self['height'])
+        self.valor_anterior = ""
         # Se configura el indicador
         self.layoutparams(self.altura, self.ancho)
         self.createhand(self.altura, self.ancho)
@@ -46,4 +47,7 @@ class Indicador(tk.Canvas, object):
         self.itemconfigure(self.tituloid, text=str(self.titulo), fill='black')
 
     def set(self, valor):
-        self.itemconfigure(self.valorid, text=str(valor))
+        if self.valor_anterior != str(valor):
+            self.itemconfigure(self.valorid, text=str(valor))
+            self.valor_anterior = str(valor)
+

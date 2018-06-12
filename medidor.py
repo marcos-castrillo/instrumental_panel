@@ -34,6 +34,7 @@ class Medidor(tk.Canvas, object):
         self.vuelta_actual = 0
         self.color = 'black'
         self.deg = 0
+        self.deg_anterior = 0
 
     def layoutparams(self):
         # find a square that fits in the window
@@ -198,17 +199,14 @@ class Medidor(tk.Canvas, object):
             else:
                 self.deg = 300 * (valor_promedio - self.start) / self.range - 240
             self.itemconfigure(self.ovalo, outline=self.color)
-            # reposition hand
-            rad = math.radians(self.deg)
-            self.coords(self.handid, self.centrex, self.centrey, self.centrex + self.handlen * math.cos(rad),
-                        self.centrey + self.handlen * math.sin(rad))
+            # Posición de la aguja, no se actualiza si es la misma que antes
+            if self.deg != self.deg_anterior:
+                rad = math.radians(self.deg)
+                self.coords(self.handid, self.centrex, self.centrey, self.centrex + self.handlen * math.cos(rad), self.centrey + self.handlen * math.sin(rad))
+                self.deg_anterior = self.deg
         if valor == self.valor_min:
-            self.itemconfigure(self.minimo, text=str(redondear(self.valor_min, self.maximo_rango)), fill=self.color)
-        else:
             self.itemconfigure(self.minimo, text=str(redondear(self.valor_min, self.maximo_rango)), fill='black')
         if valor == self.valor_max:
-            self.itemconfigure(self.maximo, text=str(redondear(self.valor_max, self.maximo_rango)), fill=self.color)
-        else:
             self.itemconfigure(self.maximo, text=str(redondear(self.valor_max, self.maximo_rango)), fill='black')
 
     def set_ajustes(self, ajustes):
