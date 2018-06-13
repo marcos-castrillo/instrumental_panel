@@ -209,37 +209,55 @@ class App(tk.Tk):
 
     def set_opciones(self, opciones):
         modo = opciones['modo']
-        n_lineas = opciones['n_lineas']
-        self.stop_set_datos()
-        if modo == 'Simulación':
-            self.reset()
-            self.simular_datos(0)
-        elif modo == 'Adquisición':
-            self.reset()
-            self.adquirir_datos(0)
-        grafico_live = self.main.graficos['grafico0']
-        if grafico_live.n_lineas != n_lineas:
-            grafico_live.n_lineas = n_lineas
-            i = n_lineas
-            while i <= len(grafico_live.line):
-                erase = grafico_live.line.pop(0)
-                erase.remove()
-                erase = grafico_live.line2.pop(0)
-                erase.remove()
-                if grafico_live.arrayX != []:
-                    grafico_live.arrayX.pop(0)
-                    grafico_live.arrayY.pop(0)
-                    grafico_live.arrayY2.pop(0)
-                    grafico_live.listaX.pop(0)
-                    grafico_live.listaY.pop(0)
-                    grafico_live.listaY2.pop(0)
+        estadoActual = self.main.estadoLabel['text']
+        if estadoActual != self.modo.get():
+            self.main.estadoLabel.config(text=modo)
+            self.stop_set_datos()
+            if modo == 'Simulación':
+                self.reset()
+                self.simular_datos(0)
+            elif modo == 'Adquisición':
+                self.reset()
+                self.adquirir_datos(0)
+        tipo_int = opciones["tipo_int"]
+        if tipo_int == 0:
+            self.main.breakpoint = ''
+            self.main.vuelta_limite = ''
+            self.main.diente_limite = ''
+            self.main.breakpointLabel.grid_remove()
+        elif tipo_int == 1:
+            horas = opciones['horas']
+            if horas == '':
+                horas = 0
+            minutos = opciones['minutos']
+            if minutos == '':
+                minutos = 0
+            segundos = opciones['segundos']
+            if segundos == '':
+                segundos = 0
+            milisegundos = opciones['milisegundos']
+            if milisegundos == '':
+                milisegundos = 0
+            tiempo = datetime.timedelta(hours=float(horas), minutes=float(minutos), seconds=float(segundos), milliseconds=float(milisegundos))
+            self.main.breakpoint = tiempo
+            self.main.breakpointLabel.grid()
+        else:
+            vuelta = opciones['vuelta']
+            if vuelta != '':
+                vuelta = int(vuelta)
+            diente = opciones['diente']
+            if diente != '':
+                diente = int(diente)
+            self.main.vuelta_limite = vuelta
+            self.main.diente_limite = diente
+            self.main.breakpointLabel.grid()
 
     def stop(self):
         self.cambiar_estado('pausa')
         self.stop_set_datos()
         if self.modo.get() == 'Simulación' or self.modo.get() == 'Adquisición':
             file = tk.filedialog.asksaveasfile(mode='w',defaultextension=".csv", initialdir = "/",title = "Select file",filetypes = (("csv files","*.csv"),("all files","*.*")))
-            if not file:  # asksaveasfile return `None` if dialog closed with "cancel".
+            if not file:
                 return
             for i in range(0, len(self.file), 1):
                 file.write(self.file[i])

@@ -26,6 +26,7 @@ class AjustesGraficos(tk.Frame, object):
             self.minY2 = configuracion["minY2"]
             self.maxY2 = configuracion["maxY2"]
             self.stepY2 = configuracion["stepY2"]
+            self.n_lineas = configuracion["n_lineas"]
         else:
             self.minY = configuracion["minY"]
             self.maxY = configuracion["maxY"]
@@ -55,6 +56,9 @@ class AjustesGraficos(tk.Frame, object):
             self.stepY2Label = tk.Label(master, text="Paso del eje Y2", bg='white', font='Helvetica 10 bold')
             self.stepY2Entry = tk.Entry(master, bd=5, width=5)
             self.stepY2Entry.insert(0, self.stepY2)
+            self.lineasLabel = tk.Label(master, text="Vueltas representadas simultáneamente", bg='white', font='Helvetica 10 bold', wraplength='150')
+            self.lineasEntry = tk.Entry(master, bd=5, width="5")
+            self.lineasEntry.insert(0, str(self.n_lineas))
         else:
             self.ejeYLabel = tk.Label(master, text="Rango del eje Y", bg='white', font='Helvetica 10 bold')
             self.minYEntry = tk.Entry(master, bd=5, width=5)
@@ -83,6 +87,8 @@ class AjustesGraficos(tk.Frame, object):
             self.maxY2Entry.grid(row=1, column=2, padx=(25, 25), sticky='E')
             self.stepY2Label.grid(row=2, column=2, padx=(25, 25), pady=(25,0))
             self.stepY2Entry.grid(row=3, column=2, padx=(25, 25))
+            self.lineasLabel.grid(row=4, column=1, pady=(25, 0))
+            self.lineasEntry.grid(row=5, column=1)
             self.aceptarButton.grid(row=8, column=0, columnspan=2, padx=(25, 25), pady=(25, 25))
             self.aplicarButton.grid(row=8, column=1, columnspan=2, padx=(0, 25), pady=(25, 25))
         else:
@@ -116,6 +122,7 @@ class AjustesGraficos(tk.Frame, object):
             minY2 = self.minY2Entry.get()
             maxY2 = self.maxY2Entry.get()
             stepY2 = self.stepY2Entry.get()
+            n_lineas = self.lineasEntry.get()
             ajustes = {
                 "minX": minX,
                 "maxX": maxX,
@@ -125,7 +132,8 @@ class AjustesGraficos(tk.Frame, object):
                 "stepY1": stepY1,
                 "minY2": minY2,
                 "maxY2": maxY2,
-                "stepY2": stepY2
+                "stepY2": stepY2,
+                "n_lineas": n_lineas
             }
         else:
             minY = self.minYEntry.get()
@@ -152,6 +160,7 @@ class AjustesGraficos(tk.Frame, object):
             self.minY2 = float(ajustes["minY2"])
             self.maxY2 = float(ajustes["maxY2"])
             self.stepY2 = float(ajustes["stepY2"])
+            self.n_lineas = int(ajustes["stepY2"])
         else:
             self.minY = float(ajustes["minY"])
             self.maxY = float(ajustes["maxY"])

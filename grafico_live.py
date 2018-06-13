@@ -19,7 +19,7 @@ from redondeo import redondear
 # Clase Grafico: Engloba cada uno de los graficos
 class GraficoLive(tk.Canvas, object):
     def __init__(self, master, configuracion, **kwargs):
-        super(GraficoLive, self).__init__(master,configuracion=None, **kwargs)
+        super(GraficoLive, self).__init__(master, configuracion=None, **kwargs)
         # Parámetros
         self.titulo = configuracion["titulo"]
         self.nombreX = configuracion["nombreX"]
@@ -112,5 +112,21 @@ class GraficoLive(tk.Canvas, object):
         self.minY2 = float(ajustes["minY2"])
         self.maxY2 = float(ajustes["maxY2"])
         self.stepY2 = float(ajustes["stepY2"])
+        n_lineas = int(ajustes["n_lineas"])
+        # Ajustar el número de líneas
+        if self.n_lineas != n_lineas:
+            self.n_lineas = n_lineas
+            i = n_lineas
+            while i <= len(self.line):
+                erase = self.line.pop(0)
+                erase.remove()
+                erase = self.line2.pop(0)
+                erase.remove()
+            self.arrayX = []
+            self.arrayY = []
+            self.arrayY2 = []
+            self.listaX = []
+            self.listaY = []
+            self.listaY2 = []
         self.canvas.get_tk_widget().destroy()
         self.config_grafico()

@@ -29,7 +29,7 @@ from redondeo import redondear
 class Main(tk.Frame):
     def __init__(self, master):
         super(Main, self).__init__()
-        self.master = master
+        self.app = master
         self.init()
 
     def init(self):
@@ -43,6 +43,9 @@ class Main(tk.Frame):
         self.tiempo = 0
         self.vuelta_actual = 0
         self.cambio_vuelta = False
+        self.breakpoint = ''
+        self.vuelta_limite = ''
+        self.diente_limite = ''
         self.presion_array = []
         self.par_array = []
         self.vel_angular_array = []
@@ -61,17 +64,17 @@ class Main(tk.Frame):
 
     def crear_elementos(self):
         # Obtener ancho/alto de la pantalla
-        self.ancho_total = self.master.winfo_screenwidth()
-        self.altura_total = self.master.winfo_screenheight()
+        self.ancho_total = self.app.winfo_screenwidth()
+        self.altura_total = self.app.winfo_screenheight()
         # Frame master
-        self.master.grid_columnconfigure(0, weight=1)
-        self.master.grid_rowconfigure(0, weight=1)
+        self.app.grid_columnconfigure(0, weight=1)
+        self.app.grid_rowconfigure(0, weight=1)
         # Resto de frames
-        self.menuContainer = tk.Frame(self.master)
+        self.menuContainer = tk.Frame(self.app)
         self.opcionesContainer = tk.Frame(self.menuContainer, bg='white', bd=2, highlightbackground="black", pady=5, relief="solid", padx=10)
-        self.medidoresContainer = tk.Frame(self.master)
-        self.graficosContainer = tk.Frame(self.master)
-        self.indicadoresContainer = tk.Frame(self.master)
+        self.medidoresContainer = tk.Frame(self.app)
+        self.graficosContainer = tk.Frame(self.app)
+        self.indicadoresContainer = tk.Frame(self.app)
         # Ajustar el lugar de los frames
         self.medidoresContainer.grid(column=0, row=0)
         self.graficosContainer.grid(column=0, row=0)
@@ -90,17 +93,18 @@ class Main(tk.Frame):
         medidor = tk.PhotoImage(file='images/gauge.png')
         pantalla_completa = tk.PhotoImage(file='images/pantalla_completa.png')
         salir = tk.PhotoImage(file='images/exit.png')
-        self.stopButton = tk.Button(self.menuContainer, bg='white', text='Parar', font='Helvetica 10 bold', image = stop, command=self.master.stop,compound="top")
+        breakpoint = tk.PhotoImage(file='images/breakpoint.png')
+        self.stopButton = tk.Button(self.menuContainer, bg='white', text='Parar', font='Helvetica 10 bold', image = stop, command=self.app.stop,compound="top")
         self.stopButton.image = stop
-        self.playButton = tk.Button(self.menuContainer, bg='white', text='Reanudar', font='Helvetica 10 bold', image = play, command=self.master.play,compound="top")
+        self.playButton = tk.Button(self.menuContainer, bg='white', text='Reanudar', font='Helvetica 10 bold', image = play, command=self.app.play,compound="top")
         self.playButton.image = play
-        self.pauseButton = tk.Button(self.menuContainer, bg='white', text='Pausar', font='Helvetica 10 bold', image = pause, command=self.master.pause,compound="top")
+        self.pauseButton = tk.Button(self.menuContainer, bg='white', text='Pausar', font='Helvetica 10 bold', image = pause, command=self.app.pause,compound="top")
         self.pauseButton.image = pause
-        self.recordButton = tk.Button(self.menuContainer, bg='white', text='Grabar', font='Helvetica 10 bold', image = record, command=self.master.record,compound="top")
+        self.recordButton = tk.Button(self.menuContainer, bg='white', text='Grabar', font='Helvetica 10 bold', image = record, command=self.app.record,compound="top")
         self.recordButton.image = record
-        self.openButton = tk.Button(self.menuContainer, bg='white', text='Abrir', font='Helvetica 10 bold', image = open, command=self.master.open,compound="top")
+        self.openButton = tk.Button(self.menuContainer, bg='white', text='Abrir', font='Helvetica 10 bold', image = open, command=self.app.open,compound="top")
         self.openButton.image = open
-        self.resetButton = tk.Button(self.menuContainer, bg='white', text='Borrar datos', font='Helvetica 10 bold', image = reset, command=self.master.reset,compound="top")
+        self.resetButton = tk.Button(self.menuContainer, bg='white', text='Borrar datos', font='Helvetica 10 bold', image = reset, command=self.app.reset,compound="top")
         self.resetButton.image = reset
         self.ajustesButton = tk.Button(self.menuContainer, bg='white', text='Ajustes', font='Helvetica 10 bold',
                                        image=ajustes, command=self.desplegar_opciones, compound="top")
@@ -109,11 +113,13 @@ class Main(tk.Frame):
         self.paginaMedidoresButton.image = medidor
         self.paginaGraficosButton = tk.Button(self.menuContainer, bg='white', text='Gráficos', font='Helvetica 10 bold', image=grafico, command=self.cambiar_pagina, compound="top")
         self.paginaGraficosButton.image = grafico
-        self.pantallaCompletaButton = tk.Button(self.menuContainer, bg='white', text='P. completa', font='Helvetica 10 bold', image=pantalla_completa, command=self.master.toggle_fullscreen, compound="top")
+        self.pantallaCompletaButton = tk.Button(self.menuContainer, bg='white', text='P. completa', font='Helvetica 10 bold', image=pantalla_completa, command=self.app.toggle_fullscreen, compound="top")
         self.pantallaCompletaButton.image = pantalla_completa
-        self.salirButton = tk.Button(self.menuContainer, bg='white', text='Salir', font='Helvetica 10 bold', image=salir, command=self.master.destroy, compound="top")
+        self.salirButton = tk.Button(self.menuContainer, bg='white', text='Salir', font='Helvetica 10 bold', image=salir, command=self.app.destroy, compound="top")
         self.salirButton.image = salir
         self.estadoLabel = tk.Label(self.menuContainer, font='Helvetica 18 bold', bg='white', borderwidth=2, relief="solid", padx=10)
+        self.breakpointLabel = tk.Label(self.menuContainer, font='Helvetica 18 bold', padx=10, image=breakpoint)
+        self.breakpointLabel.image = breakpoint
         self.timeLabel = tk.Label(self.menuContainer, font='Helvetica 18 bold', bg='white', borderwidth=2, relief="solid", padx=10)
         self.timeLabel.config(text=str(datetime.timedelta(milliseconds=0)))
         # Ajustar el lugar de los botones
@@ -132,9 +138,10 @@ class Main(tk.Frame):
         self.resetButton.grid(row=2, column=1, pady=5)
         self.ajustesButton.grid(row=2, column=2, pady=5)
         self.estadoLabel.grid(row=3, column=0, columnspan=3, pady=5)
+        self.breakpointLabel.grid(row=3, column=0, columnspan=3, pady=5, padx=(0,10), sticky="E")
+        self.breakpointLabel.grid_remove()
         self.timeLabel.grid(row=4, column=0, columnspan=3, pady=5)
         self.opcionesContainer.grid(row=5, column=0, columnspan=3, pady=5)
-
 
     def crear_medidores(self):
         # Configuración de cada medidor
@@ -216,10 +223,10 @@ class Main(tk.Frame):
         medidor2_ajustes_conf = {"nombre": medidor2_conf["nombre"], "unidad": medidor2_conf["unidad"], "colores": medidor2_conf["colores"], "umbrales_porc": medidor2_conf["umbrales_porc"], "umbrales_val": medidor2_conf["umbrales_val"], "tipo_umbral": medidor2_conf["tipo_umbral"], "minimo": medidor2_conf["minimo"], "maximo": medidor2_conf["maximo"]}
         medidor3_ajustes_conf = {"nombre": medidor3_conf["nombre"], "unidad": medidor3_conf["unidad"], "colores": medidor3_conf["colores"], "umbrales_porc": medidor3_conf["umbrales_porc"], "umbrales_val": medidor3_conf["umbrales_val"], "tipo_umbral": medidor3_conf["tipo_umbral"], "minimo": medidor3_conf["minimo"], "maximo": medidor3_conf["maximo"]}
         # Ajustes de los medidores
-        medidor0_ajustes = ajustes_medidores.AjustesMedidores(medidor0_container, self, self.master, configuracion=medidor0_ajustes_conf)
-        medidor1_ajustes = ajustes_medidores.AjustesMedidores(medidor1_container, self, self.master, configuracion=medidor1_ajustes_conf)
-        medidor2_ajustes = ajustes_medidores.AjustesMedidores(medidor2_container, self, self.master, configuracion=medidor2_ajustes_conf)
-        medidor3_ajustes = ajustes_medidores.AjustesMedidores(medidor3_container, self, self.master, configuracion=medidor3_ajustes_conf)
+        medidor0_ajustes = ajustes_medidores.AjustesMedidores(medidor0_container, self, self.app, configuracion=medidor0_ajustes_conf)
+        medidor1_ajustes = ajustes_medidores.AjustesMedidores(medidor1_container, self, self.app, configuracion=medidor1_ajustes_conf)
+        medidor2_ajustes = ajustes_medidores.AjustesMedidores(medidor2_container, self, self.app, configuracion=medidor2_ajustes_conf)
+        medidor3_ajustes = ajustes_medidores.AjustesMedidores(medidor3_container, self, self.app, configuracion=medidor3_ajustes_conf)
         # Ajustar el lugar de cada medidor
         medidor0.grid(column=2, row=0, columnspan=2, padx=(0,10), pady=(5,10))
         medidor1.grid(column=4, row=0, columnspan=2, padx=(10,0), pady=(5,10))
@@ -332,7 +339,7 @@ class Main(tk.Frame):
             "minY2": self.configParser.get('Grafico0', 'minY2'),
             "maxY2": self.configParser.get('Grafico0', 'maxY2'),
             "stepY2": self.configParser.get('Grafico0', 'stepY2'),
-            "n_lineas": self.configParser.get('Opciones', 'n_lineas')
+            "n_lineas": self.configParser.get('Grafico0', 'n_lineas'),
         }
         grafico1_conf = {
             "titulo": self.configParser.get('Grafico1', 'titulo'),
@@ -389,17 +396,18 @@ class Main(tk.Frame):
         # Configuración de los ajustes los medidores
         grafico0_ajustes_conf = {"minX": grafico0_conf["minX"], "maxX": grafico0_conf["maxX"], "stepX": grafico0_conf["stepX"],
                                  "minY1": grafico0_conf["minY1"], "maxY1": grafico0_conf["maxY1"], "stepY1": grafico0_conf["stepY1"],
-                                 "minY2": grafico0_conf["minY2"], "maxY2": grafico0_conf["maxY2"], "stepY2": grafico0_conf["stepY2"], "live": True}
+                                 "minY2": grafico0_conf["minY2"], "maxY2": grafico0_conf["maxY2"], "stepY2": grafico0_conf["stepY2"],
+                                 "live": True, "n_lineas": grafico0_conf["n_lineas"]}
         grafico1_ajustes_conf = {"minX": grafico1_conf["minX"], "maxX": grafico1_conf["maxX"], "stepX": grafico1_conf["stepX"],
                                  "minY": grafico1_conf["minY"], "maxY": grafico1_conf["maxY"], "stepY": grafico1_conf["stepY"], "live": False}
         grafico2_ajustes_conf = {"minX": grafico2_conf["minX"], "maxX": grafico2_conf["maxX"], "stepX": grafico2_conf["stepX"],
                                  "minY": grafico2_conf["minY"], "maxY": grafico2_conf["maxY"], "stepY": grafico2_conf["stepY"], "live": False}
         # Ajustes de los medidores
-        grafico0_ajustes = ajustes_graficos.AjustesGraficos(grafico0_container, self, self.master,
+        grafico0_ajustes = ajustes_graficos.AjustesGraficos(grafico0_container, self, self.app,
                                                               configuracion=grafico0_ajustes_conf)
-        grafico1_ajustes = ajustes_graficos.AjustesGraficos(grafico1_container, self, self.master,
+        grafico1_ajustes = ajustes_graficos.AjustesGraficos(grafico1_container, self, self.app,
                                                               configuracion=grafico1_ajustes_conf)
-        grafico2_ajustes = ajustes_graficos.AjustesGraficos(grafico2_container, self, self.master,
+        grafico2_ajustes = ajustes_graficos.AjustesGraficos(grafico2_container, self, self.app,
                                                               configuracion=grafico2_ajustes_conf)
         # Ajustar el lugar de cada ventana de ajustes
         grafico0_container.grid(row=0, column=2, columnspan=2)
@@ -424,15 +432,13 @@ class Main(tk.Frame):
         }
 
     def crear_opciones(self):
-        configuracion_opciones = {"modo": self.master.modo, "n_lineas": self.configParser.get('Opciones', 'n_lineas')}
-        self.ajustes = opciones.Opciones(self.opcionesContainer, self.master, configuracion=configuracion_opciones)
+        configuracion_opciones = {"modo": self.app.modo}
+        self.ajustes = opciones.Opciones(self.opcionesContainer, self.app, configuracion=configuracion_opciones)
         self.ajustes.grid(row=0, column=0)
         self.opcionesContainer.grid_remove()
 
     def create_config_file(self):
         """Crea un archivo de configuración si no existe"""
-        self.configParser.add_section('Opciones')
-        self.configParser.set('Opciones', 'n_lineas', '5')
         self.configParser.add_section('Medidor0')
         self.configParser.set('Medidor0', 'nombre', 'Presión')
         self.configParser.set('Medidor0', 'unidad', 'bar')
@@ -512,6 +518,7 @@ class Main(tk.Frame):
         self.configParser.set('Grafico0', 'minY2', '-20')
         self.configParser.set('Grafico0', 'maxY2', '20')
         self.configParser.set('Grafico0', 'stepY2', '5')
+        self.configParser.set('Grafico0', 'n_lineas', '5')
         self.configParser.add_section('Grafico1')
         self.configParser.set('Grafico1', 'titulo', 'Diagrama P-V')
         self.configParser.set('Grafico1', 'nombreX', 'Volumen (m^3)')
@@ -628,7 +635,23 @@ class Main(tk.Frame):
         potencia_promedio = calculos["potencia_promedio"]
         # Actualizar tiempo
         self.tiempo += periodo
-        self.timeLabel.config(text=str(datetime.timedelta(milliseconds=self.tiempo)))
+        time_stamp = datetime.timedelta(milliseconds=self.tiempo)
+        if self.breakpoint != '' and self.breakpoint <= time_stamp:
+            self.after(1, self.app.pause)
+            self.breakpoint = ''
+            if self.vuelta_limite == '' and self.diente_limite == '':
+                self.breakpointLabel.grid_remove()
+        elif (self.vuelta_limite != '' or self.diente_limite != '') and \
+                ((self.vuelta_limite == vuelta and self.diente_limite == diente) or \
+                (self.vuelta_limite == vuelta and self.diente_limite == '') or \
+                (self.vuelta_limite == '' and self.diente_limite == diente)):
+            self.after(1, self.app.pause)
+            self.vuelta_limite = ''
+            self.diente_limite = ''
+            if self.breakpoint == '':
+                self.breakpointLabel.grid_remove()
+        else:
+            self.timeLabel.config(text=str(time_stamp))
         # Medidor0: Presión
         # Medidor1: Par
         # Medidor2: Velocidad angular
