@@ -20,7 +20,7 @@ from redondeo import redondear
 # Clase Grafico: Engloba cada uno de los graficos
 class Grafico(tk.Canvas, object):
     def __init__(self, master, configuracion, **kwargs):
-        super(Grafico, self).__init__(master,configuracion=None, **kwargs)
+        super(Grafico, self).__init__(master, configuracion=None, **kwargs)
         # Parámetros
         self.titulo = configuracion["titulo"]
         self.nombreX = configuracion["nombreX"]

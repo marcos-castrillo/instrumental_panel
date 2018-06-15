@@ -26,6 +26,8 @@ class Medidor(tk.Canvas, object):
         self.tipo_umbral = configuracion["tipo_umbral"]
         self.colores = configuracion["colores"]
         self.n_colores = len(self.colores)
+        self.valor_min = ''
+        self.valor_max = ''
         # Se configura el medidor
         self.layoutparams()
         self.graphics(self.minimo_rango, self.maximo_rango)
@@ -111,6 +113,10 @@ class Medidor(tk.Canvas, object):
         self.minimo = self.create_text(self.centrex / 2
                                         , self.centrey * 2.1
                                         , font=tkf.Font(size=-int(2.5 * self.majortick)))
+        if self.valor_min != '':
+            self.itemconfigure(self.minimo, text=str(redondear(self.valor_min, self.maximo_rango)), fill='black')
+        if self.valor_max != '':
+            self.itemconfigure(self.maximo, text=str(redondear(self.valor_max, self.maximo_rango)), fill='black')
         self.minimoid = self.create_text(self.centrex / 2.5
                                         , self.centrey * 1.9
                                         , font=tkf.Font(size=int(self.majortick)))
@@ -146,10 +152,7 @@ class Medidor(tk.Canvas, object):
         radius = self.radius - self.bezel
         if length == self.majortick:
             canvas_id = self.create_text(self.centrex - 0.73 * radius * cos, self.centrey - 0.73 * radius * sin)
-            numero = rango_min + (angle + 60) / 30 * (rango_max - rango_min) / 10
-            numero2 = redondear(numero, self.maximo_rango)
-            if numero.is_integer():
-                numero = int(numero)
+            numero = redondear(rango_min + (angle + 60) / 30 * (rango_max - rango_min) / 10, self.maximo_rango)
             self.itemconfig(canvas_id, text=str(numero), font=tkf.Font(size=int(1.5 * self.minortick)))
         self.create_line(self.centrex - radius * cos
                          , self.centrey - radius * sin
@@ -178,14 +181,14 @@ class Medidor(tk.Canvas, object):
             self.vuelta_actual += 1
             # Se asigna el número al medidor
             if self.tipo_umbral == "P":
-                porcentaje = valor_promedio/(self.minimo_rango + self.maximo_rango)
+                porcentaje = 100*(valor_promedio - self.minimo_rango)/(self.maximo_rango - self.minimo_rango)
                 if porcentaje < float(self.umbrales_porc[0]):
                     self.color = self.colores[0]
                 elif float(self.umbrales_porc[0]) <= porcentaje < float(self.umbrales_porc[1]):
                     self.color = self.colores[1]
                 else:
                     self.color = self.colores[2]
-            else:
+            elif self.tipo_umbral == "V":
                 if valor_promedio < self.umbrales_val[0]:
                     self.color = self.colores[0]
                 elif self.umbrales_val[0] <= valor_promedio < self.umbrales_val[1]:
@@ -216,7 +219,7 @@ class Medidor(tk.Canvas, object):
         umbrales_porc_str = ajustes['umbrales_porc']
         umbrales_porc = [float(numeric_string) for numeric_string in umbrales_porc_str]
         self.umbrales_porc = umbrales_porc
-        umbrales_val_str = ajustes['umbrales_porc']
+        umbrales_val_str = ajustes['umbrales_val']
         umbrales_val = [float(numeric_string) for numeric_string in umbrales_val_str]
         self.umbrales_val = umbrales_val
         self.tipo_umbral = ajustes['tipo_umbral']

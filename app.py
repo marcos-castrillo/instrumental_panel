@@ -25,7 +25,7 @@ class App(tk.Tk):
         self.csv = []
         self.file = []
         self.modo = tk.StringVar()
-
+        self.pausa = False
         self.serial_abierto = False
         # Procesos
         self.config_ventana()
@@ -81,6 +81,8 @@ class App(tk.Tk):
             self.main.estadoLabel.config(text=self.modo.get())
 
     def simular_datos(self, fila):
+        if self.pausa:
+            return
         # (Se generan los valores aleatorios)
         # Diente
         self.diente += 1
@@ -253,6 +255,7 @@ class App(tk.Tk):
             self.main.breakpointLabel.grid()
 
     def stop(self):
+        self.pausa = True
         self.cambiar_estado('pausa')
         self.stop_set_datos()
         if self.modo.get() == 'Simulación' or self.modo.get() == 'Adquisición':
@@ -267,6 +270,7 @@ class App(tk.Tk):
             self.main.estadoLabel.config(text=self.modo.get())
 
     def open(self):
+        self.pausa = False
         file = tk.filedialog.askopenfile(initialdir = "/",title = "Select file", filetypes = (("csv files","*.csv"),("all files","*.*")))
         if not file:
             return
@@ -282,6 +286,7 @@ class App(tk.Tk):
         self.leer_datos(0)
 
     def record(self):
+        self.pausa = False
         self.stop_set_datos()
         self.cambiar_estado('grabacion')
         if self.modo.get() == 'Simulación':
@@ -290,10 +295,12 @@ class App(tk.Tk):
             self.adquirir_datos(1)
 
     def pause(self):
+        self.pausa = True
         self.cambiar_estado('pausa')
         self.stop_set_datos()
 
     def play(self):
+        self.pausa = False
         self.cambiar_estado('adquisicion')
         if self.modo.get() == 'Simulación':
             self.simular_datos(0)

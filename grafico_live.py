@@ -69,10 +69,12 @@ class GraficoLive(tk.Canvas, object):
                 self.listaX.pop(0)
                 self.listaY.pop(0)
                 self.listaY2.pop(0)
-                erase = self.line.pop(0)
-                erase.remove()
-                erase = self.line2.pop(0)
-                erase.remove()
+                if len(self.line) > 0:
+                    erase = self.line.pop(0)
+                    erase.remove()
+                if len(self.line2) > 0:
+                    erase = self.line2.pop(0)
+                    erase.remove()
             self.arrayX = []
             self.arrayY = []
             self.arrayY2 = []

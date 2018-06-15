@@ -70,6 +70,7 @@ class AjustesGraficos(tk.Frame, object):
             self.stepYEntry.insert(0, self.stepY)
         self.aceptarButton = tk.Button(master, text='Aceptar', width=10, command= lambda: self.aceptar_ajustes('aceptar'))
         self.aplicarButton = tk.Button(master, text='Aplicar', width=10,command= lambda: self.aceptar_ajustes('aplicar'))
+        self.cancelarButton = tk.Button(master, text='Cancelar', width=10,command= self.cancelar_ajustes)
         # Ajustar la posición de los elementos
         self.ejeXLabel.grid(row=0, column=0, padx=(25, 25), pady=(25,0))
         self.minXEntry.grid(row=1, column=0, padx=(25, 25), sticky='W')
@@ -89,16 +90,18 @@ class AjustesGraficos(tk.Frame, object):
             self.stepY2Entry.grid(row=3, column=2, padx=(25, 25))
             self.lineasLabel.grid(row=4, column=1, pady=(25, 0))
             self.lineasEntry.grid(row=5, column=1)
-            self.aceptarButton.grid(row=8, column=0, columnspan=2, padx=(25, 25), pady=(25, 25))
-            self.aplicarButton.grid(row=8, column=1, columnspan=2, padx=(0, 25), pady=(25, 25))
+            self.aceptarButton.grid(row=8, column=0, padx=(25, 25), pady=(25, 25))
+            self.aplicarButton.grid(row=8, column=1, padx=(0, 25), pady=(25, 25))
+            self.cancelarButton.grid(row=8, column=2, padx=(0, 25), pady=(25, 25))
         else:
             self.ejeYLabel.grid(row=0, column=1, padx=(25, 25), pady=(25,0))
             self.minYEntry.grid(row=1, column=1, padx=(25, 25), sticky='W')
             self.maxYEntry.grid(row=1, column=1, padx=(25, 25), sticky='E')
             self.stepYLabel.grid(row=2, column=1, padx=(25, 25), pady=(25,0))
             self.stepYEntry.grid(row=3, column=1, padx=(25, 25))
-            self.aceptarButton.grid(row=6, column=0, padx=(25, 25), pady=(25,25))
-            self.aplicarButton.grid(row=6, column=1, padx=(0, 25), pady=(25,25))
+            self.aceptarButton.grid(row=6, column=0, padx=(25, 25), pady=(25,25), sticky="W")
+            self.aplicarButton.grid(row=6, column=0, columnspan=2, padx=(25, 25), pady=(25,25))
+            self.cancelarButton.grid(row=6, column=1, padx=(0, 25), pady=(25,25), sticky="E")
 
     def guardar_umbral(self, evento, umbral):
         umbral_index = str(evento.widget)[-1:]
@@ -112,17 +115,21 @@ class AjustesGraficos(tk.Frame, object):
             self.umbrales_val[umbral_index] = redondear(float(umbral.get()),0)
 
     def aceptar_ajustes(self, tipo_accion):
-        minX = self.minXEntry.get()
-        maxX = self.maxXEntry.get()
-        stepX = self.stepXEntry.get()
+        minX = redondear(float(self.minXEntry.get()), float(self.maxXEntry.get()))
+        maxX = redondear(float(self.maxXEntry.get()), float(self.maxXEntry.get()))
+        stepX = redondear(float(self.stepXEntry.get()), 0)
         if self.live:
-            minY1 = self.minY1Entry.get()
-            maxY1 = self.maxY1Entry.get()
-            stepY1 = self.stepY1Entry.get()
-            minY2 = self.minY2Entry.get()
-            maxY2 = self.maxY2Entry.get()
-            stepY2 = self.stepY2Entry.get()
+            minY1 = redondear(float(self.minY1Entry.get()), float(self.maxY1Entry.get()))
+            maxY1 =redondear(float( self.maxY1Entry.get()), float(self.maxY1Entry.get()))
+            stepY1 = redondear(float(self.stepY1Entry.get()), 0)
+            minY2 = redondear(float(self.minY2Entry.get()), float(self.maxY2Entry.get()))
+            maxY2 = redondear(float(self.maxY2Entry.get()), float(self.maxY2Entry.get()))
+            stepY2 = redondear(float(self.stepY2Entry.get()), 0)
             n_lineas = self.lineasEntry.get()
+            if not float(n_lineas).is_integer():
+                n_lineas = int(float(n_lineas))
+                self.lineasEntry.delete(0, 'end')
+                self.lineasEntry.insert(0, str(n_lineas))
             ajustes = {
                 "minX": minX,
                 "maxX": maxX,
@@ -136,9 +143,9 @@ class AjustesGraficos(tk.Frame, object):
                 "n_lineas": n_lineas
             }
         else:
-            minY = self.minYEntry.get()
-            maxY = self.maxYEntry.get()
-            stepY = self.stepYEntry.get()
+            minY = redondear(float(self.minYEntry.get()), float(self.maxYEntry.get()))
+            maxY = redondear(float(self.maxYEntry.get()), float(self.maxYEntry.get()))
+            stepY = redondear(float(self.stepYEntry.get()), 0)
             ajustes = {
                 "minX": minX,
                 "maxX": maxX,
@@ -148,6 +155,37 @@ class AjustesGraficos(tk.Frame, object):
                 "stepY": stepY
             }
         self.main.save_ajustes_grafico(self, ajustes, tipo_accion)
+
+    def cancelar_ajustes(self):
+        self.minXEntry.delete(0, 'end')
+        self.minXEntry.insert(0, self.minX)
+        self.maxXEntry.delete(0, 'end')
+        self.maxXEntry.insert(0, self.maxX)
+        self.stepXEntry.delete(0, 'end')
+        self.stepXEntry.insert(0, self.stepX)
+        if self.live:
+            self.minY1Entry.delete(0, 'end')
+            self.minY1Entry.insert(0, self.minY1)
+            self.maxY1Entry.delete(0, 'end')
+            self.maxY1Entry.insert(0, self.maxY1)
+            self.stepY1Entry.delete(0, 'end')
+            self.stepY1Entry.insert(0, self.stepY1)
+            self.minY2Entry.delete(0, 'end')
+            self.minY2Entry.insert(0, self.minY2)
+            self.maxY2Entry.delete(0, 'end')
+            self.maxY2Entry.insert(0, self.maxY2)
+            self.stepY2Entry.delete(0, 'end')
+            self.stepY2Entry.insert(0, self.stepY2)
+            self.lineasEntry.delete(0, 'end')
+            self.lineasEntry.insert(0, str(self.n_lineas))
+        else:
+            self.minYEntry.delete(0, 'end')
+            self.minYEntry.insert(0, self.minY)
+            self.maxYEntry.delete(0, 'end')
+            self.maxYEntry.insert(0, self.maxY)
+            self.stepYEntry.delete(0, 'end')
+            self.stepYEntry.insert(0, self.stepY)
+        self.main.desplegar_ajustes(self.master)
 
     def set_ajustes(self, ajustes):
         self.minX = float(ajustes["minX"])
