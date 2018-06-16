@@ -328,6 +328,8 @@ class Main(tk.Frame):
         grafico0_conf = {
             "titulo": self.configParser.get('Grafico0', 'titulo'),
             "nombreX": self.configParser.get('Grafico0', 'nombreX'),
+            "color0": self.configParser.get('Grafico0', 'color0'),
+            "color1": self.configParser.get('Grafico0', 'color1'),
             "minX": self.configParser.get('Grafico0', 'minX'),
             "maxX": self.configParser.get('Grafico0', 'maxX'),
             "stepX": self.configParser.get('Grafico0', 'stepX'),
@@ -344,6 +346,7 @@ class Main(tk.Frame):
         grafico1_conf = {
             "titulo": self.configParser.get('Grafico1', 'titulo'),
             "nombreX": self.configParser.get('Grafico1', 'nombreX'),
+            "color": self.configParser.get('Grafico1', 'color'),
             "minX": self.configParser.get('Grafico1', 'minX'),
             "maxX": self.configParser.get('Grafico1', 'maxX'),
             "stepX": self.configParser.get('Grafico1', 'stepX'),
@@ -355,6 +358,7 @@ class Main(tk.Frame):
         grafico2_conf = {
             "titulo": self.configParser.get('Grafico2', 'titulo'),
             "nombreX": self.configParser.get('Grafico2', 'nombreX'),
+            "color": self.configParser.get('Grafico2', 'color'),
             "minX": self.configParser.get('Grafico2', 'minX'),
             "maxX": self.configParser.get('Grafico2', 'maxX'),
             "stepX": self.configParser.get('Grafico2', 'stepX'),
@@ -397,11 +401,13 @@ class Main(tk.Frame):
         grafico0_ajustes_conf = {"minX": grafico0_conf["minX"], "maxX": grafico0_conf["maxX"], "stepX": grafico0_conf["stepX"],
                                  "minY1": grafico0_conf["minY1"], "maxY1": grafico0_conf["maxY1"], "stepY1": grafico0_conf["stepY1"],
                                  "minY2": grafico0_conf["minY2"], "maxY2": grafico0_conf["maxY2"], "stepY2": grafico0_conf["stepY2"],
-                                 "live": True, "n_lineas": grafico0_conf["n_lineas"]}
+                                 "color0": grafico0_conf["color0"], "color1": grafico0_conf["color1"], "live": True, "n_lineas": grafico0_conf["n_lineas"]}
         grafico1_ajustes_conf = {"minX": grafico1_conf["minX"], "maxX": grafico1_conf["maxX"], "stepX": grafico1_conf["stepX"],
-                                 "minY": grafico1_conf["minY"], "maxY": grafico1_conf["maxY"], "stepY": grafico1_conf["stepY"], "live": False}
+                                 "minY": grafico1_conf["minY"], "maxY": grafico1_conf["maxY"], "stepY": grafico1_conf["stepY"],
+                                 "color": grafico1_conf["color"], "live": False}
         grafico2_ajustes_conf = {"minX": grafico2_conf["minX"], "maxX": grafico2_conf["maxX"], "stepX": grafico2_conf["stepX"],
-                                 "minY": grafico2_conf["minY"], "maxY": grafico2_conf["maxY"], "stepY": grafico2_conf["stepY"], "live": False}
+                                 "minY": grafico2_conf["minY"], "maxY": grafico2_conf["maxY"], "stepY": grafico2_conf["stepY"],
+                                "color": grafico2_conf["color"], "live": False}
         # Ajustes de los medidores
         grafico0_ajustes = ajustes_graficos.AjustesGraficos(grafico0_container, self, self.app,
                                                               configuracion=grafico0_ajustes_conf)
@@ -506,6 +512,8 @@ class Main(tk.Frame):
         self.configParser.set('Indicador7', 'unidad', 'W')
         self.configParser.add_section('Grafico0')
         self.configParser.set('Grafico0', 'titulo', 'Grado de cigüeñal/presión/par')
+        self.configParser.set('Grafico0', 'color0', 'red')
+        self.configParser.set('Grafico0', 'color1', 'green')
         self.configParser.set('Grafico0', 'nombreX', 'Grado de cigüeñal (º)')
         self.configParser.set('Grafico0', 'minX', '0')
         self.configParser.set('Grafico0', 'maxX', '360')
@@ -521,6 +529,7 @@ class Main(tk.Frame):
         self.configParser.set('Grafico0', 'n_lineas', '5')
         self.configParser.add_section('Grafico1')
         self.configParser.set('Grafico1', 'titulo', 'Diagrama P-V')
+        self.configParser.set('Grafico1', 'color', 'red')
         self.configParser.set('Grafico1', 'nombreX', 'Volumen (m^3)')
         self.configParser.set('Grafico1', 'minX', '0')
         self.configParser.set('Grafico1', 'maxX', '1500')
@@ -531,6 +540,7 @@ class Main(tk.Frame):
         self.configParser.set('Grafico1', 'stepY', '5')
         self.configParser.add_section('Grafico2')
         self.configParser.set('Grafico2', 'titulo', 'Velocidad angular/potencia')
+        self.configParser.set('Grafico2', 'color', 'red')
         self.configParser.set('Grafico2', 'nombreX', 'w promedio/vuelta (rad/s)')
         self.configParser.set('Grafico2', 'minX', '0')
         self.configParser.set('Grafico2', 'maxX', '1500')

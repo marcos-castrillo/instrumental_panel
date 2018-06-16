@@ -23,6 +23,7 @@ class Grafico(tk.Canvas, object):
         super(Grafico, self).__init__(master, configuracion=None, **kwargs)
         # Parámetros
         self.titulo = configuracion["titulo"]
+        self.color = configuracion["color"]
         self.nombreX = configuracion["nombreX"]
         self.minX = float(configuracion["minX"])
         self.maxX = float(configuracion["maxX"])
@@ -51,7 +52,7 @@ class Grafico(tk.Canvas, object):
     def config_grafico(self):
         f = Figure(figsize=(self.altura, self.ancho), dpi=100)
         self.grafico = f.add_subplot(111)
-        self.line, = self.grafico.plot(0, 0, 'red', linewidth=1)
+        self.line, = self.grafico.plot(0, 0, self.color, linewidth=1.5)
         f.subplots_adjust(left=0.12, right=0.97, bottom=0.15, top=0.9)
         self.grafico.set_title(self.titulo)
         self.grafico.set_xlabel(self.nombreX)
@@ -66,6 +67,7 @@ class Grafico(tk.Canvas, object):
         self.canvas.get_tk_widget().grid(row=0, column=0)
 
     def set_ajustes(self, ajustes):
+        self.color = ajustes["color"]
         self.minX = float(ajustes["minX"])
         self.maxX = float(ajustes["maxX"])
         self.stepX = float(ajustes["stepX"])

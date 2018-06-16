@@ -20,6 +20,8 @@ class AjustesGraficos(tk.Frame, object):
         self.maxX = configuracion["maxX"]
         self.stepX = configuracion["stepX"]
         if self.live:
+            self.color0 = configuracion["color0"]
+            self.color1 = configuracion["color1"]
             self.minY1 = configuracion["minY1"]
             self.maxY1 = configuracion["maxY1"]
             self.stepY1 = configuracion["stepY1"]
@@ -28,6 +30,7 @@ class AjustesGraficos(tk.Frame, object):
             self.stepY2 = configuracion["stepY2"]
             self.n_lineas = configuracion["n_lineas"]
         else:
+            self.color = configuracion["color"]
             self.minY = configuracion["minY"]
             self.maxY = configuracion["maxY"]
             self.stepY = configuracion["stepY"]
@@ -59,7 +62,13 @@ class AjustesGraficos(tk.Frame, object):
             self.lineasLabel = tk.Label(master, text="Vueltas representadas simultáneamente", bg='white', font='Helvetica 10 bold', wraplength='150')
             self.lineasEntry = tk.Entry(master, bd=5, width="5")
             self.lineasEntry.insert(0, str(self.n_lineas))
+            self.colorButton0 = tk.Button(master, width="18", command=lambda: self.set_color(self.colorButton0))
+            self.colorButton0.config(font='Helvetica 9 bold', text="Color de línea 1", bg=self.color0)
+            self.colorButton1 = tk.Button(master, width="18", command=lambda: self.set_color(self.colorButton1))
+            self.colorButton1.config(font='Helvetica 9 bold', text="Color de línea 2", bg=self.color1)
         else:
+            self.colorButton = tk.Button(master, width="18", command=lambda: self.set_color(self.colorButton))
+            self.colorButton.config(font='Helvetica 9 bold', text="Color de línea", bg=self.color)
             self.ejeYLabel = tk.Label(master, text="Rango del eje Y", bg='white', font='Helvetica 10 bold')
             self.minYEntry = tk.Entry(master, bd=5, width=5)
             self.minYEntry.insert(0, self.minY)
@@ -88,8 +97,10 @@ class AjustesGraficos(tk.Frame, object):
             self.maxY2Entry.grid(row=1, column=2, padx=(25, 25), sticky='E')
             self.stepY2Label.grid(row=2, column=2, padx=(25, 25), pady=(25,0))
             self.stepY2Entry.grid(row=3, column=2, padx=(25, 25))
-            self.lineasLabel.grid(row=4, column=1, pady=(25, 0))
-            self.lineasEntry.grid(row=5, column=1)
+            self.lineasLabel.grid(row=4, column=0, pady=(25, 0))
+            self.lineasEntry.grid(row=5, column=0)
+            self.colorButton0.grid(row=4, column=1, pady=(25, 0))
+            self.colorButton1.grid(row=5, column=1)
             self.aceptarButton.grid(row=8, column=0, padx=(25, 25), pady=(25, 25))
             self.aplicarButton.grid(row=8, column=1, padx=(0, 25), pady=(25, 25))
             self.cancelarButton.grid(row=8, column=2, padx=(0, 25), pady=(25, 25))
@@ -99,10 +110,29 @@ class AjustesGraficos(tk.Frame, object):
             self.maxYEntry.grid(row=1, column=1, padx=(25, 25), sticky='E')
             self.stepYLabel.grid(row=2, column=1, padx=(25, 25), pady=(25,0))
             self.stepYEntry.grid(row=3, column=1, padx=(25, 25))
+            self.colorButton.grid(row=4, column=0, columnspan=2, pady=(25, 0))
             self.aceptarButton.grid(row=6, column=0, padx=(25, 25), pady=(25,25), sticky="W")
             self.aplicarButton.grid(row=6, column=0, columnspan=2, padx=(25, 25), pady=(25,25))
             self.cancelarButton.grid(row=6, column=1, padx=(0, 25), pady=(25,25), sticky="E")
 
+    def set_color(self, widget):
+        button_index = str(widget)[-1:]
+        if button_index == 'n':
+            button_index = 1
+        button_index = int(button_index)-1
+        if self.live:
+            if button_index == 0:
+                color = askcolor(initialcolor = self.color0)
+                widget.config(font='Helvetica 9 bold', text="Color de línea 1", bg=color[1])
+                self.color0 = color[1]
+            elif button_index == 1:
+                color = askcolor(initialcolor = self.color1)
+                widget.config(font='Helvetica 9 bold', text="Color de línea 0", bg=color[1])
+                self.color1 = color[1]
+        else:
+            color = askcolor(initialcolor=self.color)
+            widget.config(font='Helvetica 9 bold', text="Color de línea", bg=color[1])
+            self.color = color[1]
     def guardar_umbral(self, evento, umbral):
         umbral_index = str(evento.widget)[-1:]
         if umbral_index == '3':
@@ -119,6 +149,8 @@ class AjustesGraficos(tk.Frame, object):
         maxX = redondear(float(self.maxXEntry.get()), float(self.maxXEntry.get()))
         stepX = redondear(float(self.stepXEntry.get()), 0)
         if self.live:
+            color0 = self.colorButton0.cget('background')
+            color1 = self.colorButton1.cget('background')
             minY1 = redondear(float(self.minY1Entry.get()), float(self.maxY1Entry.get()))
             maxY1 =redondear(float( self.maxY1Entry.get()), float(self.maxY1Entry.get()))
             stepY1 = redondear(float(self.stepY1Entry.get()), 0)
@@ -131,6 +163,8 @@ class AjustesGraficos(tk.Frame, object):
                 self.lineasEntry.delete(0, 'end')
                 self.lineasEntry.insert(0, str(n_lineas))
             ajustes = {
+                "color0": color0,
+                "color1": color1,
                 "minX": minX,
                 "maxX": maxX,
                 "stepX": stepX,
@@ -143,10 +177,12 @@ class AjustesGraficos(tk.Frame, object):
                 "n_lineas": n_lineas
             }
         else:
+            color = self.colorButton.cget('background')
             minY = redondear(float(self.minYEntry.get()), float(self.maxYEntry.get()))
             maxY = redondear(float(self.maxYEntry.get()), float(self.maxYEntry.get()))
             stepY = redondear(float(self.stepYEntry.get()), 0)
             ajustes = {
+                "color": color,
                 "minX": minX,
                 "maxX": maxX,
                 "stepX": stepX,
