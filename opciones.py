@@ -4,6 +4,7 @@ if sys.version_info[0] < 3:
     import Tkinter as tk
 else:
     import tkinter as tk
+import os
 
 class Opciones(tk.Frame, object):
     def __init__(self, master, app, configuracion, **kwargs):
@@ -37,6 +38,7 @@ class Opciones(tk.Frame, object):
         self.milisegundosLabel = tk.Label(master, text="ms", bg='white', font='Helvetica 10 bold')
         self.milisegundosEntry = tk.Entry(master, bd=5, width="5")
 
+        self.reiniciarButton = tk.Button(master, text='Reiniciar ajustes', width=15, command=self.reiniciar_ajustes)
 
         self.aplicarButton = tk.Button(master, text='Aplicar', width=10, command=self.guardar_opciones)
         self.aceptarButton = tk.Button(master, text='Aceptar', width=10, command=self.aceptar_opciones)
@@ -72,8 +74,9 @@ class Opciones(tk.Frame, object):
         self.milisegundosLabel.grid_remove()
         self.milisegundosEntry.grid(row=8, column=1, sticky="E")
         self.milisegundosEntry.grid_remove()
-        self.aplicarButton.grid(row=9, column=0)
-        self.aceptarButton.grid(row=9, column=1)
+        self.reiniciarButton.grid(row=9, column=0, columnspan=2, pady=(10,10))
+        self.aplicarButton.grid(row=10, column=0)
+        self.aceptarButton.grid(row=10, column=1)
 
     def aceptar_opciones(self):
         self.app.main.desplegar_opciones()
@@ -103,6 +106,26 @@ class Opciones(tk.Frame, object):
             }
 
         self.app.set_opciones(opciones)
+
+    def reiniciar_ajustes(self):
+        toplevel = tk.Toplevel(self, bd=2, relief="solid")
+        # Posición del TopLevel
+        g = "+%s+%s" % (400, 250)
+        toplevel.geometry(g)
+        # Ocultar botones de minimizar, cerrar, expandir
+        toplevel.overrideredirect(1)
+        ADVERTENCIA = '¿Reiniciar la aplicación y restaurar todos los ajustes por defecto?'
+        label1 = tk.Label(toplevel, text=ADVERTENCIA, height=5, width=60, font='Helvetica 12 bold')
+        aceptarButton = tk.Button(toplevel, text='Aceptar', command=self.reiniciar_app)
+        cancelarButton = tk.Button(toplevel, text='Cancelar', command=toplevel.destroy)
+        label1.grid(row=0, column=0, columnspan=2)
+        aceptarButton.grid(row=1, column=0, pady=10, padx=(0,10), sticky="E")
+        cancelarButton.grid(row=1, column=1, pady=10, padx=(10,0), sticky="W")
+
+    def reiniciar_app(self):
+        os.remove(self.app.main.configFile)
+        python = sys.executable
+        os.execl(python, python, *sys.argv)
 
     def cambiar_interrupcion(self):
         if self.tipoInterrupcion.get() == 0:
