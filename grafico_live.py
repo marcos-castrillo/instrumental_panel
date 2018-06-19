@@ -39,6 +39,7 @@ class GraficoLive(tk.Canvas, object):
         self.ancho = int(self['width'])
         self.altura = int(self['height'])
         self.n_lineas = int(configuracion["n_lineas"])
+        self.index = int(configuracion["index"])
         self.arrayX = []
         self.arrayY = []
         self.arrayY2 = []
@@ -47,6 +48,8 @@ class GraficoLive(tk.Canvas, object):
         self.listaY2 = []
         self.line = []
         self.line2 = []
+        # Flag para controlar el mostrar u ocultar la ventana de ajustes
+        self.flag = False
         self.config_grafico()
 
     def set(self, valorX, valorY, valorY2, cambio_vuelta):
@@ -68,7 +71,7 @@ class GraficoLive(tk.Canvas, object):
                 self.line[n_lineas-1].set_color(self.color0)
                 self.line[n_lineas-1].set_linewidth(0.5)
                 self.line2[n_lineas-1].set_color(self.color1)
-            self.line2[n_lineas - 1].set_linewidth(0.5)
+                self.line2[n_lineas - 1].set_linewidth(0.5)
             if n_lineas >= self.n_lineas:
                 self.listaX.pop(0)
                 self.listaY.pop(0)

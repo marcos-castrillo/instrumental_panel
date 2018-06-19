@@ -69,8 +69,8 @@ class Engranaje(tk.Canvas, object):
     def createhand(self):
 
         self.tituloid = self.create_text(self.centrex
-                                       , self.centrey * 2  - self.centrey*0.7
-                                       , font=tkf.Font(size=-int(self.majortick*1.5)),width='100', justify='center')
+                                       , self.centrey * 1.22
+                                       , font=tkf.Font(size=-int(self.majortick*1.25)),width='100', justify='center')
 
         self.valor = self.create_text(self.centrex
                                         , self.centrey * 2.1

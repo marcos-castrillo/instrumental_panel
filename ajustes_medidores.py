@@ -7,6 +7,7 @@ else:
 
 from tkinter.colorchooser import *
 from redondeo import redondear
+import json
 
 class AjustesMedidores(tk.Frame, object):
     def __init__(self, master, main, app, configuracion, **kwargs):
@@ -24,6 +25,7 @@ class AjustesMedidores(tk.Frame, object):
         self.tipo_umbral = tk.StringVar()
         self.tipo_umbral.set(configuracion["tipo_umbral"])
         self.minimo_rango = configuracion["minimo"]
+        self.index = configuracion["index"]
         if self.minimo_rango.is_integer():
             self.minimo_rango = int(self.minimo_rango)
         self.maximo_rango = configuracion["maximo"]
@@ -37,29 +39,29 @@ class AjustesMedidores(tk.Frame, object):
             self.umbrales_actual = self.umbrales_val
             self.unidad_actual = " " + self.unidad
         self.rangoLabel = tk.Label(master, text="Rango", bg='white', font='Helvetica 10 bold')
-        self.minimoEntry = tk.Entry(master, bd=5, width=7)
+        self.minimoEntry = tk.Entry(master, bd=5, width=5)
         self.minimoEntry.insert(0, self.minimo_rango)
-        self.maximoEntry = tk.Entry(master, bd=5, width=7)
+        self.maximoEntry = tk.Entry(master, bd=5, width=5)
         self.maximoEntry.insert(0, self.maximo_rango)
         self.umbralRadioLabel = tk.Label(master, text="Tipo de umbral", bg='white', font='Helvetica 10 bold')
         self.umbralRadio0 = tk.Radiobutton(master, text="Porcentaje", variable=self.tipo_umbral, value='P', command=self.cambiar_umbral)
         self.umbralRadio1 = tk.Radiobutton(master, text="Valor", variable=self.tipo_umbral, value='V', command=self.cambiar_umbral)
         self.umbralLabel = tk.Label(master, text="Umbrales", bg='white', font='Helvetica 10 bold')
         self.umbral0 = tk.StringVar()
-        self.umbralEntry0 = tk.Entry(master, textvariable=self.umbral0, bd=5, width=7)
+        self.umbralEntry0 = tk.Entry(master, textvariable=self.umbral0, bd=5, width=6)
         self.umbralEntry0.insert(0, self.umbrales_actual[0])
         self.umbral1 = tk.StringVar()
-        self.umbralEntry1 = tk.Entry(master, textvariable=self.umbral1, bd=5, width=7)
+        self.umbralEntry1 = tk.Entry(master, textvariable=self.umbral1, bd=5, width=6)
         self.umbralEntry1.insert(0, self.umbrales_actual[1])
-        self.colorButton0 = tk.Button(master, width="18", command = lambda: self.set_color(self.colorButton0))
+        self.colorButton0 = tk.Button(master, width="18", command = lambda: self.set_color(self.colorButton0, 0))
         self.colorButton0.config(font='Helvetica 9 bold', text="< " + str(self.umbrales_actual[0]) + self.unidad_actual, bg=self.colores[0])
-        self.colorButton1 = tk.Button(master, width="18", command = lambda: self.set_color(self.colorButton1))
+        self.colorButton1 = tk.Button(master, width="18", command = lambda: self.set_color(self.colorButton1, 1))
         self.colorButton1.config(font='Helvetica 9 bold', text=">= " + str(self.umbrales_actual[0]) + self.unidad_actual + " y < " + str(self.umbrales_actual[1]) + self.unidad_actual, bg=self.colores[1])
-        self.colorButton2 = tk.Button(master, width="18", command = lambda: self.set_color(self.colorButton2))
+        self.colorButton2 = tk.Button(master, width="18", command = lambda: self.set_color(self.colorButton2, 2))
         self.colorButton2.config(font='Helvetica 9 bold', text=">= " + str(self.umbrales_actual[1]) + self.unidad_actual, bg=self.colores[2])
-        self.aceptarButton = tk.Button(master, text='Aceptar', width=10, command= lambda: self.aceptar_ajustes('aceptar'))
-        self.aplicarButton = tk.Button(master, text='Aplicar', width=10, command= lambda: self.aceptar_ajustes('aplicar'))
-        self.cancelarButton = tk.Button(master, text='Cancelar', width=10, command=self.cancelar_ajustes)
+        self.aceptarButton = tk.Button(master, text='Aceptar', width=7, command= lambda: self.aceptar_ajustes('aceptar'))
+        self.aplicarButton = tk.Button(master, text='Aplicar', width=7, command= lambda: self.aceptar_ajustes('aplicar'))
+        self.cancelarButton = tk.Button(master, text='Cancelar', width=7, command=self.cancelar_ajustes)
         # Ajustar la posición de los elementos
         self.rangoLabel.grid(row=0, column=0, padx=(5, 25), pady=(25,0))
         self.minimoEntry.grid(row=1, column=0, padx=(10, 10), sticky='W')
@@ -77,12 +79,9 @@ class AjustesMedidores(tk.Frame, object):
         self.aplicarButton.grid(row=5, column=0, columnspan=2, padx=(25, 25), pady=(25,25))
         self.cancelarButton.grid(row=5, column=1, padx=(0, 10), pady=(25,25), sticky='E')
 
-    def set_color(self, widget):
-        button_index = str(widget)[-1:]
-        if button_index == 'n':
-            button_index = 1
-        button_index = int(button_index)-1
+    def set_color(self, widget, button_index):
         color = askcolor(initialcolor = self.colores[button_index])
+        self.colores[button_index] = color[1]
         if button_index == 0:
             widget.config(font='Helvetica 9 bold',  text="< " + str(self.umbrales_actual[0]) + self.unidad_actual, bg=color[1])
         elif button_index == 1:
@@ -147,7 +146,8 @@ class AjustesMedidores(tk.Frame, object):
             "minimo": str(minimo),
             "maximo": str(maximo)
         }
-        self.main.save_ajustes_medidor(self, ajustes, tipo_accion)
+        self.main.save_ajustes(self, ajustes, tipo_accion)
+        self.set_ajustes(ajustes)
 
     def cancelar_ajustes(self):
         self.minimoEntry.delete(0,'end')
@@ -161,7 +161,8 @@ class AjustesMedidores(tk.Frame, object):
         self.colorButton0.config(font='Helvetica 9 bold', text="< " + str(self.umbrales_actual[0]) + self.unidad_actual,bg=self.colores[0])
         self.colorButton1.config(font='Helvetica 9 bold',text=">= " + str(self.umbrales_actual[0]) + self.unidad_actual + " y < " + str(self.umbrales_actual[1]) + self.unidad_actual, bg=self.colores[1])
         self.colorButton2.config(font='Helvetica 9 bold',text=">= " + str(self.umbrales_actual[1]) + self.unidad_actual, bg=self.colores[2])
-        self.main.desplegar_ajustes(self.master)
+        elemento = self.main.medidores['medidor' + str(self.index)]
+        self.main.desplegar_ajustes(elemento)
 
     def validar_entries(self, valor1, valor2):
         if valor1 > valor2:
@@ -175,7 +176,7 @@ class AjustesMedidores(tk.Frame, object):
         return valor1, valor2
 
     def set_ajustes(self, ajustes):
-        self.colores = ajustes['colores']
+        self.colores = json.loads(ajustes['colores'])
         umbrales_porc_str = ajustes['umbrales_porc']
         umbrales_val_str = ajustes['umbrales_val']
         self.umbrales_porc = [float(numeric_string) for numeric_string in umbrales_porc_str]

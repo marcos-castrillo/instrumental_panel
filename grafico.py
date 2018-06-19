@@ -6,7 +6,6 @@ else:
     import tkinter as tk
 
 import matplotlib
-import matplotlib.pyplot as plt
 matplotlib.use('TkAgg')
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.figure import Figure
@@ -34,10 +33,13 @@ class Grafico(tk.Canvas, object):
         self.stepY = float(configuracion["stepY"])
         self.ancho = int(self['width'])
         self.altura = int(self['height'])
+        self.index = configuracion["index"]
         self.arrayX = []
         self.arrayY = []
+        # Flag para controlar el mostrar u ocultar la ventana de ajustes
+        self.flag = False
         self.config_grafico()
-
+    
     def set(self, valorX, valorY, cambio_vuelta):
         self.arrayX.append(redondear(valorX, 0))
         self.arrayY.append(redondear(valorY, 0))

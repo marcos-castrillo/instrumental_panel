@@ -6,6 +6,7 @@ else:
     import tkinter as tk
 import tkinter.font as tkf
 
+import json
 import math
 from redondeo import redondear
 
@@ -25,9 +26,12 @@ class Medidor(tk.Canvas, object):
         self.umbrales_val = configuracion["umbrales_val"]
         self.tipo_umbral = configuracion["tipo_umbral"]
         self.colores = configuracion["colores"]
+        self.index = configuracion["index"]
         self.n_colores = len(self.colores)
         self.valor_min = ''
         self.valor_max = ''
+        # Flag para controlar el mostrar u ocultar la ventana de ajustes
+        self.flag = False
         # Se configura el medidor
         self.layoutparams()
         self.graphics(self.minimo_rango, self.maximo_rango)
@@ -126,7 +130,7 @@ class Medidor(tk.Canvas, object):
                                        , font=tkf.Font(size=-int(1.5*self.majortick)))
         self.tituloid = self.create_text(self.centrex
                                        , self.centrey * 2  - self.centrey*0.7
-                                       , font=tkf.Font(size=-int(self.majortick*1.5)),width='150', justify='center')
+                                       , font=tkf.Font(size=-int(self.majortick*1.25)),width='150', justify='center')
 
         self.handid = self.create_line(self.centrex, self.centrey
                                        , self.centrex - self.handlen, self.centrey
@@ -213,7 +217,7 @@ class Medidor(tk.Canvas, object):
             self.itemconfigure(self.maximo, text=str(redondear(self.valor_max, self.maximo_rango)), fill='black')
 
     def set_ajustes(self, ajustes):
-        self.colores = ajustes['colores']
+        self.colores = json.loads(ajustes['colores'])
         self.minimo_rango = float(ajustes['minimo'])
         self.maximo_rango = float(ajustes['maximo'])
         umbrales_porc_str = ajustes['umbrales_porc']
