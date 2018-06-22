@@ -212,6 +212,9 @@ class App(tk.Tk):
     def set_opciones(self, opciones):
         modo = opciones['modo']
         estadoActual = self.main.estadoLabel['text']
+        dientes_refresco = opciones['dientes_refresco']
+        if dientes_refresco != '' and dientes_refresco.isdigit():
+            self.main.dientes_refresco = int(dientes_refresco)
         if estadoActual != self.modo.get():
             self.main.estadoLabel.config(text=modo)
             self.stop_set_datos()

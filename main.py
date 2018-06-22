@@ -46,6 +46,8 @@ class Main(tk.Frame):
         self.breakpoint = ''
         self.vuelta_limite = ''
         self.diente_limite = ''
+        self.dientes_refresco = 1
+        self.dientes_refresco_index = 1
         self.presion_array = []
         self.par_array = []
         self.vel_angular_array = []
@@ -123,25 +125,25 @@ class Main(tk.Frame):
         self.timeLabel = tk.Label(self.menuContainer, font='Helvetica 18 bold', bg='white', borderwidth=2, relief="solid", padx=10)
         self.timeLabel.config(text=str(datetime.timedelta(milliseconds=0)))
         # Ajustar el lugar de los botones
-        self.paginaMedidoresButton.grid(row=0, column=0, pady=5)
-        self.paginaGraficosButton.grid(row=0, column=0, pady=5)
+        self.paginaMedidoresButton.grid(row=0, column=0, pady=2)
+        self.paginaGraficosButton.grid(row=0, column=0, pady=2)
         self.paginaMedidoresButton.grid_remove()
-        self.pantallaCompletaButton.grid(row=0, column=1, pady=5)
-        self.salirButton.grid(row=0, column=2, pady=5)
-        self.stopButton.grid(row=1, column=0, pady=5)
+        self.pantallaCompletaButton.grid(row=0, column=1, pady=2)
+        self.salirButton.grid(row=0, column=2, pady=2)
+        self.stopButton.grid(row=1, column=0, pady=2)
         self.stopButton.configure(state='disabled')
-        self.playButton.grid(row=1, column=1, pady=5)
+        self.playButton.grid(row=1, column=1, pady=2)
         self.playButton.grid_remove()
-        self.pauseButton.grid(row=1, column=1, pady=5)
-        self.recordButton.grid(row=1, column=2, pady=5)
-        self.openButton.grid(row=2, column=0, pady=5)
-        self.resetButton.grid(row=2, column=1, pady=5)
-        self.ajustesButton.grid(row=2, column=2, pady=5)
-        self.estadoLabel.grid(row=3, column=0, columnspan=3, pady=5)
-        self.breakpointLabel.grid(row=3, column=0, columnspan=3, pady=5, padx=(0,10), sticky="E")
+        self.pauseButton.grid(row=1, column=1, pady=2)
+        self.recordButton.grid(row=1, column=2, pady=2)
+        self.openButton.grid(row=2, column=0, pady=2)
+        self.resetButton.grid(row=2, column=1, pady=2)
+        self.ajustesButton.grid(row=2, column=2, pady=2)
+        self.estadoLabel.grid(row=3, column=0, columnspan=3, pady=2)
+        self.breakpointLabel.grid(row=3, column=0, columnspan=3, pady=2, padx=(0,10), sticky="E")
         self.breakpointLabel.grid_remove()
-        self.timeLabel.grid(row=4, column=0, columnspan=3, pady=5)
-        self.opcionesContainer.grid(row=5, column=0, columnspan=3, pady=5)
+        self.timeLabel.grid(row=4, column=0, columnspan=3, pady=2)
+        self.opcionesContainer.grid(row=5, column=0, columnspan=3, pady=2)
 
     def crear_medidores(self):
         # Configuración de cada medidor
@@ -655,11 +657,23 @@ class Main(tk.Frame):
                 self.breakpointLabel.grid_remove()
         else:
             self.timeLabel.config(text=str(time_stamp))
+        self.dientes_refresco_index -= 1
         # Medidor0: Presión
         # Medidor1: Par
         # Medidor2: Velocidad angular
         # Medidor3: Potencia
         # Medidor4: Ángulo de cigüeñal
+        # Gráfico 0: Eje X: nº grado cigüeñal, eje Y: Presión y par -> Gráfico móvil
+        # Gráfico 1: Eje X: Volumen, eje Y: Presión -> Diagrama P-V
+        # Gráfico 2: Eje X: Velocidad angular promedio de vuelta, eje Y: Potencia de vuelta
+        # Indicador0: Número de vuelta de cigüeñal
+        # Indicador1: Número de impulso dentro de la vuelta (grados girados)
+        # Indicador2: Presión
+        # Indicador3: Par
+        # Indicador4: Volumen
+        # Indicador5: Velocidad angular instantánea
+        # Indicador6: Velocidad angular promedio en una vuelta
+        # Indicador7: Potencia
         if reiniciar:
             self.tiempo = periodo
             self.medidores['medidor0'].valor_min = presion
@@ -670,36 +684,31 @@ class Main(tk.Frame):
             self.medidores['medidor2'].valor_max = vel_angular
             self.medidores['medidor3'].valor_min = potencia
             self.medidores['medidor3'].valor_max = potencia
+        #Valores promedio
         if not self.paginaFlag:
             self.medidores['medidor0'].set(presion, presion_promedio, self.cambio_vuelta)
             self.medidores['medidor1'].set(par, par_promedio, self.cambio_vuelta)
             self.medidores['medidor2'].set(vel_angular, vel_angular_promedio, self.cambio_vuelta)
             self.medidores['medidor3'].set(potencia, potencia_promedio, self.cambio_vuelta)
-            self.medidores['medidor4'].set(diente)
         else:
-            # Gráfico 0: Eje X: nº grado cigüeñal, eje Y: Presión y par -> Gráfico móvil
-            # Gráfico 1: Eje X: Volumen, eje Y: Presión -> Diagrama P-V
-            # Gráfico 2: Eje X: Velocidad angular promedio de vuelta, eje Y: Potencia de vuelta
             self.graficos['grafico0'].set(diente, presion, par, self.cambio_vuelta)
             self.graficos['grafico1'].set(volumen, presion, self.cambio_vuelta)
             self.graficos['grafico2'].set(vel_angular, potencia, self.cambio_vuelta)
-        self.indicadores['indicador1'].set(diente)
-        self.indicadores['indicador2'].set(presion)
-        self.indicadores['indicador3'].set(par)
-        self.indicadores['indicador4'].set(volumen)
-        self.indicadores['indicador5'].set(vel_angular)
         if self.cambio_vuelta:
             self.indicadores['indicador0'].set(vuelta)
             self.indicadores['indicador6'].set(vel_angular_promedio)
             self.indicadores['indicador7'].set(potencia_promedio)
-        # Indicador0: Número de vuelta de cigüeñal
-        # Indicador1: Número de impulso dentro de la vuelta (grados girados)
-        # Indicador2: Presión
-        # Indicador3: Par
-        # Indicador4: Volumen
-        # Indicador5: Velocidad angular instantánea
-        # Indicador6: Velocidad angular promedio en una vuelta
-        # Indicador7: Potencia
+        #Valores instantáneos
+        if self.dientes_refresco_index == 0:
+            self.dientes_refresco_index = self.dientes_refresco
+            if not self.paginaFlag:
+                self.medidores['medidor4'].set(diente)
+            self.indicadores['indicador1'].set(diente)
+            self.indicadores['indicador2'].set(presion)
+            self.indicadores['indicador3'].set(par)
+            self.indicadores['indicador4'].set(volumen)
+            self.indicadores['indicador5'].set(vel_angular)
+
 
 
     def save_ajustes(self, ajustes_elemento, ajustes, tipo_accion):
