@@ -11,6 +11,7 @@ from redondeo import redondear
 class AjustesGraficos(tk.Frame, object):
     def __init__(self, master, main, app, configuracion, **kwargs):
         super(AjustesGraficos, self).__init__(master, configuracion=None, **kwargs)
+        # Parámetros
         self.master = master
         self.master.configure(bg='white', highlightbackground="black", highlightcolor="black", highlightthickness=2)
         self.main = main
@@ -35,52 +36,56 @@ class AjustesGraficos(tk.Frame, object):
             self.minY = configuracion["minY"]
             self.maxY = configuracion["maxY"]
             self.stepY = configuracion["stepY"]
-        self.ejeXLabel = tk.Label(master, text="Rango del eje X", bg='white', font='Helvetica 10 bold')
-        self.minXEntry = tk.Entry(master, bd=5, width=5)
+
+        self.crear_elementos()
+
+    def crear_elementos(self):
+        self.ejeXLabel = tk.Label(self.master, text="Rango del eje X", bg='white', font='Helvetica 10 bold')
+        self.minXEntry = tk.Entry(self.master, bd=5, width=5)
         self.minXEntry.insert(0, self.minX)
-        self.maxXEntry = tk.Entry(master, bd=5, width=5)
+        self.maxXEntry = tk.Entry(self.master, bd=5, width=5)
         self.maxXEntry.insert(0, self.maxX)
-        self.stepXLabel = tk.Label(master, text="Paso del eje X", bg='white', font='Helvetica 10 bold')
-        self.stepXEntry = tk.Entry(master, bd=5, width=5)
+        self.stepXLabel = tk.Label(self.master, text="Paso del eje X", bg='white', font='Helvetica 10 bold')
+        self.stepXEntry = tk.Entry(self.master, bd=5, width=5)
         self.stepXEntry.insert(0, self.stepX)
         if self.live:
-            self.ejeY1Label = tk.Label(master, text="Rango del eje Y1", bg='white', font='Helvetica 10 bold')
-            self.minY1Entry = tk.Entry(master, bd=5, width=5)
+            self.ejeY1Label = tk.Label(self.master, text="Rango del eje Y1", bg='white', font='Helvetica 10 bold')
+            self.minY1Entry = tk.Entry(self.master, bd=5, width=5)
             self.minY1Entry.insert(0, self.minY1)
-            self.maxY1Entry = tk.Entry(master, bd=5, width=5)
+            self.maxY1Entry = tk.Entry(self.master, bd=5, width=5)
             self.maxY1Entry.insert(0, self.maxY1)
-            self.stepY1Label = tk.Label(master, text="Paso del eje Y1", bg='white', font='Helvetica 10 bold')
-            self.stepY1Entry = tk.Entry(master, bd=5, width=5)
+            self.stepY1Label = tk.Label(self.master, text="Paso del eje Y1", bg='white', font='Helvetica 10 bold')
+            self.stepY1Entry = tk.Entry(self.master, bd=5, width=5)
             self.stepY1Entry.insert(0, self.stepY1)
-            self.ejeY2Label = tk.Label(master, text="Rango del eje Y2", bg='white', font='Helvetica 10 bold')
-            self.minY2Entry = tk.Entry(master, bd=5, width=5)
+            self.ejeY2Label = tk.Label(self.master, text="Rango del eje Y2", bg='white', font='Helvetica 10 bold')
+            self.minY2Entry = tk.Entry(self.master, bd=5, width=5)
             self.minY2Entry.insert(0, self.minY2)
-            self.maxY2Entry = tk.Entry(master, bd=5, width=5)
+            self.maxY2Entry = tk.Entry(self.master, bd=5, width=5)
             self.maxY2Entry.insert(0, self.maxY2)
-            self.stepY2Label = tk.Label(master, text="Paso del eje Y2", bg='white', font='Helvetica 10 bold')
-            self.stepY2Entry = tk.Entry(master, bd=5, width=5)
+            self.stepY2Label = tk.Label(self.master, text="Paso del eje Y2", bg='white', font='Helvetica 10 bold')
+            self.stepY2Entry = tk.Entry(self.master, bd=5, width=5)
             self.stepY2Entry.insert(0, self.stepY2)
-            self.lineasLabel = tk.Label(master, text="Vueltas representadas simultáneamente", bg='white', font='Helvetica 10 bold', wraplength='150')
-            self.lineasEntry = tk.Entry(master, bd=5, width="5")
+            self.lineasLabel = tk.Label(self.master, text="Vueltas representadas simultáneamente", bg='white', font='Helvetica 10 bold', wraplength='150')
+            self.lineasEntry = tk.Entry(self.master, bd=5, width="5")
             self.lineasEntry.insert(0, str(self.n_lineas))
-            self.colorButton0 = tk.Button(master, width="18", command=lambda: self.set_color(self.colorButton0, 0))
+            self.colorButton0 = tk.Button(self.master, width="18", command=lambda: self.set_color(self.colorButton0, 0))
             self.colorButton0.config(font='Helvetica 9 bold', text="Color de línea 1", bg=self.color0)
-            self.colorButton1 = tk.Button(master, width="18", command=lambda: self.set_color(self.colorButton1, 1))
+            self.colorButton1 = tk.Button(self.master, width="18", command=lambda: self.set_color(self.colorButton1, 1))
             self.colorButton1.config(font='Helvetica 9 bold', text="Color de línea 2", bg=self.color1)
         else:
-            self.colorButton = tk.Button(master, width="18", command=lambda: self.set_color(self.colorButton,0))
+            self.colorButton = tk.Button(self.master, width="18", command=lambda: self.set_color(self.colorButton,0))
             self.colorButton.config(font='Helvetica 9 bold', text="Color de línea", bg=self.color)
-            self.ejeYLabel = tk.Label(master, text="Rango del eje Y", bg='white', font='Helvetica 10 bold')
-            self.minYEntry = tk.Entry(master, bd=5, width=5)
+            self.ejeYLabel = tk.Label(self.master, text="Rango del eje Y", bg='white', font='Helvetica 10 bold')
+            self.minYEntry = tk.Entry(self.master, bd=5, width=5)
             self.minYEntry.insert(0, self.minY)
-            self.maxYEntry = tk.Entry(master, bd=5, width=5)
+            self.maxYEntry = tk.Entry(self.master, bd=5, width=5)
             self.maxYEntry.insert(0, self.maxY)
-            self.stepYLabel = tk.Label(master, text="Paso del eje Y", bg='white', font='Helvetica 10 bold')
-            self.stepYEntry = tk.Entry(master, bd=5, width=5)
+            self.stepYLabel = tk.Label(self.master, text="Paso del eje Y", bg='white', font='Helvetica 10 bold')
+            self.stepYEntry = tk.Entry(self.master, bd=5, width=5)
             self.stepYEntry.insert(0, self.stepY)
-        self.aceptarButton = tk.Button(master, text='Aceptar', width=7, command= lambda: self.aceptar_ajustes('aceptar'))
-        self.aplicarButton = tk.Button(master, text='Aplicar', width=7, command= lambda: self.aceptar_ajustes('aplicar'))
-        self.cancelarButton = tk.Button(master, text='Cancelar', width=7, command= self.cancelar_ajustes)
+        self.aceptarButton = tk.Button(self.master, text='Aceptar', width=7, command= lambda: self.aceptar_ajustes('aceptar'))
+        self.aplicarButton = tk.Button(self.master, text='Aplicar', width=7, command= lambda: self.aceptar_ajustes('aplicar'))
+        self.cancelarButton = tk.Button(self.master, text='Cancelar', width=7, command= self.cancelar_ajustes)
         # Ajustar la posición de los elementos
         self.ejeXLabel.grid(row=0, column=0, padx=(25, 25), pady=(25,0))
         self.minXEntry.grid(row=1, column=0, padx=(25, 25), sticky='W')
@@ -115,8 +120,9 @@ class AjustesGraficos(tk.Frame, object):
             self.aceptarButton.grid(row=6, column=0, padx=(25, 25), pady=(25,25), sticky="W")
             self.aplicarButton.grid(row=6, column=0, columnspan=2, padx=(25, 25), pady=(25,25))
             self.cancelarButton.grid(row=6, column=1, padx=(0, 25), pady=(25,25), sticky="E")
-
+        
     def set_color(self, widget, button_index):
+        """Pide un color al usuario y actualiza el botón correspondiente"""
         if self.live:
             if button_index == 0:
                 color = askcolor(initialcolor = self.color0)
@@ -130,18 +136,9 @@ class AjustesGraficos(tk.Frame, object):
             color = askcolor(initialcolor=self.color)
             widget.config(font='Helvetica 9 bold', text="Color de línea", bg=color[1])
             self.color = color[1]
-    def guardar_umbral(self, evento, umbral):
-        umbral_index = str(evento.widget)[-1:]
-        if umbral_index == '3':
-            umbral_index = 0
-        elif umbral_index == '4':
-            umbral_index = 1
-        if self.tipo_umbral == 'P':
-            self.umbrales_porc[umbral_index] = redondear(float(umbral.get()),0)
-        else:
-            self.umbrales_val[umbral_index] = redondear(float(umbral.get()),0)
 
     def aceptar_ajustes(self, tipo_accion):
+        """Al pulsar aceptar se actualizan los ajustes"""
         minX = redondear(float(self.minXEntry.get()), float(self.maxXEntry.get()))
         maxX = redondear(float(self.maxXEntry.get()), float(self.maxXEntry.get()))
         stepX = redondear(float(self.stepXEntry.get()), 0)
@@ -149,7 +146,7 @@ class AjustesGraficos(tk.Frame, object):
             color0 = self.colorButton0.cget('background')
             color1 = self.colorButton1.cget('background')
             minY1 = redondear(float(self.minY1Entry.get()), float(self.maxY1Entry.get()))
-            maxY1 =redondear(float( self.maxY1Entry.get()), float(self.maxY1Entry.get()))
+            maxY1 = redondear(float( self.maxY1Entry.get()), float(self.maxY1Entry.get()))
             stepY1 = redondear(float(self.stepY1Entry.get()), 0)
             minY2 = redondear(float(self.minY2Entry.get()), float(self.maxY2Entry.get()))
             maxY2 = redondear(float(self.maxY2Entry.get()), float(self.maxY2Entry.get()))
@@ -191,6 +188,7 @@ class AjustesGraficos(tk.Frame, object):
         self.set_ajustes(ajustes)
 
     def cancelar_ajustes(self):
+        """Al pulsar el botón de cancelar ajustes"""
         self.minXEntry.delete(0, 'end')
         self.minXEntry.insert(0, self.minX)
         self.maxXEntry.delete(0, 'end')
@@ -223,6 +221,7 @@ class AjustesGraficos(tk.Frame, object):
         self.main.desplegar_ajustes(elemento)
 
     def set_ajustes(self, ajustes):
+        """Aplicar los ajustes"""
         self.minX = float(ajustes["minX"])
         self.maxX = float(ajustes["maxX"])
         self.stepX = float(ajustes["stepX"])

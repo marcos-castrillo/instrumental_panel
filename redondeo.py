@@ -1,16 +1,13 @@
 # coding=utf-8
-# Función para redondear el valor pasado por argumento
 def redondear(numero, full_scale):
-    # Se convierte el numero (argumento) a cadena de texto
+    """Función para redondear el valor pasado por argumento"""
     numero_s = str(numero)
-    # Se halla su longitud
     longitud = len(numero_s)
     # Si el numero es menor que 0.1%, se devuelve 0
     if numero <= 0.001 * full_scale:
         return 0
     # Se encuentra la posición de la coma, si hay. Si no, coma = -1
     coma = numero_s.find('.')
-    # Se inicializa el indice
     n = 0
     # Bucle while para hallar digito y n
     # Digito = Ultimo digito antes de la coma
@@ -28,7 +25,6 @@ def redondear(numero, full_scale):
         else:
             # Si el digito es una coma, se suma 1 a n y se sigue iterando
             n += 1
-    # Fin del while
     # Si la primera cifra significativa es 1, hay que redondear a 4 decimales
     if digito == '1':
         decimales = 4

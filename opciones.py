@@ -46,7 +46,7 @@ class Opciones(tk.Frame, object):
 
         self.aplicarButton = tk.Button(master, text='Aplicar', width=10, command=self.guardar_opciones)
         self.aceptarButton = tk.Button(master, text='Aceptar', width=10, command=self.aceptar_opciones)
-
+        # Ajustar el lugar de los elementos
         self.modoRadioLabel.grid(row=0, column=0, columnspan=3)
         self.modoRadio0.grid(row=1, column=0, columnspan=3)
         self.modoRadio1.grid(row=2, column=0, columnspan=3)
@@ -89,12 +89,14 @@ class Opciones(tk.Frame, object):
         self.guardar_opciones()
 
     def guardar_opciones(self):
+        # Si la interrupción está desactivada
         if self.tipoInterrupcion.get() == 0:
             opciones = {
                 "modo": self.modo.get(),
                 "tipo_int": self.tipoInterrupcion.get(),
                 "dientes_refresco": self.dientesRefrescoEntry.get()
             }
+        # Si la interrupción es de tipo tiempo
         elif self.tipoInterrupcion.get() == 1:
             opciones = {
                 "modo": self.modo.get(),
@@ -105,6 +107,7 @@ class Opciones(tk.Frame, object):
                 "segundos": self.segundosEntry.get(),
                 "milisegundos": self.milisegundosEntry.get(),
             }
+        # Si la interrupción es de tipo vuelta
         else:
             opciones = {
                 "modo": self.modo.get(),
@@ -122,6 +125,7 @@ class Opciones(tk.Frame, object):
         toplevel.geometry(g)
         # Ocultar botones de minimizar, cerrar, expandir
         toplevel.overrideredirect(1)
+        # Elementos del TopLevel
         ADVERTENCIA = '¿Reiniciar la aplicación y restaurar todos los ajustes por defecto?'
         label1 = tk.Label(toplevel, text=ADVERTENCIA, height=5, width=60, font='Helvetica 12 bold')
         aceptarButton = tk.Button(toplevel, text='Aceptar', command=self.reiniciar_app)
@@ -131,11 +135,14 @@ class Opciones(tk.Frame, object):
         cancelarButton.grid(row=1, column=1, pady=10, padx=(10,0), sticky="W")
 
     def reiniciar_app(self):
+        # Borra el archivo de configuración
         os.remove(self.app.main.configFile)
         python = sys.executable
+        # Reinicia la app
         os.execl(python, python, *sys.argv)
 
     def cambiar_interrupcion(self):
+        """Cambia la interfaz seguún el tipo de interrupción seleccionada"""
         if self.tipoInterrupcion.get() == 0:
             self.horasLabel.grid_remove()
             self.horasEntry.grid_remove()
@@ -175,4 +182,3 @@ class Opciones(tk.Frame, object):
             self.segundosEntry.grid_remove()
             self.milisegundosLabel.grid_remove()
             self.milisegundosEntry.grid_remove()
-

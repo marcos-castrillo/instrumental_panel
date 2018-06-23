@@ -2,40 +2,32 @@
 import sys
 if sys.version_info[0] < 3:
     import Tkinter as tk
-    import Tkinter.font as tkf
 else:
     import tkinter as tk
-    import tkinter.font as tkf
 
-from tkinter import filedialog
+from medidor import Medidor
+from engranaje import Engranaje
+from indicador import Indicador
+from grafico import Grafico
+from grafico_live import GraficoLive
+from opciones import Opciones
+from ajustes_medidores import AjustesMedidores
+from ajustes_graficos import AjustesGraficos
 
-import medidor as medidor
-import engranaje as engranaje
-import indicador as indicador
-import grafico as grafico
-import grafico_live as grafico_live
-import opciones as opciones
-import ajustes_medidores as ajustes_medidores
-import ajustes_graficos as ajustes_graficos
+from redondeo import redondear
 
 import math
 import json
 import configparser
 import os.path
-import datetime as datetime
-
-from redondeo import redondear
+import datetime
 
 class Main(tk.Frame):
     def __init__(self, master):
         super(Main, self).__init__()
         self.app = master
-        self.init()
-
-    def init(self):
-        # Configurar la aplicación
         self.crear_elementos()
-        # Estado inicial de las variables
+        # Inicializar las variables
         self.paginaFlag = False
         self.opcionesFlag = False
         self.vuelta = 0
@@ -52,7 +44,7 @@ class Main(tk.Frame):
         self.par_array = []
         self.vel_angular_array = []
         self.potencia_array = []
-        # Leer el archivo de configuración
+        # Leer el archivo de configuración inicial
         self.configParser = configparser.RawConfigParser()
         self.configFile = 'settings.ini'
         if not os.path.exists(self.configFile):
@@ -82,7 +74,7 @@ class Main(tk.Frame):
         self.graficosContainer.grid(column=0, row=0)
         self.menuContainer.grid(column=1, row=0, sticky="N", padx=20)
         self.indicadoresContainer.grid(column=0, row=1, sticky="S", columnspan=2)
-        # Botones
+        # Elementos
         self.imagen_ajustes = tk.PhotoImage(file="images/ajustes.png")
         stop = tk.PhotoImage(file='images/stop.png')
         play = tk.PhotoImage(file='images/play.png')
@@ -115,7 +107,7 @@ class Main(tk.Frame):
         self.paginaMedidoresButton.image = medidor
         self.paginaGraficosButton = tk.Button(self.menuContainer, bg='white', text='Gráficos', font='Helvetica 10 bold', image=grafico, command=self.cambiar_pagina, compound="top")
         self.paginaGraficosButton.image = grafico
-        self.pantallaCompletaButton = tk.Button(self.menuContainer, bg='white', text='P. completa', font='Helvetica 10 bold', image=pantalla_completa, command=self.app.toggle_fullscreen, compound="top")
+        self.pantallaCompletaButton = tk.Button(self.menuContainer, bg='white', text='P. completa', font='Helvetica 10 bold', image=pantalla_completa, command=self.app.switch_fullscreen, compound="top")
         self.pantallaCompletaButton.image = pantalla_completa
         self.salirButton = tk.Button(self.menuContainer, bg='white', text='Salir', font='Helvetica 10 bold', image=salir, command=self.app.destroy, compound="top")
         self.salirButton.image = salir
@@ -124,7 +116,7 @@ class Main(tk.Frame):
         self.breakpointLabel.image = breakpoint
         self.timeLabel = tk.Label(self.menuContainer, font='Helvetica 18 bold', bg='white', borderwidth=2, relief="solid", padx=10)
         self.timeLabel.config(text=str(datetime.timedelta(milliseconds=0)))
-        # Ajustar el lugar de los botones
+        # Ajustar el lugar de los elementos
         self.paginaMedidoresButton.grid(row=0, column=0, pady=2)
         self.paginaGraficosButton.grid(row=0, column=0, pady=2)
         self.paginaMedidoresButton.grid_remove()
@@ -147,8 +139,6 @@ class Main(tk.Frame):
 
     def crear_medidores(self):
         # Configuración de cada medidor
-        # Si se quiere cambiar el nº de colores (3 por defecto), basta con modificar en las conf. siguientes
-        # las variables "colores" y "umbrales" de forma adecuada
         self.n_medidores = 5
         medidor0_conf = {
             "nombre": self.configParser.get('Medidor0', 'nombre'),
@@ -208,11 +198,11 @@ class Main(tk.Frame):
         # Medidores
         ancho_medidor = self.ancho_total / self.n_medidores
         altura_medidor = self.altura_total/ self.n_medidores*2
-        medidor0 = medidor.Medidor(self.medidoresContainer, bd=2, height=altura_medidor, width=ancho_medidor, bg='white', highlightbackground="black", configuracion=medidor0_conf)
-        medidor1 = medidor.Medidor(self.medidoresContainer, bd=2, height=altura_medidor, width=ancho_medidor, bg='white', highlightbackground="black", configuracion=medidor1_conf)
-        medidor2 = medidor.Medidor(self.medidoresContainer, bd=2, height=altura_medidor, width=ancho_medidor, bg='white', highlightbackground="black", configuracion=medidor2_conf)
-        medidor3 = medidor.Medidor(self.medidoresContainer, bd=2, height=altura_medidor, width=ancho_medidor, bg='white', highlightbackground="black", configuracion=medidor3_conf)
-        medidor4 = engranaje.Engranaje(self.medidoresContainer, bd=2, height=altura_medidor, width=ancho_medidor, bg='white', highlightbackground="black", configuracion=medidor4_conf)
+        medidor0 = Medidor(self.medidoresContainer, bd=2, height=altura_medidor, width=ancho_medidor, bg='white', highlightbackground="black", configuracion=medidor0_conf)
+        medidor1 = Medidor(self.medidoresContainer, bd=2, height=altura_medidor, width=ancho_medidor, bg='white', highlightbackground="black", configuracion=medidor1_conf)
+        medidor2 = Medidor(self.medidoresContainer, bd=2, height=altura_medidor, width=ancho_medidor, bg='white', highlightbackground="black", configuracion=medidor2_conf)
+        medidor3 = Medidor(self.medidoresContainer, bd=2, height=altura_medidor, width=ancho_medidor, bg='white', highlightbackground="black", configuracion=medidor3_conf)
+        medidor4 = Engranaje(self.medidoresContainer, bd=2, height=altura_medidor, width=ancho_medidor, bg='white', highlightbackground="black", configuracion=medidor4_conf)
         # Frame de la ventana de ajustes de cada medidor
         medidor0_container = tk.Frame(self.medidoresContainer)
         medidor1_container = tk.Frame(self.medidoresContainer)
@@ -224,10 +214,10 @@ class Main(tk.Frame):
         medidor2_button = tk.Button(self.medidoresContainer, text="Ajustes", image=self.imagen_ajustes, command=lambda: self.desplegar_ajustes(medidor2))
         medidor3_button = tk.Button(self.medidoresContainer, text="Ajustes", image=self.imagen_ajustes, command=lambda: self.desplegar_ajustes(medidor3))
         # Ajustes de los medidores
-        medidor0_ajustes = ajustes_medidores.AjustesMedidores(medidor0_container, self, self.app, configuracion=medidor0_conf)
-        medidor1_ajustes = ajustes_medidores.AjustesMedidores(medidor1_container, self, self.app, configuracion=medidor1_conf)
-        medidor2_ajustes = ajustes_medidores.AjustesMedidores(medidor2_container, self, self.app, configuracion=medidor2_conf)
-        medidor3_ajustes = ajustes_medidores.AjustesMedidores(medidor3_container, self, self.app, configuracion=medidor3_conf)
+        medidor0_ajustes = AjustesMedidores(medidor0_container, self, self.app, configuracion=medidor0_conf)
+        medidor1_ajustes = AjustesMedidores(medidor1_container, self, self.app, configuracion=medidor1_conf)
+        medidor2_ajustes = AjustesMedidores(medidor2_container, self, self.app, configuracion=medidor2_conf)
+        medidor3_ajustes = AjustesMedidores(medidor3_container, self, self.app, configuracion=medidor3_conf)
         # Ajustar el lugar de cada medidor
         medidor0.grid(column=2, row=0, columnspan=2, padx=(0,10), pady=(5,10))
         medidor1.grid(column=4, row=0, columnspan=2, padx=(10,0), pady=(5,10))
@@ -300,14 +290,14 @@ class Main(tk.Frame):
         # Indicadores
         ancho_indicador = (self.ancho_total / self.n_indicadores) - self.n_indicadores*2
         altura_indicador = self.altura_total / self.n_indicadores * 1.15
-        indicador0 = indicador.Indicador(self.indicadoresContainer, bd=2, height=altura_indicador, width=ancho_indicador, bg='white', highlightbackground="black",configuracion=indicador0_conf)
-        indicador1 = indicador.Indicador(self.indicadoresContainer, bd=2, height=altura_indicador, width=ancho_indicador, bg='white', highlightbackground="black",configuracion=indicador1_conf)
-        indicador2 = indicador.Indicador(self.indicadoresContainer, bd=2, height=altura_indicador, width=ancho_indicador, bg='white', highlightbackground="black",configuracion=indicador2_conf)
-        indicador3 = indicador.Indicador(self.indicadoresContainer, bd=2, height=altura_indicador, width=ancho_indicador, bg='white', highlightbackground="black",configuracion=indicador3_conf)
-        indicador4 = indicador.Indicador(self.indicadoresContainer, bd=2, height=altura_indicador, width=ancho_indicador, bg='white', highlightbackground="black",configuracion=indicador4_conf)
-        indicador5 = indicador.Indicador(self.indicadoresContainer, bd=2, height=altura_indicador, width=ancho_indicador, bg='white', highlightbackground="black",configuracion=indicador5_conf)
-        indicador6 = indicador.Indicador(self.indicadoresContainer, bd=2, height=altura_indicador, width=ancho_indicador, bg='white', highlightbackground="black",configuracion=indicador6_conf)
-        indicador7 = indicador.Indicador(self.indicadoresContainer, bd=2, height=altura_indicador, width=ancho_indicador, bg='white', highlightbackground="black",configuracion=indicador7_conf)
+        indicador0 = Indicador(self.indicadoresContainer, bd=2, height=altura_indicador, width=ancho_indicador, bg='white', highlightbackground="black",configuracion=indicador0_conf)
+        indicador1 = Indicador(self.indicadoresContainer, bd=2, height=altura_indicador, width=ancho_indicador, bg='white', highlightbackground="black",configuracion=indicador1_conf)
+        indicador2 = Indicador(self.indicadoresContainer, bd=2, height=altura_indicador, width=ancho_indicador, bg='white', highlightbackground="black",configuracion=indicador2_conf)
+        indicador3 = Indicador(self.indicadoresContainer, bd=2, height=altura_indicador, width=ancho_indicador, bg='white', highlightbackground="black",configuracion=indicador3_conf)
+        indicador4 = Indicador(self.indicadoresContainer, bd=2, height=altura_indicador, width=ancho_indicador, bg='white', highlightbackground="black",configuracion=indicador4_conf)
+        indicador5 = Indicador(self.indicadoresContainer, bd=2, height=altura_indicador, width=ancho_indicador, bg='white', highlightbackground="black",configuracion=indicador5_conf)
+        indicador6 = Indicador(self.indicadoresContainer, bd=2, height=altura_indicador, width=ancho_indicador, bg='white', highlightbackground="black",configuracion=indicador6_conf)
+        indicador7 = Indicador(self.indicadoresContainer, bd=2, height=altura_indicador, width=ancho_indicador, bg='white', highlightbackground="black",configuracion=indicador7_conf)
         # Ajustar el lugar de cada indicador
         indicador0.grid(row=2, column=0, padx=(5,0), pady=(0,5))
         indicador1.grid(row=2, column=1, padx=(5,0), pady=(0,5))
@@ -384,9 +374,9 @@ class Main(tk.Frame):
         ancho_grafico_live = self.ancho_total / self.n_graficos / 70
         altura_grafico_live = self.altura_total / self.n_graficos / 15
         # Gráficos
-        grafico0 = grafico_live.GraficoLive(self.graficosContainer, height=altura_grafico_live, width=ancho_grafico_live, configuracion=grafico0_conf)
-        grafico1 = grafico.Grafico(self.graficosContainer, height=altura_grafico, width=ancho_grafico, configuracion=grafico1_conf)
-        grafico2 = grafico.Grafico(self.graficosContainer, height=altura_grafico, width=ancho_grafico, configuracion=grafico2_conf)
+        grafico0 = GraficoLive(self.graficosContainer, height=altura_grafico_live, width=ancho_grafico_live, configuracion=grafico0_conf)
+        grafico1 = Grafico(self.graficosContainer, height=altura_grafico, width=ancho_grafico, configuracion=grafico1_conf)
+        grafico2 = Grafico(self.graficosContainer, height=altura_grafico, width=ancho_grafico, configuracion=grafico2_conf)
         # Ajustar el lugar de cada gráfico
         grafico0.grid(row=0, column=2, columnspan=2, padx=(5,5), pady=(5,5))
         grafico1.grid(row=1, column=2, padx=(5,5), pady=(0,5))
@@ -404,11 +394,11 @@ class Main(tk.Frame):
         grafico2_button = tk.Button(self.graficosContainer, text="Ajustes", image=self.imagen_ajustes,
                                     command=lambda: self.desplegar_ajustes(grafico2))
         # Ajustes de los medidores
-        grafico0_ajustes = ajustes_graficos.AjustesGraficos(grafico0_container, self, self.app,
+        grafico0_ajustes = AjustesGraficos(grafico0_container, self, self.app,
                                                               configuracion=grafico0_conf)
-        grafico1_ajustes = ajustes_graficos.AjustesGraficos(grafico1_container, self, self.app,
+        grafico1_ajustes = AjustesGraficos(grafico1_container, self, self.app,
                                                               configuracion=grafico1_conf)
-        grafico2_ajustes = ajustes_graficos.AjustesGraficos(grafico2_container, self, self.app,
+        grafico2_ajustes = AjustesGraficos(grafico2_container, self, self.app,
                                                               configuracion=grafico2_conf)
         # Ajustar el lugar de cada ventana de ajustes
         grafico0_container.grid(row=0, column=2, columnspan=2)
@@ -434,12 +424,12 @@ class Main(tk.Frame):
 
     def crear_opciones(self):
         configuracion_opciones = {"modo": self.app.modo}
-        self.ajustes = opciones.Opciones(self.opcionesContainer, self.app, configuracion=configuracion_opciones)
+        self.ajustes = Opciones(self.opcionesContainer, self.app, configuracion=configuracion_opciones)
         self.ajustes.grid(row=0, column=0)
         self.opcionesContainer.grid_remove()
 
     def create_config_file(self):
-        """Crea un archivo de configuración si no existe"""
+        """Crea un archivo de configuración"""
         self.configParser.add_section('Medidor0')
         self.configParser.set('Medidor0', 'nombre', 'Presión')
         self.configParser.set('Medidor0', 'unidad', 'bar')
@@ -570,18 +560,22 @@ class Main(tk.Frame):
         self.opcionesFlag = not self.opcionesFlag
 
     def set(self, valores, reiniciar):
+        """Actualizar los datos"""
         calculos = self.calcular(valores)
         self.actualizar_elementos(calculos, reiniciar)
 
     def calcular(self, valores):
+        """Realiza todos los cálculos aplicando las fórmulas y los guarda en arrays"""
         vuelta = valores["vuelta"]
         diente = valores["diente"]
         periodo = valores["tiempo"]
         par = valores["par"]
         presion = valores["presion"]
+        # Si ya es la vuelta siguiente
         if vuelta > self.vuelta_actual:
             self.vuelta_actual += 1
             self.cambio_vuelta = True
+        # Si es el primer diente de la primera vuelta
         elif vuelta == 0 and diente == 1:
             self.cambio_vuelta = True
         else:
@@ -641,15 +635,17 @@ class Main(tk.Frame):
         # Actualizar tiempo
         self.tiempo += periodo
         time_stamp = datetime.timedelta(milliseconds=self.tiempo)
+        # Si la time_stamp es mayor que el breakpoint de tiempo definido, se pausa la app
         if self.breakpoint != '' and self.breakpoint <= time_stamp:
             self.after(1, self.app.pause)
             self.breakpoint = ''
             if self.vuelta_limite == '' and self.diente_limite == '':
                 self.breakpointLabel.grid_remove()
-        elif (self.vuelta_limite != '' or self.diente_limite != '') and \
-                ((self.vuelta_limite == vuelta and self.diente_limite == diente) or \
-                (self.vuelta_limite == vuelta and self.diente_limite == '') or \
-                (self.vuelta_limite == '' and self.diente_limite == diente)):
+        # Si la vuelta/diente es igual o mayor al limite establecido, se pausa la app
+        elif (self.vuelta_limite != '' or self.diente_limite != '') and (
+                (self.vuelta_limite == vuelta and self.diente_limite == diente) or (
+                self.vuelta_limite == vuelta and self.diente_limite == '') or (
+                        self.vuelta_limite == '' and self.diente_limite == diente)):
             self.after(1, self.app.pause)
             self.vuelta_limite = ''
             self.diente_limite = ''
@@ -675,6 +671,7 @@ class Main(tk.Frame):
         # Indicador6: Velocidad angular promedio en una vuelta
         # Indicador7: Potencia
         if reiniciar:
+            # Si reiniciar = True, los máximos y mínimos se actualizan a los valores actuales
             self.tiempo = periodo
             self.medidores['medidor0'].valor_min = presion
             self.medidores['medidor0'].valor_max = presion
@@ -684,7 +681,7 @@ class Main(tk.Frame):
             self.medidores['medidor2'].valor_max = vel_angular
             self.medidores['medidor3'].valor_min = potencia
             self.medidores['medidor3'].valor_max = potencia
-        #Valores promedio
+        # Valores promedio
         if not self.paginaFlag:
             self.medidores['medidor0'].set(presion, presion_promedio, self.cambio_vuelta)
             self.medidores['medidor1'].set(par, par_promedio, self.cambio_vuelta)
@@ -698,7 +695,7 @@ class Main(tk.Frame):
             self.indicadores['indicador0'].set(vuelta)
             self.indicadores['indicador6'].set(vel_angular_promedio)
             self.indicadores['indicador7'].set(potencia_promedio)
-        #Valores instantáneos
+        # Valores instantáneos
         if self.dientes_refresco_index == 0:
             self.dientes_refresco_index = self.dientes_refresco
             if not self.paginaFlag:
@@ -708,8 +705,6 @@ class Main(tk.Frame):
             self.indicadores['indicador3'].set(par)
             self.indicadores['indicador4'].set(volumen)
             self.indicadores['indicador5'].set(vel_angular)
-
-
 
     def save_ajustes(self, ajustes_elemento, ajustes, tipo_accion):
         """Guardar los ajustes de un medidor o gráfico"""
@@ -733,7 +728,6 @@ class Main(tk.Frame):
         if not self.paginaFlag:
             container = self.medidores['medidor' + str(index) + "_container"] 
         else:
-
             container = self.graficos['grafico' + str(index) + "_container"]
         if elemento.flag:
             container.grid_remove()
