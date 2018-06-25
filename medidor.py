@@ -226,6 +226,6 @@ class Medidor(tk.Canvas, object):
         self.tipo_umbral = ajustes['tipo_umbral']
         # Reinicia gráficamente el medidor
         self.delete("all")
-        self.crear_estructura()
+        self.crear_estructura(self.altura, self.ancho)
         self.crear_interfaz(self.minimo_rango, self.maximo_rango)
         self.set_rango(self.minimo_rango, self.maximo_rango)

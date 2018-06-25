@@ -8,8 +8,9 @@ else:
 from medidor import Medidor
 from engranaje import Engranaje
 from indicador import Indicador
-from grafico import Grafico
-from grafico_live import GraficoLive
+from grafico_multilinea import GraficoMultilinea
+from grafico_pv import GraficoPV
+from grafico_estandar import GraficoEstandar
 from opciones import Opciones
 from ajustes_medidores import AjustesMedidores
 from ajustes_graficos import AjustesGraficos
@@ -96,7 +97,7 @@ class Main(tk.Frame):
         self.pauseButton.image = pause
         self.recordButton = tk.Button(self.menuContainer, bg='white', text='Grabar', font='Helvetica 10 bold', image = record, command=self.app.record,compound="top")
         self.recordButton.image = record
-        self.openButton = tk.Button(self.menuContainer, bg='white', text='Abrir', font='Helvetica 10 bold', image = open, command=self.app.open,compound="top")
+        self.openButton = tk.Button(self.menuContainer, bg='white', text='Reproducir', font='Helvetica 10 bold', image = open, command=self.app.open,compound="top")
         self.openButton.image = open
         self.resetButton = tk.Button(self.menuContainer, bg='white', text='Borrar datos', font='Helvetica 10 bold', image = reset, command=self.app.reset,compound="top")
         self.resetButton.image = reset
@@ -112,6 +113,7 @@ class Main(tk.Frame):
         self.salirButton = tk.Button(self.menuContainer, bg='white', text='Salir', font='Helvetica 10 bold', image=salir, command=self.app.destroy, compound="top")
         self.salirButton.image = salir
         self.estadoLabel = tk.Label(self.menuContainer, font='Helvetica 18 bold', bg='white', borderwidth=2, relief="solid", padx=10)
+        self.estadoLabel.config(text=self.app.modo.get())
         self.breakpointLabel = tk.Label(self.menuContainer, font='Helvetica 18 bold', padx=10, image=breakpoint)
         self.breakpointLabel.image = breakpoint
         self.timeLabel = tk.Label(self.menuContainer, font='Helvetica 18 bold', bg='white', borderwidth=2, relief="solid", padx=10)
@@ -374,9 +376,9 @@ class Main(tk.Frame):
         ancho_grafico_live = self.ancho_total / self.n_graficos / 70
         altura_grafico_live = self.altura_total / self.n_graficos / 15
         # Gráficos
-        grafico0 = GraficoLive(self.graficosContainer, height=altura_grafico_live, width=ancho_grafico_live, configuracion=grafico0_conf)
-        grafico1 = Grafico(self.graficosContainer, height=altura_grafico, width=ancho_grafico, configuracion=grafico1_conf)
-        grafico2 = Grafico(self.graficosContainer, height=altura_grafico, width=ancho_grafico, configuracion=grafico2_conf)
+        grafico0 = GraficoMultilinea(self.graficosContainer, height=altura_grafico_live, width=ancho_grafico_live, configuracion=grafico0_conf)
+        grafico1 = GraficoPV(self.graficosContainer, height=altura_grafico, width=ancho_grafico, configuracion=grafico1_conf)
+        grafico2 = GraficoEstandar(self.graficosContainer, height=altura_grafico, width=ancho_grafico, configuracion=grafico2_conf)
         # Ajustar el lugar de cada gráfico
         grafico0.grid(row=0, column=2, columnspan=2, padx=(5,5), pady=(5,5))
         grafico1.grid(row=1, column=2, padx=(5,5), pady=(0,5))
@@ -587,7 +589,7 @@ class Main(tk.Frame):
         potencia = par * vel_angular
         diametro = 10
         carrera = 30
-        volumen = ((math.pi * diametro ** 2) / 4) * (carrera / 2) * math.sin(diente)
+        volumen = ((math.pi * diametro ** 2) / 4) * (carrera / 2) * math.sin(diente*math.pi/180)
         # Guardar datos en los arrays
         self.presion_array.append(presion)
         self.par_array.append(par)

@@ -26,6 +26,8 @@ class App(tk.Tk):
         self.csv = []
         self.file = []
         self.modo = tk.StringVar()
+        # Se establece el modo adquisición por defecto
+        self.modo.set('Adquisición')
         self.pausa = False
         self.serial_abierto = False
         # Configurar la ventana
@@ -35,7 +37,6 @@ class App(tk.Tk):
         self.main.pantallaCompletaButton.configure(relief='sunken')
         self.main.estadoLabel.config(text=self.modo.get())
         # Arrancar la aplicación
-        self.modo.set('Adquisición')
         if self.modo.get() == 'Simulación':
             self.simular_datos(0)
         else:
@@ -68,10 +69,16 @@ class App(tk.Tk):
         # Tiempo
         self.tiempo = random.uniform(0.00025, 0.0003)
         # Presión
-        if self.presion < 15:
-            self.presion += 0.5
-        else:
-            self.presion = random.uniform(15, 20)
+        if self.diente == 1:
+            self.presion = 12
+        elif 1 < self.diente <= 15:
+            self.presion += 8/14
+        elif 15 < self.diente <= 180:
+            self.presion -= 6/165
+        elif 180 < self.diente <= 195:
+            self.presion -= 4/15
+        elif 195 < self.diente <= 360:
+            self.presion += 2/165
         # Par
         if self.par < 15:
             self.par += 0.05
