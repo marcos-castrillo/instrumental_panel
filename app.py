@@ -11,6 +11,7 @@ from tkinter import filedialog
 import datetime as datetime
 import random
 import serial
+import os
 
 class App(tk.Tk):
     def __init__(self):
@@ -30,6 +31,8 @@ class App(tk.Tk):
         self.modo.set('Adquisición')
         self.pausa = False
         self.serial_abierto = False
+        # Obtener el directorio actual
+        self.dir = os.getcwd()
         # Configurar la ventana
         self.config_ventana()
         # Arrancar el main.py
@@ -291,7 +294,7 @@ class App(tk.Tk):
         self.cambiar_estado('pausa')
         self.stop_set_datos()
         if self.modo.get() == 'Simulación' or self.modo.get() == 'Adquisición':
-            file = tk.filedialog.asksaveasfile(mode='w', defaultextension=".csv", initialdir="/", title="Select file",
+            file = tk.filedialog.asksaveasfile(mode='w', defaultextension=".csv", initialdir=self.dir, title="Select file",
                                                filetypes=(("csv files", "*.csv"), ("all files", "*.*")))
             if not file:
                 return
