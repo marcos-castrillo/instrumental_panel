@@ -8,7 +8,7 @@ import tkinter.font as tkf
 
 import json
 import math
-from redondeo import redondear
+from scripts.redondeo import redondear
 
 class Medidor(tk.Canvas, object):
     def __init__(self, master, configuracion, **kwargs):

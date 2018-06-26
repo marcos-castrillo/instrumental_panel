@@ -12,7 +12,7 @@ from matplotlib.figure import Figure
 
 import numpy as np
 
-from redondeo import redondear
+from scripts.redondeo import redondear
 
 class GraficoMultilinea(tk.Canvas, object):
     def __init__(self, master, configuracion, **kwargs):

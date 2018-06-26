@@ -5,7 +5,7 @@ if sys.version_info[0] < 3:
 else:
     import tkinter as tk
 
-from main import Main
+from scripts.main import Main
 
 from tkinter import filedialog
 import datetime as datetime

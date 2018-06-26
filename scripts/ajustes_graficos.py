@@ -6,7 +6,7 @@ else:
     import tkinter as tk
 
 from tkinter.colorchooser import *
-from redondeo import redondear
+from scripts.redondeo import redondear
 
 class AjustesGraficos(tk.Frame, object):
     def __init__(self, master, main, app, configuracion, **kwargs):

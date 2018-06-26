@@ -18,6 +18,7 @@
 
 # Conf. files #
 *settings.ini
+*.csv
 
 # Folders #
 docs/

@@ -5,17 +5,17 @@ if sys.version_info[0] < 3:
 else:
     import tkinter as tk
 
-from medidor import Medidor
-from engranaje import Engranaje
-from indicador import Indicador
-from grafico_multilinea import GraficoMultilinea
-from grafico_pv import GraficoPV
-from grafico_estandar import GraficoEstandar
-from opciones import Opciones
-from ajustes_medidores import AjustesMedidores
-from ajustes_graficos import AjustesGraficos
+from scripts.medidor import Medidor
+from scripts.engranaje import Engranaje
+from scripts.indicador import Indicador
+from scripts.grafico_multilinea import GraficoMultilinea
+from scripts.grafico_pv import GraficoPV
+from scripts.grafico_estandar import GraficoEstandar
+from scripts.opciones import Opciones
+from scripts.ajustes_medidores import AjustesMedidores
+from scripts.ajustes_graficos import AjustesGraficos
 
-from redondeo import redondear
+from scripts.redondeo import redondear
 
 import math
 import json
