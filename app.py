@@ -311,7 +311,7 @@ class App(tk.Tk):
     def open(self):
         """Abrir y reproducir un archivo"""
         self.pausa = False
-        file = tk.filedialog.askopenfile(initialdir="/", title="Select file",
+        file = tk.filedialog.askopenfile(initialdir=self.dir, title="Select file",
                                          filetypes=(("csv files", "*.csv"), ("all files", "*.*")))
         if not file:
             return
