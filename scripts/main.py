@@ -101,7 +101,7 @@ class Main(tk.Frame):
         self.openButton.image = open
         self.resetButton = tk.Button(self.menuContainer, bg='white', text='Borrar datos', font='Helvetica 10 bold', image = reset, command=self.app.reset,compound="top")
         self.resetButton.image = reset
-        self.ajustesButton = tk.Button(self.menuContainer, bg='white', text='Ajustes', font='Helvetica 10 bold',
+        self.ajustesButton = tk.Button(self.menuContainer, bg='white', text='Opciones', font='Helvetica 10 bold',
                                        image=ajustes, command=self.desplegar_opciones, compound="top")
         self.ajustesButton.image = ajustes
         self.paginaMedidoresButton = tk.Button(self.menuContainer, bg='white', text='Medidores', font='Helvetica 10 bold', image=medidor, command=self.cambiar_pagina, compound="top")
@@ -498,7 +498,7 @@ class Main(tk.Frame):
         self.configParser.set('Indicador7', 'nombre', 'Potencia promedio')
         self.configParser.set('Indicador7', 'unidad', 'W')
         self.configParser.add_section('Grafico0')
-        self.configParser.set('Grafico0', 'titulo', 'Grado de cigüeñal/presión/par')
+        self.configParser.set('Grafico0', 'titulo', 'Presión y par/velocidad angular')
         self.configParser.set('Grafico0', 'color0', 'red')
         self.configParser.set('Grafico0', 'color1', 'green')
         self.configParser.set('Grafico0', 'nombreX', 'Grado de cigüeñal (º)')
@@ -526,7 +526,7 @@ class Main(tk.Frame):
         self.configParser.set('Grafico1', 'maxY', '30')
         self.configParser.set('Grafico1', 'stepY', '5')
         self.configParser.add_section('Grafico2')
-        self.configParser.set('Grafico2', 'titulo', 'Velocidad angular/potencia')
+        self.configParser.set('Grafico2', 'titulo', 'Potencia / velocidad angular')
         self.configParser.set('Grafico2', 'color', 'red')
         self.configParser.set('Grafico2', 'nombreX', 'w promedio/vuelta (rad/s)')
         self.configParser.set('Grafico2', 'minX', '0')

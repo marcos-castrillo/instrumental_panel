@@ -402,7 +402,7 @@ class App(tk.Tk):
         elif estado == 'reproduccion':
             self.main.stopButton.configure(state='normal')
             self.main.recordButton.configure(relief='raised')
-            self.main.recordButton.configure(state='normal')
+            self.main.recordButton.configure(state='disabled')
             self.main.playButton.configure(relief='raised')
             self.main.playButton.configure(state='normal')
             self.main.pauseButton.configure(relief='raised')
