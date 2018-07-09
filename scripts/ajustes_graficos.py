@@ -1,9 +1,5 @@
 # coding=utf-8
-import sys
-if sys.version_info[0] < 3:
-    import Tkinter as tk
-else:
-    import tkinter as tk
+import tkinter as tk
 
 from tkinter.colorchooser import *
 from scripts.redondeo import redondear
@@ -141,7 +137,7 @@ class AjustesGraficos(tk.Frame, object):
         """Al pulsar aceptar se actualizan los ajustes"""
         minX = redondear(float(self.minXEntry.get()), float(self.maxXEntry.get()))
         maxX = redondear(float(self.maxXEntry.get()), float(self.maxXEntry.get()))
-        stepX = redondear(float(self.stepXEntry.get()), 0)
+        stepX = redondear(float(self.stepXEntry.get()), float(self.stepXEntry.get()))
         if self.live:
             color0 = self.colorButton0.cget('background')
             color1 = self.colorButton1.cget('background')
@@ -184,8 +180,7 @@ class AjustesGraficos(tk.Frame, object):
                 "maxY": maxY,
                 "stepY": stepY
             }
-        self.main.save_ajustes(self, ajustes, tipo_accion)
-        self.set_ajustes(ajustes)
+        self.main.guardar_ajustes(self, ajustes, tipo_accion)
 
     def cancelar_ajustes(self):
         """Al pulsar el botón de cancelar ajustes"""

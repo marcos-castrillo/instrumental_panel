@@ -1,9 +1,5 @@
 # coding=utf-8
-import sys
-if sys.version_info[0] < 3:
-    import Tkinter as tk
-else:
-    import tkinter as tk
+import tkinter as tk
 
 from tkinter.colorchooser import *
 from scripts.redondeo import redondear
@@ -159,8 +155,7 @@ class AjustesMedidores(tk.Frame, object):
             "minimo": str(minimo),
             "maximo": str(maximo)
         }
-        self.main.save_ajustes(self, ajustes, tipo_accion)
-        self.set_ajustes(ajustes)
+        self.main.guardar_ajustes(self, ajustes, tipo_accion)
 
     def cancelar_ajustes(self):
         """Al pulsar el botón de cancelar ajustes"""

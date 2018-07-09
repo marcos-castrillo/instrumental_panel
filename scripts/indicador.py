@@ -1,9 +1,5 @@
 # coding=utf-8
-import sys
-if sys.version_info[0] < 3:
-    import Tkinter as tk
-else:
-    import tkinter as tk
+import tkinter as tk
 import tkinter.font as tkf
 
 class Indicador(tk.Canvas, object):
@@ -34,7 +30,7 @@ class Indicador(tk.Canvas, object):
         # Texto
         self.tituloid = self.create_text(self.centroX
                                        ,  self.centroY - self.centroY*0.6
-                                       , font=tkf.Font(size=-int(self.lado/8),weight="bold"),width='225')
+                                       , font=tkf.Font(size=-int(self.lado/8),weight="bold"),width='180')
         self.valorid = self.create_text(self.centroX
                                        , self.centroY/1
                                        , font=tkf.Font(size=-int(self.lado/4)))

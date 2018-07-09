@@ -1,9 +1,5 @@
 # coding=utf-8
-import sys
-if sys.version_info[0] < 3:
-    import Tkinter as tk
-else:
-    import tkinter as tk
+import tkinter as tk
 import tkinter.font as tkf
 
 import json
@@ -147,6 +143,7 @@ class Medidor(tk.Canvas, object):
         cos = math.cos(rad)
         sin = math.sin(rad)
         radio = self.radio - self.bisel
+        # Si el tick es grande, añade el texto
         if longitud == self.tick_gran:
             canvas_id = self.create_text(self.centroX - 0.73 * radio * cos, self.centroY - 0.73 * radio * sin)
             numero = redondear(rango_min + (angulo + 60) / 30 * (rango_max - rango_min) / 10, self.maximo_rango)

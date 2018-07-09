@@ -1,9 +1,5 @@
 # coding=utf-8
-import sys
-if sys.version_info[0] < 3:
-    import Tkinter as tk
-else:
-    import tkinter as tk
+import tkinter as tk
 
 from scripts.main import Main
 
@@ -12,6 +8,7 @@ import datetime as datetime
 import random
 import serial
 import os
+import math
 
 class App(tk.Tk):
     def __init__(self):
@@ -19,14 +16,17 @@ class App(tk.Tk):
         # Inicializar variables
         self.job = None
         self.reiniciar = False
+        self.puerto = '/dev/ttyUSB0'
+        self.fila = 0
         self.vuelta = 0
         self.diente = 0
         self.tiempo = 0
         self.presion = 0
-        self.par = -20
+        self.par = 0
         self.csv = []
         self.file = []
         self.modo = tk.StringVar()
+        self.grabando = False
         # Se establece el modo adquisición por defecto
         self.modo.set('Adquisición')
         self.pausa = False
@@ -60,7 +60,7 @@ class App(tk.Tk):
         """Simula la entrada de datos recursivamente cada 1ms"""
         if self.pausa:
             return
-        # Se generan los valores aleatorios
+        # Se generan los valores
         # Diente
         self.diente += 1
         if self.diente > 360:
@@ -69,27 +69,26 @@ class App(tk.Tk):
         # Vuelta
         if self.diente == 360:
             self.vuelta += 1
-        # Tiempo
-        self.tiempo = random.uniform(0.00025, 0.0003)
         # Presión
-        if self.diente == 1:
-            self.presion = 12
-        elif 1 < self.diente <= 15:
-            self.presion += 8/14
-        elif 15 < self.diente <= 180:
-            self.presion -= 6/165
-        elif 180 < self.diente <= 195:
-            self.presion -= 4/15
-        elif 195 < self.diente <= 360:
-            self.presion += 2/165
+        self.presion = ''
         # Par
-        if self.par < 15:
-            self.par += 0.05
-        else:
-            self.par = random.uniform(15, 20)
+        if self.diente == 1:
+            self.par = random.uniform(-2.3, -1.7)
+        elif self.diente < 95:  # -2 -> 5
+            self.par += 0.07368
+        elif self.diente < 150:  # 5 -> 3.2
+            self.par -= 0.03272
+        elif self.diente < 222:  # 3.2 -> 6.5
+            self.par += 0.04583
+        elif self.diente < 340:  # 6.5 -> -2.7
+            self.par -= 0.07797
+        else:  # -2.7 -> -2.05
+            self.par += 0.0325
+        # Tiempo
+        self.tiempo = math.pi /((self.par+4)*25)
         # Pasa los datos al main.py
         self.set_datos()
-        # Si es la primera fila, se llama de nuevo a la función. Si no, se guardan los datos en self.file
+        # Si es la primera fila, se llama de nuevo a la función. Si no, también se guardan los datos en self.file
         if fila > 0:
             self.file.append(str(self.vuelta) + ',' + str(self.diente) + ',' + str(self.tiempo) + ',' + str(self.presion) + ',' + str(self.par) + '\n')
             self.job = self.after(1, self.simular_datos, fila + 1)
@@ -99,21 +98,21 @@ class App(tk.Tk):
     def adquirir_datos(self, fila):
         """Obtiene los datos por el puerto serial"""
         self.serial_abierto = True
-        puerto = '/dev/ttyUSB0'
-        if self.puerto_disponible(puerto):
-            # Define los datos del puerto
-            ser = serial.Serial(
-                port=puerto,
-                baudrate=9600,
-                parity=serial.PARITY_NONE,
-                stopbits=serial.STOPBITS_ONE,
-                bytesize=serial.EIGHTBITS,
-                timeout=1
-            )
+        if self.puerto_disponible(self.puerto):
             # Obtiene los datos y los guarda en self.file
             while self.serial_abierto:
-                datos = ser.readline()
-                self.vuelta = datos.vuelta
+                # Definir los datos del puerto
+                self.ser = serial.Serial(
+                    port=self.puerto,
+                    baudrate=9600,
+                    parity=serial.PARITY_NONE,
+                    stopbits=serial.STOPBITS_ONE,
+                    bytesize=serial.EIGHTBITS,
+                    timeout=1
+                )
+                datos = self.ser.readline()
+                if self.diente > datos.diente:
+                    self.vuelta += 1
                 self.diente = datos.diente
                 self.tiempo = datos.tiempo
                 self.presion = datos.presion
@@ -122,53 +121,34 @@ class App(tk.Tk):
                 if fila > 0:
                     self.file.append(str(self.vuelta) + ',' + str(self.diente) + ',' + str(self.tiempo) + ',' + str(self.presion) + ',' + str(self.par) + '\n')
                 fila += 1
+                self.fila = fila
         else:
-            def desconectar():
-                toplevel.destroy()
-                self.after_cancel(self.cuenta_atras)
-                self.cuenta_atras = None
-                self.unbind("<FocusIn>")
-                self.unbind("<Map>")
-                self.cambiar_estado('adquisicion')
-            def reconectar():
-                desconectar()
-                self.adquirir_datos(fila)
-            def bucle_reconectar(i):
-                label2.config(text='Reconectando automáticamente en ' + str(i) + ' segundos')
-                if self.modo.get() != 'Adquisición':
-                    desconectar()
-                elif i > 0:
-                    i -= 1
-                    self.cuenta_atras = self.after(1000, bucle_reconectar, i)
-                else:
-                    reconectar()
-            def on_map(event):
-                reconectar()
             # Se desconecta
             self.cambiar_estado('desconexion')
             # Recargar TopLevel cuando se minimiza/maximiza o se abre de nuevo la ventana
-            self.bind("<FocusIn>", on_map)
-            self.bind("<Map>", on_map)
-            toplevel = tk.Toplevel(self, bd=2, relief="solid")
+            self.bind("<FocusIn>", self.on_map)
+            self.bind("<Map>", self.on_map)
+            # Mensaje de reconexión
+            self.toplevel = tk.Toplevel(self, bd=2, relief="solid")
             # Posición del TopLevel
             g = "+%s+%s" % (500, 200)
-            toplevel.geometry(g)
+            self.toplevel.geometry(g)
             # Ocultar botones de minimizar, cerrar, expandir
-            toplevel.overrideredirect(1)
+            self.toplevel.overrideredirect(1)
             # Elementos del TopLevel
-            ERROR_CONEXION = 'No se ha podido establecer la conexión con ' + puerto + '.'
-            label1 = tk.Label(toplevel, text=ERROR_CONEXION, height=5, width=60)
+            ERROR_CONEXION = 'No se ha podido establecer la conexión con ' + self.puerto + '.'
+            label1 = tk.Label(self.toplevel, text=ERROR_CONEXION, height=5, width=60)
             desconexion = tk.PhotoImage(file='images/desconexion.png')
-            imagen = tk.Label(toplevel, image=desconexion)
+            imagen = tk.Label(self.toplevel, image=desconexion)
             imagen.image = desconexion
-            boton = tk.Button(toplevel, text='Reconectar', command=reconectar)
+            boton = tk.Button(self.toplevel, text='Reconectar', command=self.reconectar)
             TIEMPO = 'Reconectando automáticamente en 10 segundos'
-            label2 = tk.Label(toplevel, text=TIEMPO, font='Helvetica 12 bold')
+            self.label2 = tk.Label(self.toplevel, text=TIEMPO, font='Helvetica 12 bold')
             label1.grid(row=0, column=0)
             imagen.grid(row=1, column=0)
             boton.grid(row=3, column=0, pady=20)
-            label2.grid(row=2, column=0)
-            bucle_reconectar(10)
+            self.label2.grid(row=2, column=0)
+            self.bucle_reconectar(10)
 
     def puerto_disponible(self, puerto):
         """Comprueba si el puerto está disponible y devuelve True/False"""
@@ -177,6 +157,31 @@ class App(tk.Tk):
             return True
         except:
             return False
+
+    def desconectar(self):
+        self.toplevel.destroy()
+        self.after_cancel(self.cuenta_atras)
+        self.cuenta_atras = None
+        self.unbind("<FocusIn>")
+        self.unbind("<Map>")
+        self.cambiar_estado('marcha')
+
+    def reconectar(self):
+        self.desconectar()
+        self.adquirir_datos(self.fila)
+
+    def bucle_reconectar(self, i):
+        self.label2.config(text='Reconectando automáticamente en ' + str(i) + ' segundos')
+        if self.modo.get() != 'Adquisición':
+            self.desconectar()
+        elif i > 0:
+            i -= 1
+            self.cuenta_atras = self.after(1000, self.bucle_reconectar, i)
+        else:
+            self.reconectar()
+
+    def on_map(self, event):
+        self.reconectar()
 
     def leer_datos(self, fila):
         self.fila_actual = fila
@@ -194,7 +199,7 @@ class App(tk.Tk):
         self.par = float(datos[4])
         self.fila = fila + 1
         self.set_datos()
-        # Se calcula un nuevo valor aleatorio cuando termina el intervalo
+        # Se calcula un nuevo valor cuando termina el intervalo
         if fila < len(self.csv) - 1:
             self.job = self.after(1, self.leer_datos, self.fila)
         else:
@@ -236,8 +241,8 @@ class App(tk.Tk):
     def set_opciones(self, opciones):
         """Aplica las opciones de la aplicación"""
         modo = opciones['modo']
-        estadoActual = self.main.estadoLabel['text']
         dientes_refresco = opciones['dientes_refresco']
+        estadoActual = self.main.estadoLabel['text']
         # Si se ha definido un intervalo de refresco
         if dientes_refresco != '' and dientes_refresco.isdigit():
             self.main.dientes_refresco = int(dientes_refresco)
@@ -291,6 +296,7 @@ class App(tk.Tk):
     def stop(self):
         """Detener la aplicación completamente"""
         self.pausa = True
+        self.grabando = False
         self.cambiar_estado('pausa')
         self.stop_set_datos()
         if self.modo.get() == 'Simulación' or self.modo.get() == 'Adquisición':
@@ -307,10 +313,10 @@ class App(tk.Tk):
             self.modo.set(self.modo_anterior)
             self.main.estadoLabel.config(text=self.modo.get())
 
-
     def open(self):
         """Abrir y reproducir un archivo"""
         self.pausa = False
+        self.grabando = False
         file = tk.filedialog.askopenfile(initialdir=self.dir, title="Select file",
                                          filetypes=(("csv files", "*.csv"), ("all files", "*.*")))
         if not file:
@@ -326,10 +332,10 @@ class App(tk.Tk):
         self.reset()
         self.leer_datos(0)
 
-
     def record(self):
-        """Grabar los datos de un intervalo y arrancar la aplicación"""
+        """Grabar los datos y arrancar la aplicación"""
         self.pausa = False
+        self.grabando = True
         self.stop_set_datos()
         self.cambiar_estado('grabacion')
         if self.modo.get() == 'Simulación':
@@ -337,18 +343,18 @@ class App(tk.Tk):
         else:
             self.adquirir_datos(1)
 
-
     def pause(self):
         """Pausar la aplicación"""
         self.pausa = True
+        self.grabando = False
         self.cambiar_estado('pausa')
         self.stop_set_datos()
-
 
     def play(self):
         """Reanudar la aplicación"""
         self.pausa = False
-        self.cambiar_estado('adquisicion')
+        self.grabando = False
+        self.cambiar_estado('marcha')
         if self.modo.get() == 'Simulación':
             self.simular_datos(0)
         elif self.modo.get() == 'Adquisición':
@@ -356,7 +362,6 @@ class App(tk.Tk):
         else:
             self.cambiar_estado('reproduccion')
             self.leer_datos(self.fila_actual)
-
 
     def reset(self):
         """Reiniciar los datos (se hará efectivo cuando se termine la vuelta actual)"""
@@ -367,7 +372,7 @@ class App(tk.Tk):
 
     def cambiar_estado(self, estado):
         """Cambiar el aspecto de los botones según el modo actual"""
-        if estado == 'adquisicion':
+        if estado == 'marcha':
             self.main.stopButton.configure(state='disabled')
             self.main.recordButton.configure(relief='raised')
             self.main.recordButton.configure(state='normal')

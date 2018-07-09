@@ -1,9 +1,5 @@
 # coding=utf-8
-import sys
-if sys.version_info[0] < 3:
-    import Tkinter as tk
-else:
-    import tkinter as tk
+import tkinter as tk
 
 from scripts.medidor import Medidor
 from scripts.engranaje import Engranaje
@@ -20,17 +16,18 @@ from scripts.redondeo import redondear
 import math
 import json
 import configparser
-import os.path
+from os import path
 import datetime
+import random
 
 class Main(tk.Frame):
     def __init__(self, master):
         super(Main, self).__init__()
         self.app = master
-        self.crear_elementos()
+
         # Inicializar las variables
         self.paginaFlag = False
-        self.opcionesFlag = False
+        self.opcionesFlag = True
         self.vuelta = 0
         self.diente = 0
         self.tiempo = 0
@@ -45,13 +42,33 @@ class Main(tk.Frame):
         self.par_array = []
         self.vel_angular_array = []
         self.potencia_array = []
+        # Constantes
+        self.radio = 37.5 * 10 ** (-3)  # 37.5mm
+        self.longitud_frio = 146 * 10 ** (-3)  # 146mm
+        self.longitud_caliente = 130 * 10**(-3)  #130mm
+        self.diametro_frio = 85 * 10 ** (-3)  # 85mm
+        self.diametro_caliente = 96 * 10**(-3)  #96mm
+        self.volumen_muerto_frio = 303.66 * 10 ** (-6)  # 303.66 cm3
+        self.volumen_muerto_caliente = 226.47 * 10**(-6)  #226.47 cm3
+        self.volumen_muerto_regenerador = 335.19 * 10**(-6)  #335.19 cm3
+        self.area_caliente = math.pi * (self.diametro_caliente ** 2) / 4
+        self.area_frio = math.pi * (self.diametro_frio ** 2) / 4
+        self.y_max = self.radio + self.longitud_caliente
+        self.y_min = self.longitud_caliente - self.radio
+        self.x_max = self.radio + self.longitud_frio
+        self.masa_total = 7.03 * (10**-3)  #7.03g
+        self.resistencia_aire = 297 #J/Kg K
+        self.temperatura_caliente = 693 #K
+        self.temperatura_frio = 303 #K
+        self.temperatura_r = 471.4 #K
         # Leer el archivo de configuración inicial
         self.configParser = configparser.RawConfigParser()
         self.configFile = 'settings.ini'
-        if not os.path.exists(self.configFile):
-            self.create_config_file()
+        if not path.exists(self.configFile):
+            self.crear_config_file()
         self.configParser.read(self.configFile)
         # Crear elementos gráficos
+        self.crear_elementos()
         self.crear_medidores()
         self.crear_indicadores()
         self.crear_graficos()
@@ -234,7 +251,9 @@ class Main(tk.Frame):
         medidor2_container.grid(column=1, row=1, columnspan=2)
         medidor2_container.grid_remove()
         medidor3_container.grid(column=3, row=1, columnspan=2)
-        medidor3_container.grid_remove()
+        medidor3_container.grid_remove(
+
+        )
         # Ajustar el lugar del contenido de cada frame de ajustes
         medidor0_ajustes.grid(row=0, column=0)
         medidor1_ajustes.grid(row=0, column=0)
@@ -362,7 +381,7 @@ class Main(tk.Frame):
             "nombreY": self.configParser.get('Grafico2', 'nombreY'),
             "minY": self.configParser.get('Grafico2', 'minY'),
             "maxY": self.configParser.get('Grafico2', 'maxY'),
-            "stepY": self.configParser.get('Grafico2', 'stepX'),
+            "stepY": self.configParser.get('Grafico2', 'stepY'),
             "live": False,
             "index": 2
         }
@@ -370,12 +389,11 @@ class Main(tk.Frame):
         grafico0_flag = False
         grafico1_flag = False
         grafico2_flag = False
-        # 1 inch = 96 pixels
+        # Gráficos
         ancho_grafico = self.ancho_total / self.n_graficos / 88
         altura_grafico = self.altura_total / self.n_graficos / 30
         ancho_grafico_live = self.ancho_total / self.n_graficos / 70
         altura_grafico_live = self.altura_total / self.n_graficos / 15
-        # Gráficos
         grafico0 = GraficoMultilinea(self.graficosContainer, height=altura_grafico_live, width=ancho_grafico_live, configuracion=grafico0_conf)
         grafico1 = GraficoPV(self.graficosContainer, height=altura_grafico, width=ancho_grafico, configuracion=grafico1_conf)
         grafico2 = GraficoEstandar(self.graficosContainer, height=altura_grafico, width=ancho_grafico, configuracion=grafico2_conf)
@@ -426,47 +444,46 @@ class Main(tk.Frame):
 
     def crear_opciones(self):
         configuracion_opciones = {"modo": self.app.modo}
-        self.ajustes = Opciones(self.opcionesContainer, self.app, configuracion=configuracion_opciones)
-        self.ajustes.grid(row=0, column=0)
-        self.opcionesContainer.grid_remove()
+        self.opciones = Opciones(self.opcionesContainer, self.app, configuracion=configuracion_opciones)
+        self.opciones.grid(row=0, column=0)
 
-    def create_config_file(self):
+    def crear_config_file(self):
         """Crea un archivo de configuración"""
         self.configParser.add_section('Medidor0')
         self.configParser.set('Medidor0', 'nombre', 'Presión')
         self.configParser.set('Medidor0', 'unidad', 'bar')
         self.configParser.set('Medidor0', 'minimo', '0')
-        self.configParser.set('Medidor0', 'maximo', '100')
+        self.configParser.set('Medidor0', 'maximo', '10')
         self.configParser.set('Medidor0', 'colores', '["green", "yellow", "red"]')
-        self.configParser.set('Medidor0', 'umbrales_porc', '[33, 66]')
-        self.configParser.set('Medidor0', 'umbrales_val', '[5, 20]')
+        self.configParser.set('Medidor0', 'umbrales_porc', '[50, 75]')
+        self.configParser.set('Medidor0', 'umbrales_val', '[7.5, 8]')
         self.configParser.set('Medidor0', 'tipo_umbral', 'P')
         self.configParser.add_section('Medidor1')
         self.configParser.set('Medidor1', 'nombre', 'Par')
         self.configParser.set('Medidor1', 'unidad', 'N*m')
-        self.configParser.set('Medidor1', 'minimo', '0')
-        self.configParser.set('Medidor1', 'maximo', '100')
+        self.configParser.set('Medidor1', 'minimo', '-10')
+        self.configParser.set('Medidor1', 'maximo', '10')
         self.configParser.set('Medidor1', 'colores', '["green", "yellow", "red"]')
-        self.configParser.set('Medidor1', 'umbrales_porc', '[33, 66]')
-        self.configParser.set('Medidor1', 'umbrales_val', '[5, 20]')
+        self.configParser.set('Medidor1', 'umbrales_porc', '[50, 75]')
+        self.configParser.set('Medidor1', 'umbrales_val', '[7, 9]')
         self.configParser.set('Medidor1', 'tipo_umbral', 'P')
         self.configParser.add_section('Medidor2')
         self.configParser.set('Medidor2', 'nombre', 'Velocidad angular')
         self.configParser.set('Medidor2', 'unidad', 'rad/s')
         self.configParser.set('Medidor2', 'minimo', '0')
-        self.configParser.set('Medidor2', 'maximo', '100')
+        self.configParser.set('Medidor2', 'maximo', '500')
         self.configParser.set('Medidor2', 'colores', '["green", "yellow", "red"]')
-        self.configParser.set('Medidor2', 'umbrales_porc', '[33, 66]')
-        self.configParser.set('Medidor2', 'umbrales_val', '[5, 20]')
+        self.configParser.set('Medidor2', 'umbrales_porc', '[50, 75]')
+        self.configParser.set('Medidor2', 'umbrales_val', '[250, 400]')
         self.configParser.set('Medidor2', 'tipo_umbral', 'P')
         self.configParser.add_section('Medidor3')
         self.configParser.set('Medidor3', 'nombre', 'Potencia')
         self.configParser.set('Medidor3', 'unidad', 'W')
         self.configParser.set('Medidor3', 'minimo', '0')
-        self.configParser.set('Medidor3', 'maximo', '100')
+        self.configParser.set('Medidor3', 'maximo', '5000')
         self.configParser.set('Medidor3', 'colores', '["green", "yellow", "red"]')
-        self.configParser.set('Medidor3', 'umbrales_porc', '[33, 66]')
-        self.configParser.set('Medidor3', 'umbrales_val', '[5, 20]')
+        self.configParser.set('Medidor3', 'umbrales_porc', '[50, 75]')
+        self.configParser.set('Medidor3', 'umbrales_val', '[2500, 4000]')
         self.configParser.set('Medidor3', 'tipo_umbral', 'P')
         self.configParser.add_section('Medidor4')
         self.configParser.set('Medidor4', 'nombre', 'Ángulo cigüeñal')
@@ -487,7 +504,7 @@ class Main(tk.Frame):
         self.configParser.set('Indicador3', 'unidad', 'N*m')
         self.configParser.add_section('Indicador4')
         self.configParser.set('Indicador4', 'nombre', 'Volumen instantáneo')
-        self.configParser.set('Indicador4', 'unidad', 'm^3')
+        self.configParser.set('Indicador4', 'unidad', 'l')
         self.configParser.add_section('Indicador5')
         self.configParser.set('Indicador5', 'nombre', 'Velocidad angular inst.')
         self.configParser.set('Indicador5', 'unidad', 'rad/s')
@@ -498,7 +515,7 @@ class Main(tk.Frame):
         self.configParser.set('Indicador7', 'nombre', 'Potencia promedio')
         self.configParser.set('Indicador7', 'unidad', 'W')
         self.configParser.add_section('Grafico0')
-        self.configParser.set('Grafico0', 'titulo', 'Presión y par/velocidad angular')
+        self.configParser.set('Grafico0', 'titulo', 'Presión y par/grado de cigüeñal')
         self.configParser.set('Grafico0', 'color0', 'red')
         self.configParser.set('Grafico0', 'color1', 'green')
         self.configParser.set('Grafico0', 'nombreX', 'Grado de cigüeñal (º)')
@@ -507,35 +524,44 @@ class Main(tk.Frame):
         self.configParser.set('Grafico0', 'stepX', '30')
         self.configParser.set('Grafico0', 'nombreY1', 'Presión (bar)')
         self.configParser.set('Grafico0', 'minY1', '0')
-        self.configParser.set('Grafico0', 'maxY1', '30')
-        self.configParser.set('Grafico0', 'stepY1', '2.5')
+        self.configParser.set('Grafico0', 'maxY1', '10')
+        self.configParser.set('Grafico0', 'stepY1', '2')
         self.configParser.set('Grafico0', 'nombreY2', 'Par (N*m)')
-        self.configParser.set('Grafico0', 'minY2', '-20')
-        self.configParser.set('Grafico0', 'maxY2', '20')
-        self.configParser.set('Grafico0', 'stepY2', '5')
-        self.configParser.set('Grafico0', 'n_lineas', '5')
+        self.configParser.set('Grafico0', 'minY2', '-10')
+        self.configParser.set('Grafico0', 'maxY2', '10')
+        self.configParser.set('Grafico0', 'stepY2', '2.5')
+        self.configParser.set('Grafico0', 'n_lineas', '3')
         self.configParser.add_section('Grafico1')
         self.configParser.set('Grafico1', 'titulo', 'Diagrama P-V')
         self.configParser.set('Grafico1', 'color', 'red')
-        self.configParser.set('Grafico1', 'nombreX', 'Volumen (m^3)')
+        self.configParser.set('Grafico1', 'nombreX', 'Volumen (l)')
         self.configParser.set('Grafico1', 'minX', '0')
-        self.configParser.set('Grafico1', 'maxX', '1500')
-        self.configParser.set('Grafico1', 'stepX', '125')
+        self.configParser.set('Grafico1', 'maxX', '3')
+        self.configParser.set('Grafico1', 'stepX', '0.5')
         self.configParser.set('Grafico1', 'nombreY', 'Presión (bar)')
         self.configParser.set('Grafico1', 'minY', '0')
-        self.configParser.set('Grafico1', 'maxY', '30')
-        self.configParser.set('Grafico1', 'stepY', '5')
+        self.configParser.set('Grafico1', 'maxY', '10')
+        self.configParser.set('Grafico1', 'stepY', '2')
         self.configParser.add_section('Grafico2')
         self.configParser.set('Grafico2', 'titulo', 'Potencia / velocidad angular')
         self.configParser.set('Grafico2', 'color', 'red')
         self.configParser.set('Grafico2', 'nombreX', 'w promedio/vuelta (rad/s)')
         self.configParser.set('Grafico2', 'minX', '0')
-        self.configParser.set('Grafico2', 'maxX', '1500')
-        self.configParser.set('Grafico2', 'stepX', '250')
+        self.configParser.set('Grafico2', 'maxX', '1000')
+        self.configParser.set('Grafico2', 'stepX', '200')
         self.configParser.set('Grafico2', 'nombreY', 'Potencia/vuelta (W)')
         self.configParser.set('Grafico2', 'minY', '0')
-        self.configParser.set('Grafico2', 'maxY', '1500')
-        self.configParser.set('Grafico2', 'stepY', '125')
+        self.configParser.set('Grafico2', 'maxY', '5000')
+        self.configParser.set('Grafico2', 'stepY', '1000')
+        with open(self.configFile, 'w') as output:
+            self.configParser.write(output)
+
+    def guardar_config(self, seccion, subsecciones, config):
+        """Guarda la nueva configuracion en el archivo """
+        if not self.configParser.has_section(seccion):
+            self.configParser.add_section(seccion)
+        for i in range(0, len(subsecciones), 1):
+            self.configParser.set(seccion, subsecciones[i], config[subsecciones[i]])
         with open(self.configFile, 'w') as output:
             self.configParser.write(output)
 
@@ -583,13 +609,28 @@ class Main(tk.Frame):
         else:
             self.cambio_vuelta = False
         # Fórmulas matemáticas
-        frecuencia_diente = 1 / periodo
-        frecuencia_vuelta = frecuencia_diente / 360
-        vel_angular = 2 * math.pi * frecuencia_vuelta
-        potencia = par * vel_angular
-        diametro = 10
-        carrera = 30
-        volumen = ((math.pi * diametro ** 2) / 4) * (carrera / 2) * math.sin(diente*math.pi/180)
+        frecuencia_diente = 1 / periodo #Hz
+        vel_angular = 2 * math.pi * frecuencia_diente   #rad/s
+        potencia = abs(par) * vel_angular    #W
+        diente_rad = diente * math.pi/180
+        diente_rad_2 = (270 + diente) * math.pi/180
+        # VOLUMEN CALIENTE
+        y = self.radio * math.cos(diente_rad_2) + self.longitud_caliente * math.sqrt(1 - (self.radio* math.sin(diente_rad_2) / self.longitud_caliente) ** 2)
+        volumen_caliente_parcial = self.area_caliente * (self.y_max - y)
+        volumen_caliente = volumen_caliente_parcial + self.volumen_muerto_caliente
+        # VOLUMEN FRÍO
+        x = self.radio * math.cos(diente_rad) + self.longitud_frio * math.sqrt(1 - (self.radio* math.sin(diente_rad) / self.longitud_frio) ** 2)
+        volumen_frio_parcial = self.area_frio * (self.x_max - x) + self.area_caliente * (y - self.y_min)
+        volumen_frio = volumen_frio_parcial + self.volumen_muerto_frio
+        # VOLUMEN TOTAL
+        volumen = volumen_caliente + volumen_frio + self.volumen_muerto_regenerador
+        # Pasar el volumen de m^3 a litros
+        volumen = volumen * 1000
+        # PRESIÓN (Sólo en simulación)
+        if presion == '':
+            presion = (self.masa_total * self.resistencia_aire) / ( (volumen_caliente/self.temperatura_caliente) + (volumen_frio/self.temperatura_frio) + (self.volumen_muerto_regenerador/self.temperatura_r) )
+            presion = presion * (10**-5)    # Pasar a bares
+            self.app.presion = presion
         # Guardar datos en los arrays
         self.presion_array.append(presion)
         self.par_array.append(par)
@@ -613,6 +654,7 @@ class Main(tk.Frame):
         # Devolver los valores calculados
         valores["vel_angular"] = vel_angular
         valores["potencia"] = potencia
+        valores["presion"] = presion
         valores["volumen"] = volumen
         valores["presion_promedio"] = presion_promedio
         valores["par_promedio"] = par_promedio
@@ -639,7 +681,10 @@ class Main(tk.Frame):
         time_stamp = datetime.timedelta(milliseconds=self.tiempo)
         # Si la time_stamp es mayor que el breakpoint de tiempo definido, se pausa la app
         if self.breakpoint != '' and self.breakpoint <= time_stamp:
-            self.after(1, self.app.pause)
+            if self.app.grabando:
+                self.after(1, self.app.stop)
+            else:
+                self.after(1, self.app.pause)
             self.breakpoint = ''
             if self.vuelta_limite == '' and self.diente_limite == '':
                 self.breakpointLabel.grid_remove()
@@ -648,30 +693,16 @@ class Main(tk.Frame):
                 (self.vuelta_limite == vuelta and self.diente_limite == diente) or (
                 self.vuelta_limite == vuelta and self.diente_limite == '') or (
                         self.vuelta_limite == '' and self.diente_limite == diente)):
-            self.after(1, self.app.pause)
+            if self.app.grabando:
+                self.after(1, self.app.stop)
+            else:
+                self.after(1, self.app.pause)
             self.vuelta_limite = ''
             self.diente_limite = ''
             if self.breakpoint == '':
                 self.breakpointLabel.grid_remove()
         else:
             self.timeLabel.config(text=str(time_stamp))
-        self.dientes_refresco_index -= 1
-        # Medidor0: Presión
-        # Medidor1: Par
-        # Medidor2: Velocidad angular
-        # Medidor3: Potencia
-        # Medidor4: Ángulo de cigüeñal
-        # Gráfico 0: Eje X: nº grado cigüeñal, eje Y: Presión y par -> Gráfico móvil
-        # Gráfico 1: Eje X: Volumen, eje Y: Presión -> Diagrama P-V
-        # Gráfico 2: Eje X: Velocidad angular promedio de vuelta, eje Y: Potencia de vuelta
-        # Indicador0: Número de vuelta de cigüeñal
-        # Indicador1: Número de impulso dentro de la vuelta (grados girados)
-        # Indicador2: Presión
-        # Indicador3: Par
-        # Indicador4: Volumen
-        # Indicador5: Velocidad angular instantánea
-        # Indicador6: Velocidad angular promedio en una vuelta
-        # Indicador7: Potencia
         if reiniciar:
             # Si reiniciar = True, los máximos y mínimos se actualizan a los valores actuales
             self.tiempo = periodo
@@ -698,6 +729,7 @@ class Main(tk.Frame):
             self.indicadores['indicador6'].set(vel_angular_promedio)
             self.indicadores['indicador7'].set(potencia_promedio)
         # Valores instantáneos
+        self.dientes_refresco_index -= 1
         if self.dientes_refresco_index == 0:
             self.dientes_refresco_index = self.dientes_refresco
             if not self.paginaFlag:
@@ -708,7 +740,7 @@ class Main(tk.Frame):
             self.indicadores['indicador4'].set(volumen)
             self.indicadores['indicador5'].set(vel_angular)
 
-    def save_ajustes(self, ajustes_elemento, ajustes, tipo_accion):
+    def guardar_ajustes(self, ajustes_elemento, ajustes, tipo_accion):
         """Guardar los ajustes de un medidor o gráfico"""
         index = ajustes_elemento.index
         if not self.paginaFlag:
@@ -720,7 +752,7 @@ class Main(tk.Frame):
             seccion = "Grafico" + str(index)
         elemento.set_ajustes(ajustes)
         subsecciones = list(ajustes)
-        self.save_config(seccion,subsecciones, ajustes)
+        self.guardar_config(seccion,subsecciones, ajustes)
         if tipo_accion == 'aceptar':
             self.desplegar_ajustes(elemento)
 
@@ -736,12 +768,3 @@ class Main(tk.Frame):
         else:
             container.grid()
         elemento.flag = not elemento.flag
-
-    def save_config(self, seccion, subsecciones, config):
-        """Guarda la nueva configuracion en el archivo """
-        if not self.configParser.has_section(seccion):
-            self.configParser.add_section(seccion)
-        for i in range(0, len(subsecciones), 1):
-            self.configParser.set(seccion, subsecciones[i], config[subsecciones[i]])
-        with open(self.configFile, 'w') as output:
-            self.configParser.write(output)

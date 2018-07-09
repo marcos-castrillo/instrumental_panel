@@ -1,11 +1,16 @@
 # coding=utf-8
 def redondear(numero, full_scale):
     """Función para redondear el valor pasado por argumento"""
+    # Si el numero es menor que 0.1%, se devuelve 0
+    if abs(numero) <= 0.001 * abs(full_scale):
+        return 0
+    if numero < 0:
+        negativo = True
+        numero = numero * (-1)
+    else:
+        negativo = False
     numero_s = str(numero)
     longitud = len(numero_s)
-    # Si el numero es menor que 0.1%, se devuelve 0
-    if numero <= 0.001 * full_scale:
-        return 0
     # Se encuentra la posición de la coma, si hay. Si no, coma = -1
     coma = numero_s.find('.')
     n = 0
@@ -38,7 +43,9 @@ def redondear(numero, full_scale):
     # Cifras = Numero de cifras a las que hay que redondear
     # Si la longitud es menor que 4, no hace falta redondear
     if longitud < 4:
-        cifras = 0
+        if negativo:
+            numero = numero * (-1)
+        return numero
     # Si no hay coma y el primer digito es cifra significativa, se cogen (decimales - longitud) cifras
     elif n == 0 and coma == -1:
         cifras = decimales - longitud
@@ -61,11 +68,15 @@ def redondear(numero, full_scale):
         cifras = decimales - coma
     # En cualquier otro caso, no se redondea
     else:
-        cifras = 0
+        if negativo:
+            numero = numero * (-1)
+        return numero
     # Se redondea el numero a las cifras correspondientes
     resultado = round(numero, cifras)
     # Se evita el ".0" para numeros enteros
     if float(resultado).is_integer():
         resultado = int(resultado)
     # Se devuelve el numero redondeado
+    if negativo:
+        resultado = resultado * (-1)
     return resultado

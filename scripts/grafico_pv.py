@@ -1,9 +1,5 @@
 # coding=utf-8
-import sys
-if sys.version_info[0] < 3:
-    import Tkinter as tk
-else:
-    import tkinter as tk
+import tkinter as tk
 
 import matplotlib
 matplotlib.use('TkAgg')
@@ -51,6 +47,7 @@ class GraficoPV(tk.Canvas, object):
         self.grafico.set_ylabel(self.nombreY)
         self.grafico.set_xlim(xmin=self.minX, xmax=self.maxX)
         self.grafico.set_ylim(ymin=self.minY, ymax=self.maxY)
+
         self.grafico.set_xticks(np.arange(self.minX, self.maxX+1, self.stepX))
         self.grafico.set_yticks(np.arange(self.minY, self.maxY+1, self.stepY))
 
@@ -70,7 +67,7 @@ class GraficoPV(tk.Canvas, object):
         if cambio_vuelta and len(self.arrayX) > 1:
             self.line.set_xdata(self.arrayX)
             self.line.set_ydata(self.arrayY)
-            self.grafico.fill_between(self.arrayX, self.arrayY, color='gray')
+            #self.grafico.fill_between(self.arrayX, self.arrayY, color='gray', interpolate=True)
             self.canvas.draw()
             self.canvas.flush_events()
             self.arrayX = []

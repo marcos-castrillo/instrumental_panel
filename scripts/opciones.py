@@ -1,9 +1,6 @@
 # coding=utf-8
 import sys
-if sys.version_info[0] < 3:
-    import Tkinter as tk
-else:
-    import tkinter as tk
+import tkinter as tk
 import os
 
 class Opciones(tk.Frame, object):
@@ -13,39 +10,42 @@ class Opciones(tk.Frame, object):
         self.master = master
         self.app = app
         self.modo = configuracion["modo"]
-        # Elementos
-        self.modoRadioLabel = tk.Label(master, text="Modo de funcionamiento", bg='white', font='Helvetica 10 bold')
-        self.modoRadio0 = tk.Radiobutton(master, text="Adquisición de datos", variable=self.modo, value='Adquisición', bg='white')
-        self.modoRadio1 = tk.Radiobutton(master, text="Simulación de datos", variable=self.modo, value='Simulación', bg='white')
+        self.crear_elementos()
 
-        self.refrescoLabel = tk.Label(master, text="Intervalo de refresco (dientes)", bg='white', font='Helvetica 10 bold')
-        self.dientesRefrescoEntry = tk.Entry(master, bd=5, width="7")
+    def crear_elementos(self):
+        # Elementos
+        self.modoRadioLabel = tk.Label(self.master, text="Modo de funcionamiento", bg='white', font='Helvetica 10 bold')
+        self.modoRadio0 = tk.Radiobutton(self.master, text="Adquisición de datos", variable=self.modo, value='Adquisición', bg='white')
+        self.modoRadio1 = tk.Radiobutton(self.master, text="Simulación de datos", variable=self.modo, value='Simulación', bg='white')
+
+        self.refrescoLabel = tk.Label(self.master, text="Intervalo de refresco (dientes)", bg='white', font='Helvetica 10 bold')
+        self.dientesRefrescoEntry = tk.Entry(self.master, bd=5, width="7")
         self.dientesRefrescoEntry.insert(0, 1)
 
         self.tipoInterrupcion = tk.IntVar()
-        self.interrupcionLabel = tk.Label(master, text="Punto de interrupción", bg='white', font='Helvetica 10 bold')
-        self.interrupcionRadio0 = tk.Radiobutton(master, text="Desactivado", variable=self.tipoInterrupcion, value='0', bg='white', command=self.cambiar_interrupcion)
-        self.interrupcionRadio1 = tk.Radiobutton(master, text="Tiempo", variable=self.tipoInterrupcion, value='1', bg='white', command=self.cambiar_interrupcion)
-        self.interrupcionRadio2 = tk.Radiobutton(master, text="Vuelta", variable=self.tipoInterrupcion, value='2', bg='white', command=self.cambiar_interrupcion)
+        self.interrupcionLabel = tk.Label(self.master, text="Punto de interrupción", bg='white', font='Helvetica 10 bold')
+        self.interrupcionRadio0 = tk.Radiobutton(self.master, text="Desactivado", variable=self.tipoInterrupcion, value='0', bg='white', command=self.cambiar_interrupcion)
+        self.interrupcionRadio1 = tk.Radiobutton(self.master, text="Tiempo", variable=self.tipoInterrupcion, value='1', bg='white', command=self.cambiar_interrupcion)
+        self.interrupcionRadio2 = tk.Radiobutton(self.master, text="Vuelta", variable=self.tipoInterrupcion, value='2', bg='white', command=self.cambiar_interrupcion)
 
-        self.numeroVueltaLabel = tk.Label(master, text="Vuelta", bg='white', font='Helvetica 10 bold')
-        self.numeroVueltaEntry = tk.Entry(master, bd=5, width="5")
-        self.numeroDienteLabel = tk.Label(master, text="Diente", bg='white', font='Helvetica 10 bold')
-        self.numeroDienteEntry = tk.Entry(master, bd=5, width="5")
+        self.numeroVueltaLabel = tk.Label(self.master, text="Vuelta", bg='white', font='Helvetica 10 bold')
+        self.numeroVueltaEntry = tk.Entry(self.master, bd=5, width="5")
+        self.numeroDienteLabel = tk.Label(self.master, text="Diente", bg='white', font='Helvetica 10 bold')
+        self.numeroDienteEntry = tk.Entry(self.master, bd=5, width="5")
 
-        self.horasLabel = tk.Label(master, text="h", bg='white', font='Helvetica 10 bold')
-        self.horasEntry = tk.Entry(master, bd=5, width="5")
-        self.minutosLabel = tk.Label(master, text="min", bg='white', font='Helvetica 10 bold')
-        self.minutosEntry = tk.Entry(master, bd=5, width="5")
-        self.segundosLabel = tk.Label(master, text="s", bg='white', font='Helvetica 10 bold')
-        self.segundosEntry = tk.Entry(master, bd=5, width="5")
-        self.milisegundosLabel = tk.Label(master, text="ms", bg='white', font='Helvetica 10 bold')
-        self.milisegundosEntry = tk.Entry(master, bd=5, width="5")
+        self.horasLabel = tk.Label(self.master, text="h", bg='white', font='Helvetica 10 bold')
+        self.horasEntry = tk.Entry(self.master, bd=5, width="5")
+        self.minutosLabel = tk.Label(self.master, text="min", bg='white', font='Helvetica 10 bold')
+        self.minutosEntry = tk.Entry(self.master, bd=5, width="5")
+        self.segundosLabel = tk.Label(self.master, text="s", bg='white', font='Helvetica 10 bold')
+        self.segundosEntry = tk.Entry(self.master, bd=5, width="5")
+        self.milisegundosLabel = tk.Label(self.master, text="ms", bg='white', font='Helvetica 10 bold')
+        self.milisegundosEntry = tk.Entry(self.master, bd=5, width="5")
 
-        self.reiniciarButton = tk.Button(master, text='Reiniciar ajustes', width=15, command=self.reiniciar_ajustes)
+        self.reiniciarButton = tk.Button(self.master, text='Reiniciar ajustes', width=15, command=self.reiniciar_ajustes)
 
-        self.aplicarButton = tk.Button(master, text='Aplicar', width=10, command=self.guardar_opciones)
-        self.aceptarButton = tk.Button(master, text='Aceptar', width=10, command=self.aceptar_opciones)
+        self.aplicarButton = tk.Button(self.master, text='Aplicar', width=10, command=self.guardar_opciones)
+        self.aceptarButton = tk.Button(self.master, text='Aceptar', width=10, command=self.aceptar_opciones)
         # Ajustar el lugar de los elementos
         self.modoRadioLabel.grid(row=0, column=0, columnspan=3)
         self.modoRadio0.grid(row=1, column=0, columnspan=3)

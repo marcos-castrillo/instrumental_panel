@@ -1,9 +1,6 @@
 # coding=utf-8
 import sys
-if sys.version_info[0] < 3:
-    import Tkinter as tk
-else:
-    import tkinter as tk
+import tkinter as tk
 import tkinter.font as tkf
 
 import math
