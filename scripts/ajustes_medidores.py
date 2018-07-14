@@ -139,7 +139,6 @@ class AjustesMedidores(tk.Frame, object):
         colores.append(self.colorButton2.cget('background'))
         minimo = redondear(float(self.minimoEntry.get()), float(self.maximoEntry.get()))
         maximo = redondear(float(self.maximoEntry.get()), float(self.maximoEntry.get()))
-        # Validar entries
         minimo, maximo = self.validar_entries(minimo, maximo)
         if self.minimoEntry.get() != str(minimo):
             self.minimoEntry.delete(0,'end')

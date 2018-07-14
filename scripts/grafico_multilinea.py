@@ -74,7 +74,6 @@ class GraficoMultilinea(tk.Canvas, object):
         # Leyenda
         labs = [l.get_label() for l in lines]
         self.grafico.legend(lines, labs, loc='lower right')
-
         self.grafico.grid()
         self.canvas = FigureCanvasTkAgg(f, self)
         self.canvas.draw()

@@ -159,7 +159,7 @@ class Medidor(tk.Canvas, object):
         self.range = end - start
 
     def set(self, valor, valor_promedio, cambio_vuelta):
-        """Actualizael medidor con los datos pasados por parámetro"""
+        """Actualiza el medidor con los datos pasados por parámetro"""
         # Si no hay valores guardados, se establecen los nuevos valores como min y max
         try:
             self.valor_min
@@ -167,11 +167,13 @@ class Medidor(tk.Canvas, object):
             self.valor_min = valor
             self.valor_max = valor
         else:
-            # Se comprueban el máximo y minimo
+            # Se comprueban el máximo y mínimo
             if valor < self.valor_min:
                 self.valor_min = valor
+                self.itemconfigure(self.minimo, text=str(redondear(self.valor_min, self.maximo_rango)), fill='black')
             if valor > self.valor_max:
                 self.valor_max = valor
+                self.itemconfigure(self.maximo, text=str(redondear(self.valor_max, self.maximo_rango)), fill='black')
         # Si es una vuelta nueva
         if cambio_vuelta:
             self.vuelta_actual += 1
@@ -203,10 +205,6 @@ class Medidor(tk.Canvas, object):
                 rad = math.radians(self.deg)
                 self.coords(self.aguja, self.centroX, self.centroY, self.centroX + self.largo_aguja * math.cos(rad), self.centroY + self.largo_aguja * math.sin(rad))
                 self.deg_anterior = self.deg
-        if valor == self.valor_min:
-            self.itemconfigure(self.minimo, text=str(redondear(self.valor_min, self.maximo_rango)), fill='black')
-        if valor == self.valor_max:
-            self.itemconfigure(self.maximo, text=str(redondear(self.valor_max, self.maximo_rango)), fill='black')
 
     def set_ajustes(self, ajustes):
         """Aplica los ajustes"""

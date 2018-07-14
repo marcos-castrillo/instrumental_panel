@@ -348,6 +348,9 @@ class App(tk.Tk):
         self.pausa = True
         self.grabando = False
         self.cambiar_estado('pausa')
+        if self.modo.get() == 'Reproducción':
+            self.main.stopButton.configure(state='normal')
+            self.main.recordButton.configure(state='disabled')
         self.stop_set_datos()
 
     def play(self):
@@ -368,6 +371,7 @@ class App(tk.Tk):
         self.reiniciar = True
         self.main.vuelta_actual = 0
         self.vuelta = 0
+        self.main.indicadores['indicador0'].itemconfigure(self.main.indicadores['indicador0'].valorid, text=str(0))
         self.main.timeLabel.config(text=str(datetime.timedelta(milliseconds=0)))
 
     def cambiar_estado(self, estado):
