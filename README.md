@@ -2,14 +2,18 @@
 
 Monitorization of a Stirling engine.
 
-The data is received from an Arduino and displayed using a Raspberry Pi.
+The data is received from an Arduino and displayed on a LCD using a Raspberry Pi.
+
+My contribution to the project was writing the code to analyze the received data and represent it in real time using different gauges and charts. I had to mock the data because that part of the project wasn't ready yet.
+
+This code was written for my Thesis during 2017/2018.
 
 # Dependencies:
 
 * Python 3.5.3 (Instalated by default in Raspbian)
 * Tkinter module
 
-# POSIBLE ERRORS:
+# Error debugging:
 
 ImportError: No module named 'meter'
 * Every .py file has to be in the same folder.
