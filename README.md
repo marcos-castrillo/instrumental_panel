@@ -10,10 +10,10 @@ This code was written for my Thesis during 2017/2018.
 
 # Dependencies:
 
-* Python 3.5.3 (Instalated by default in Raspbian)
+* Python >= 3.5.3 (Installed by default in Raspbian)
 * Tkinter module
 
-# Error debugging:
+# FAQ:
 
 ImportError: No module named 'meter'
 * Every .py file has to be in the same folder.
